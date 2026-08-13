@@ -1,0 +1,11 @@
+{
+  "size_threshold_gb": 10.0,
+  "include_model": true,
+  "include_logs": false,
+  "include_pycache": false,
+  "compression_level": 6,
+  "keep_local_after_upload": false,
+  "split_threshold_mb": 1900,
+  "local_only": true,
+  "note": "No external sync. Local backup only."
+}

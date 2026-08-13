@@ -1,0 +1,17 @@
+{
+  "name": "time_greeting",
+  "description": "Greets the user with a time-appropriate greeting",
+  "trigger_keywords": [
+    "صباح",
+    "مساء",
+    "morning",
+    "evening",
+    "hello",
+    "مرحبا"
+  ],
+  "procedure": "1. Detect language\n2. Compose a warm, time-aware greeting",
+  "enabled": true,
+  "input_schema": {},
+  "examples": [],
+  "version": "1.0.0"
+}

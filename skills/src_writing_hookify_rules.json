@@ -1,0 +1,25 @@
+{
+  "name": "src_writing_hookify_rules",
+  "description": "This skill should be used when the user asks to \"create a hookify rule\", \"write a hook rule\", \"configure hookify\", \"add a hookify rule\", or needs guidance on hookify rule syntax and patterns.",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "writing",
+    "hookify",
+    "rules"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Writing Hookify Rules\n\n## Overview\n\nHookify rules are markdown files with YAML frontmatter that define patterns to watch for and messages to show when those patterns match. Rules are stored in `.claude/hookify.{rule-name}.local.md` files.\n\n## Rule File Format\n\n### Basic Structure\n\n```markdown\n---\nname: rule-identifier\nenabled: true\nevent: bash|file|stop|prompt|all\npattern: regex-pattern-here\n---\n\nMessage to show Claude when this rule triggers.\nCan include markdown formatting, warnings, suggestions, etc.\n```\n\n### Frontmatter Fields\n\n**name** (required): Unique identifier for the rule\n- Use kebab-case: `warn-dangerous-rm`, `block-console-log`\n- Be descriptive and action-oriented\n- Start with verb: warn, prevent, block, require, check\n\n**enabled** (required): Boolean to activate/deactivate\n- `true`: Rule is active\n- `false`: Rule is disabled (won't trigger)\n- Can toggle without deleting rule\n\n**event** (required): Which hook event to trigger on\n- `bash`: Bash tool commands\n- `file`: Edit, Write, MultiEdit tools\n- `stop`: When agent wants to stop\n- `prompt`: When user submits a prompt\n- `all`: All events\n\n**action** (optional): What to do when rule matches\n- `warn`: Show message but allow operation (default)\n- `block`: Prevent operation (PreToolUse) or stop session (Stop events)\n- If omitted, defaults to `warn`\n\n**pattern** (simple format): Regex pattern to match\n- Used for simple single-condition rules\n- Matches against command (bash) or new_text (file)\n- Python regex syntax\n\n**Example:**\n```yaml\nevent: bash\npattern: rm\\s+-rf\n```\n\n### Advanced Format (Multiple Conditions)\n\nFor complex rules with multiple conditions:\n\n```markdown\n---\nname: warn-env-file-edits\nenabled: true\nevent: file\nconditions:\n  - field: file_path\n    operator: regex_match\n    pattern: \\.env$\n  - field: new_text\n    operator: contains\n    pattern: API_KEY\n---\n\nYou're adding an API key to a .env file. Ensure this file is in .gitignore!\n```\n\n**Condition fields:**\n- `field`: Which field to check\n  - For bash: `command`\n  - For file: `file_path`, `new_text`, `old_text`, `content`\n- `operator`: How to match\n  - `regex_match`: Regex pattern matching\n  - `contains`: Substring check\n  - `equals`: Exact match\n  - `not_contains`: Substring must NOT be present\n  - `starts_with`: Prefix check\n  - `ends_with`: Suffix check\n- `pattern`: Pattern or string to match\n\n**All conditions must match for rule to trigger.**\n\n## Message Body\n\nThe markdown content after frontmatter is shown to Claude when the rule triggers.\n\n**Good messages:**\n- Explain what was detected\n- Explain why it's problematic\n- Suggest alternatives or best practices\n- Use formatting for clarity (bold, lists, etc.)\n\n**Example:**\n```markdown\n⚠️ **Console.log detected!**\n\nYou're adding console.log to production code.\n\n**Why this matters:**\n- Debug logs shouldn't ship to production\n- Console.log can expose sensitive data\n- Impacts browser performance\n\n**Alternatives:**\n- Use a proper logging library\n- Remove before committing\n- Use ",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: writing-hookify-rules"
+}

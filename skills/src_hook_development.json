@@ -1,0 +1,24 @@
+{
+  "name": "src_hook_development",
+  "description": "This skill should be used when the user asks to \"create a hook\", \"add a PreToolUse/PostToolUse/Stop hook\", \"validate tool use\", \"implement prompt-based hooks\", \"use ${CLAUDE_PLUGIN_ROOT}\", \"set up event-driven automation\", \"block dangerous commands\", or mentions hook events (PreToolUse, PostToolUse,",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "hook",
+    "development"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Hook Development for Claude Code Plugins\n\n## Overview\n\nHooks are event-driven automation scripts that execute in response to Claude Code events. Use hooks to validate operations, enforce policies, add context, and integrate external tools into workflows.\n\n**Key capabilities:**\n- Validate tool calls before execution (PreToolUse)\n- React to tool results (PostToolUse)\n- Enforce completion standards (Stop, SubagentStop)\n- Load project context (SessionStart)\n- Automate workflows across the development lifecycle\n\n## Hook Types\n\n### Prompt-Based Hooks (Recommended)\n\nUse LLM-driven decision making for context-aware validation:\n\n```json\n{\n  \"type\": \"prompt\",\n  \"prompt\": \"Evaluate if this tool use is appropriate: $TOOL_INPUT\",\n  \"timeout\": 30\n}\n```\n\n**Supported events:** Stop, SubagentStop, UserPromptSubmit, PreToolUse\n\n**Benefits:**\n- Context-aware decisions based on natural language reasoning\n- Flexible evaluation logic without bash scripting\n- Better edge case handling\n- Easier to maintain and extend\n\n### Command Hooks\n\nExecute bash commands for deterministic checks:\n\n```json\n{\n  \"type\": \"command\",\n  \"command\": \"bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh\",\n  \"timeout\": 60\n}\n```\n\n**Use for:**\n- Fast deterministic validations\n- File system operations\n- External tool integrations\n- Performance-critical checks\n\n## Hook Configuration Formats\n\n### Plugin hooks.json Format\n\n**For plugin hooks** in `hooks/hooks.json`, use wrapper format:\n\n```json\n{\n  \"description\": \"Brief explanation of hooks (optional)\",\n  \"hooks\": {\n    \"PreToolUse\": [...],\n    \"Stop\": [...],\n    \"SessionStart\": [...]\n  }\n}\n```\n\n**Key points:**\n- `description` field is optional\n- `hooks` field is required wrapper containing actual hook events\n- This is the **plugin-specific format**\n\n**Example:**\n```json\n{\n  \"description\": \"Validation hooks for code quality\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Write\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/validate.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\n### Settings Format (Direct)\n\n**For user settings** in `.claude/settings.json`, use direct format:\n\n```json\n{\n  \"PreToolUse\": [...],\n  \"Stop\": [...],\n  \"SessionStart\": [...]\n}\n```\n\n**Key points:**\n- No wrapper - events directly at top level\n- No description field\n- This is the **settings format**\n\n**Important:** The examples below show the hook event structure that goes inside either format. For plugin hooks.json, wrap these in `{\"hooks\": {...}}`.\n\n## Hook Events\n\n### PreToolUse\n\nExecute before any tool runs. Use to approve, deny, or modify tool calls.\n\n**Example (prompt-based):**\n```json\n{\n  \"PreToolUse\": [\n    {\n      \"matcher\": \"Write|Edit\",\n      \"hooks\": [\n        {\n          \"type\": \"prompt\",\n          \"prompt\": \"Validate file write safety. Check: system paths, credentials, path traversal, sensitive content. Return 'approve' or 'deny'.\"\n        }\n      ]\n    }\n  ]\n}\n```\n\n**Output for Pre",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: hook-development"
+}

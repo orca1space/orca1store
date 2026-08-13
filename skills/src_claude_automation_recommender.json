@@ -1,0 +1,24 @@
+{
+  "name": "src_claude_automation_recommender",
+  "description": "Analyze a codebase and recommend Claude Code automations (hooks, subagents, skills, plugins, MCP servers). Use when user asks for automation recommendations, wants to optimize their Claude Code setup, mentions improving Claude Code workflows, asks how to first set up Claude Code for a project, or wa",
+  "trigger_keywords": [
+    "analyze",
+    "codebase",
+    "and",
+    "recommend",
+    "claude",
+    "code",
+    "automations",
+    "hooks",
+    "automation",
+    "recommender"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Claude Automation Recommender\n\nAnalyze codebase patterns to recommend tailored Claude Code automations across all extensibility options.\n\n**This skill is read-only.** It analyzes the codebase and outputs recommendations. It does NOT create or modify any files. Users implement the recommendations themselves or ask Claude separately to help build them.\n\n## Output Guidelines\n\n- **Recommend 1-2 of each type**: Don't overwhelm - surface the top 1-2 most valuable automations per category\n- **If user asks for a specific type**: Focus only on that type and provide more options (3-5 recommendations)\n- **Go beyond the reference lists**: The reference files contain common patterns, but use web search to find recommendations specific to the codebase's tools, frameworks, and libraries\n- **Tell users they can ask for more**: End by noting they can request more recommendations for any specific category\n\n## Automation Types Overview\n\n| Type | Best For |\n|------|----------|\n| **Hooks** | Automatic actions on tool events (format on save, lint, block edits) |\n| **Subagents** | Specialized reviewers/analyzers that run in parallel |\n| **Skills** | Packaged expertise, workflows, and repeatable tasks (invoked by Claude or user via `/skill-name`) |\n| **Plugins** | Collections of skills that can be installed |\n| **MCP Servers** | External tool integrations (databases, APIs, browsers, docs) |\n\n## Workflow\n\n### Phase 1: Codebase Analysis\n\nGather project context:\n\n```bash\n# Detect project type and tools\nls -la package.json pyproject.toml Cargo.toml go.mod pom.xml 2>/dev/null\ncat package.json 2>/dev/null | head -50\n\n# Check dependencies for MCP server recommendations\ncat package.json 2>/dev/null | grep -E '\"(react|vue|angular|next|express|fastapi|django|prisma|supabase|convex|stripe)\"'\n\n# Check for existing Claude Code config\nls -la .claude/ CLAUDE.md 2>/dev/null\n\n# Analyze project structure\nls -la src/ app/ lib/ tests/ components/ pages/ api/ 2>/dev/null\n```\n\n**Key Indicators to Capture:**\n\n| Category | What to Look For | Informs Recommendations For |\n|----------|------------------|----------------------------|\n| Language/Framework | package.json, pyproject.toml, import patterns | Hooks, MCP servers |\n| Frontend stack | React, Vue, Angular, Next.js | Playwright MCP, frontend skills |\n| Backend stack | Express, FastAPI, Django | API documentation tools |\n| Database | Prisma, Supabase, Convex, raw SQL | Database / backend MCP servers |\n| External APIs | Stripe, OpenAI, AWS SDKs | context7 MCP for docs |\n| Testing | Jest, pytest, Playwright configs | Testing hooks, subagents |\n| CI/CD | GitHub Actions, CircleCI | GitHub MCP server |\n| Issue tracking | Linear, Jira references | Issue tracker MCP |\n| Docs patterns | OpenAPI, JSDoc, docstrings | Documentation skills |\n\n### Phase 2: Generate Recommendations\n\nBased on analysis, generate recommendations across all categories:\n\n#### A. MCP Server Recommendations\n\nSee [references/mcp-servers.md](references/mcp-servers.md) for detail",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: claude-automation-recommender"
+}

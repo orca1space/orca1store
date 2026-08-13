@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OrcaMax Code</title>
+<style>
+:root {
+  --bg-primary: #1e1f22;
+  --bg-secondary: #2a2b2f;
+  --bg-tertiary: #1a1b1e;
+  --bg-hover: #3a3b3f;
+  --bg-input: #1f2024;
+  --border: #3a3b3f;
+  --text-primary: #e3e3e3;
+  --text-secondary: #b4b4b4;
+  --text-muted: #8a8a8a;
+  --accent: #4cc2ff;
+  --accent-dim: #2a8fb5;
+  --success: #4ade80;
+  --danger: #f87171;
+  --sidebar-width: 260px;
+  --header-height: 48px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === HEADER === */
+.header {
+  height: var(--header-height);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.logo {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #1a1b1e 0%, #2a2b2f 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--accent);
+}
+.brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+.brand small {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+  margin-left: 8px;
+}
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* === MAIN LAYOUT === */
+.main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.sidebar-section {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 13px;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-item.active { background: var(--bg-hover); color: var(--text-primary); }
+.nav-item .icon { font-size: 14px; width: 18px; text-align: center; }
+.nav-item .count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+.sidebar-stats {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.stat-row { display: flex; justify-content: space-between; padding: 2px 0; }
+
+/* === CHAT AREA === */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  min-width: 0;
+}
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 0;
+}
+.messages-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.message {
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+.message.user .message-avatar { background: var(--accent-dim); color: white; }
+.message.assistant .message-avatar { background: var(--bg-tertiary); color: var(--accent); border: 1px solid var(--border); }
+.message-body { flex: 1; min-width: 0; }
+.message-name {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+}
+.message.user .message-name { color: var(--accent); }
+.message-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.message-content code {
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.message.thinking .message-content { color: var(--text-muted); font-style: italic; }
+.welcome {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+}
+.welcome h1 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.welcome p { font-size: 14px; margin-bottom: 8px; }
+
+/* === INPUT === */
+.input-area {
+  border-top: 1px solid var(--border);
+  background: var(--bg-primary);
+  padding: 12px 24px 20px;
+}
+.input-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.input-box {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  transition: border 0.15s;
+}
+.input-box:focus-within { border-color: var(--accent); }
+.input-box textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  max-height: 200px;
+  line-height: 1.5;
+}
+.input-box textarea::placeholder { color: var(--text-muted); }
+.send-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.send-btn:hover:not(:disabled) { background: #3ab0e8; }
+.send-btn:disabled { background: var(--bg-hover); cursor: not-allowed; }
+.input-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* === COMMANDS PALETTE === */
+.commands {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  display: none;
+}
+.commands.show { display: block; }
+.command-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.command-item:last-child { border-bottom: none; }
+.command-item:hover, .command-item.selected { background: var(--bg-hover); }
+.command-item .cmd-name { color: var(--accent); font-family: var(--mono); font-weight: 600; }
+.command-item .cmd-desc { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--bg-hover); }
+
+/* === UPLOAD BUTTON (+) === */
+.attach-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.attach-btn:hover { background: var(--bg-hover); color: var(--accent); border-color: var(--accent); }
+.attach-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.attach-btn.uploading { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* === UPLOAD CHIPS === */
+.upload-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 24px 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.upload-chips:empty { display: none; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px 10px 4px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.chip .chip-icon { color: var(--accent); }
+.chip .chip-x {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1;
+  margin-left: 2px;
+}
+.chip .chip-x:hover { color: var(--danger); }
+
+/* === SIDEBAR EXTRA STATS === */
+.stat-row.cache-hit { color: var(--success); }
+.stat-row .stat-hint { font-size: 10px; color: var(--text-muted); margin-left: 4px; }
+
+/* === STREAMING === */
+.message.streaming .message-content {
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
+  animation: pulseStream 1.4s ease-in-out infinite;
+}
+@keyframes pulseStream { 0%, 100% { border-left-color: var(--accent); } 50% { border-left-color: transparent; } }
+.stream-status {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-style: italic;
+  margin-left: 6px;
+}
+.source-tag {
+  display: inline-block;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 10px;
+  margin-left: 6px;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--success);
+}
+.source-tag.source-cached { color: var(--accent); }
+
+/* === SESSION RESTORED BANNER === */
+.restore-banner {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--success);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.restore-banner .restore-icon { color: var(--success); font-size: 16px; }
+.restore-banner .restore-text { flex: 1; }
+.restore-banner button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.restore-banner button:hover { background: var(--bg-hover); }
+
+/* === SKILLS PANEL === */
+.skills-panel {
+  display: none;
+  position: fixed;
+  top: 90px;
+  left: 280px;
+  width: 380px;
+  max-height: 70vh;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 100;
+  overflow: hidden;
+  flex-direction: column;
+}
+.skills-panel.show { display: flex; }
+.skills-panel-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.skills-panel-header input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  outline: none;
+}
+.skills-panel-header input:focus { border-color: var(--accent); }
+.skills-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 6px 0;
+}
+.skill-item {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  transition: background 0.12s;
+}
+.skill-item:hover { background: var(--bg-hover); }
+.skill-item .skill-info { flex: 1; min-width: 0; }
+.skill-item .skill-name {
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+.skill-item .skill-desc {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skill-item .skill-score {
+  background: var(--bg-primary);
+  color: var(--success);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.skills-panel-footer {
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.skills-panel-footer button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.skills-panel-footer button:hover { background: var(--bg-hover); color: var(--accent); }
+
+/* === SKILL DETAIL MODAL === */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal h3 {
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+.modal label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.modal input, .modal textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 12px;
+  outline: none;
+  font-family: var(--font);
+}
+.modal textarea { resize: vertical; min-height: 100px; font-family: var(--mono); }
+.modal input:focus, .modal textarea:focus { border-color: var(--accent); }
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+.modal-actions button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.modal-actions button.secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.modal-actions button:hover { opacity: 0.85; }
+
+/* === AUTO-SUGGEST IN INPUT === */
+.suggest-chips {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+  display: none;
+  z-index: 50;
+}
+.suggest-chips.show { display: block; }
+.suggest-chip {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.suggest-chip:hover { background: var(--bg-hover); }
+.suggest-chip:last-child { border-bottom: none; }
+.suggest-chip .suggest-score {
+  color: var(--success);
+  font-size: 10px;
+  margin-left: auto;
+  font-weight: 600;
+}
+.suggest-hint {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* === TABS BAR === */
+.tabs-bar {
+  display: flex;
+  align-items: center;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 8px;
+  gap: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  min-height: 38px;
+}
+.tabs-bar::-webkit-scrollbar { height: 4px; }
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  padding: 6px 10px 6px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  max-width: 200px;
+  min-width: 80px;
+  position: relative;
+  user-select: none;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tab:hover { background: var(--bg-hover); }
+.tab.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-bottom-color: var(--bg-primary);
+  font-weight: 500;
+}
+.tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.tab-close {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.tab-close:hover { background: var(--danger); color: white; }
+.tab-add {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.tab-add:hover { color: var(--accent); border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🐋</div>
+  <div class="brand">OrcaMax Code <small>OrcaMax Code</small></div>
+  <div class="header-right">
+    <span><span class="status-dot" id="statusDot"></span><span id="statusText">Connecting...</span></span>
+  </div>
+</div>
+
+<div class="tabs-bar" id="tabsBar">
+  <button class="tab-add" onclick="createNewTab()" title="New tab">+</button>
+</div>
+
+<!-- Skills panel (popup) -->
+<div class="skills-panel" id="skillsPanel">
+  <div class="skills-panel-header">
+    <input type="text" id="skillsSearch" placeholder="Search skills (semantic)..." oninput="onSkillSearchInput(this.value)">
+  </div>
+  <div class="skills-list" id="skillsList"></div>
+  <div class="skills-panel-footer">
+    <button onclick="showImportSkillDialog()">Import JSON</button>
+    <button onclick="showLearnSkillDialog()">Learn New</button>
+    <button onclick="reindexSkills()">Reindex</button>
+  </div>
+</div>
+
+<!-- Learn skill modal -->
+<div class="modal-overlay" id="learnModal">
+  <div class="modal">
+    <h3>📚 Learn a new skill</h3>
+    <label>Name (snake_case, e.g. "summarize_email")</label>
+    <input type="text" id="learnName" placeholder="my_skill_name">
+    <label>Description (what does this skill do?)</label>
+    <textarea id="learnDesc" placeholder="A short description..." style="min-height: 60px;"></textarea>
+    <label>Procedure (steps or prompt template)</label>
+    <textarea id="learnProc" placeholder="1. Read the input&#10;2. Process it..." style="min-height: 120px;"></textarea>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeLearnDialog()">Cancel</button>
+      <button onclick="submitLearnSkill()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import skill modal -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <h3>📥 Import skill from JSON</h3>
+    <label>Paste a skill JSON (raw or in a code block):</label>
+    <textarea id="importText" placeholder='{"name": "my_skill", "description": "...", "trigger_keywords": [...], "procedure": "..."}' style="min-height: 200px;"></textarea>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeImportDialog()">Cancel</button>
+      <button onclick="submitImportSkill()">Import</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Navigation</div>
+      <div class="nav-item active" data-nav="chat" onclick="switchNav('chat')">
+        <span class="icon">💬</span><span>Chat</span>
+      </div>
+      <div class="nav-item" data-nav="skills" onclick="toggleSkillsPanel()">
+        <span class="icon">⚡</span><span>Skills</span><span class="count" id="skillsCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="lessons" onclick="switchNav('lessons')">
+        <span class="icon">📚</span><span>Lessons</span><span class="count" id="lessonsCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="knowledge" onclick="switchNav('knowledge')">
+        <span class="icon">🧠</span><span>Knowledge</span><span class="count" id="kbCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="training" onclick="switchNav('training')">
+        <span class="icon">🎓</span><span>Training</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="conversationList">
+      <div class="sidebar-title">Recent</div>
+      <div id="conversations" style="font-size: 12px; color: var(--text-muted); padding: 4px;">
+        (current session)
+      </div>
+    </div>
+
+    <div class="sidebar-stats">
+      <div class="stat-row"><span>Model</span><span id="statModel">3B</span></div>
+      <div class="stat-row"><span>Skills</span><span id="statSkills">0</span></div>
+      <div class="stat-row"><span>Lessons</span><span id="statLessons">0</span></div>
+      <div class="stat-row"><span>KB chunks</span><span id="statKB">0</span></div>
+      <div class="stat-row"><span>Cache <span class="stat-hint">(instant)</span></span><span id="statCache">0</span></div>
+      <div class="stat-row"><span>Uploads</span><span id="statUploads">0</span></div>
+      <div class="stat-row"><span>Storage</span><span>D:\</span></div>
+    </div>
+  </div>
+
+  <div class="chat-area">
+    <div class="messages" id="messages">
+      <div class="messages-inner" id="messagesInner">
+        <div class="welcome">
+          <h1>🐋 OrcaMax Code</h1>
+          <p>Local AI assistant. <strong>Independent</strong>. <strong>Yours</strong>.</p>
+          <p style="margin-top: 12px; font-size: 12px;">Press <code>/</code> for commands. <code>Enter</code> to send. <code>Shift+Enter</code> for new line.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-inner" style="position: relative;">
+        <div class="commands" id="commands"></div>
+        <div class="suggest-chips" id="suggestChips"></div>
+        <div class="upload-chips" id="uploadChips"></div>
+        <div class="input-box">
+          <button class="attach-btn" id="attachBtn" title="Attach file (txt, md, py, json, csv, log, ...)" onclick="document.getElementById('fileInput').click()">+</button>
+          <input type="file" id="fileInput" style="display:none" onchange="handleFileUpload(event)">
+          <textarea id="input" rows="1" placeholder="Send a message to OrcaMax Code... (try: /skills, /help, or just type to get skill suggestions)" onkeydown="handleKey(event)" oninput="autoResize(this); checkSlash(this); checkSkillSuggest(this)"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>➤</button>
+        </div>
+        <div class="input-hint">All processing happens on this machine. No data leaves.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let isProcessing = false;
+let uploadedFiles = [];  // [{filename, original_name, chunks, size_bytes, preview}]
+let currentAssistantDiv = null;
+let currentTextBuffer = '';
+let sessionRestored = false;
+let activeTabId = null;
+let tabMessageCache = {};  // {tab_id: [messages]}
+let commands = [
+  { cmd: '/help', desc: 'Show all available commands' },
+  { cmd: '/status', desc: 'Show Hermes status' },
+  { cmd: '/teach', desc: 'Add a lesson (followed by text)' },
+  { cmd: '/skill', desc: 'Add a new skill (interactive)' },
+  { cmd: '/learn', desc: 'Learn text (followed by content)' },
+  { cmd: '/learnfile', desc: 'Learn from a file (followed by path)' },
+  { cmd: '/search', desc: 'Search knowledge base' },
+  { cmd: '/skills', desc: 'List all skills' },
+  { cmd: '/lessons', desc: 'List all lessons' },
+  { cmd: '/new', desc: 'Start a new conversation' },
+  { cmd: '/exit', desc: 'Close OrcaMax Code' },
+];
+
+async function loadStatus() {
+  try {
+    const r = await fetch('/api/status');
+    const s = await r.json();
+    document.getElementById('statusText').textContent = s.llm?.healthy ? 'Ready' : 'Loading...';
+    document.getElementById('statusDot').style.background = s.llm?.healthy ? '#4ade80' : '#f87171';
+    document.getElementById('skillsCount').textContent = s.skills?.count || 0;
+    document.getElementById('lessonsCount').textContent = s.memory?.lessons || 0;
+    document.getElementById('kbCount').textContent = s.knowledge_base?.count || 0;
+    document.getElementById('statModel').textContent = s.llm?.info?.size_mb ? Math.round(s.llm.info.size_mb/1024) + 'GB' : '-';
+    document.getElementById('statSkills').textContent = s.skills?.count || 0;
+    document.getElementById('statLessons').textContent = s.memory?.lessons || 0;
+    document.getElementById('statKB').textContent = s.knowledge_base?.count || 0;
+    document.getElementById('statCache').textContent = (s.cache?.size || 0) + (s.cache?.total_hits ? ' (' + s.cache.total_hits + ' hits)' : '');
+    document.getElementById('statUploads').textContent = s.uploads?.count || 0;
+  } catch (e) {
+    document.getElementById('statusText').textContent = 'Offline';
+    document.getElementById('statusDot').style.background = '#f87171';
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+}
+
+function checkSlash(el) {
+  const palette = document.getElementById('commands');
+  if (el.value.startsWith('/')) {
+    const q = el.value.slice(1).toLowerCase();
+    const filtered = commands.filter(c => c.cmd.slice(1).includes(q));
+    palette.innerHTML = filtered.map((c, i) =>
+      `<div class="command-item${i===0?' selected':''}" data-cmd="${c.cmd}">
+        <div class="cmd-name">${c.cmd}</div>
+        <div class="cmd-desc">${c.desc}</div>
+      </div>`
+    ).join('');
+    palette.classList.add('show');
+  } else {
+    palette.classList.remove('show');
+  }
+  document.getElementById('sendBtn').disabled = !el.value.trim();
+}
+
+function handleKey(e) {
+  const palette = document.getElementById('commands');
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  } else if (e.key === 'Escape') {
+    palette.classList.remove('show');
+  }
+}
+
+function switchNav(nav) {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.nav === nav);
+  });
+  // Future: switch views per nav
+}
+
+async function sendMessage() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if ((!text && uploadedFiles.length === 0) || isProcessing) return;
+  isProcessing = true;
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('commands').classList.remove('show');
+  // Remove welcome
+  const welcome = document.querySelector('.welcome');
+  if (welcome) welcome.remove();
+  // Build user message (include uploaded files as context)
+  let userText = text;
+  if (uploadedFiles.length > 0) {
+    const refs = uploadedFiles.map(f => `[${f.original_name}]`).join(' ');
+    userText = (text ? text + '\n\n' : '') + `Attached files: ${refs}`;
+  }
+  const sendingTabId = activeTabId;
+  // Add user message
+  addMessage('user', text + (uploadedFiles.length ? ' 📎' + uploadedFiles.length : ''));
+  input.value = '';
+  autoResize(input);
+  // Create streaming assistant bubble
+  currentAssistantDiv = addMessageStreaming('assistant');
+  currentTextBuffer = '';
+  setStreamingStatus(currentAssistantDiv, 'Thinking...');
+  try {
+    const r = await fetch('/api/chat/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userText, tab_id: sendingTabId })
+    });
+    if (!r.ok || !r.body) {
+      throw new Error('Stream failed: ' + r.status);
+    }
+    const reader = r.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buf = '';
+    let firstToken = true;
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      // Split by SSE event boundary
+      const events = buf.split('\n\n');
+      buf = events.pop();  // last incomplete event stays in buffer
+      for (const ev of events) {
+        const line = ev.trim();
+        if (!line.startsWith('data:')) continue;
+        const json = line.slice(5).trim();
+        try {
+          const data = JSON.parse(json);
+          if (data.kind === 'token') {
+            if (firstToken) {
+              setStreamingStatus(currentAssistantDiv, null);
+              firstToken = false;
+            }
+            currentTextBuffer += data.content;
+            updateStreamingContent(currentAssistantDiv, currentTextBuffer);
+          } else if (data.kind === 'quick' || data.kind === 'cached') {
+            setStreamingStatus(currentAssistantDiv, null);
+            currentTextBuffer = data.content;
+            updateStreamingContent(currentAssistantDiv, currentTextBuffer);
+            // Cached/quick is instant; mark source
+            addSourceTag(currentAssistantDiv, data.kind === 'quick' ? 'instant' : 'cached');
+          } else if (data.kind === 'error') {
+            setStreamingStatus(currentAssistantDiv, null);
+            currentTextBuffer = '⚠️ ' + data.content;
+            updateStreamingContent(currentAssistantDiv, currentTextBuffer);
+          } else if (data.kind === 'done') {
+            finalizeStreaming(currentAssistantDiv);
+          }
+        } catch (parseErr) {
+          // ignore bad JSON line
+        }
+      }
+    }
+  } catch (e) {
+    setStreamingStatus(currentAssistantDiv, null);
+    updateStreamingContent(currentAssistantDiv, '⚠️ Connection error: ' + e.message);
+  }
+  currentAssistantDiv = null;
+  // Clear chips after sending
+  uploadedFiles = [];
+  renderChips();
+  isProcessing = false;
+  loadStatus();
+}
+
+function addMessageStreaming(role) {
+  const inner = document.getElementById('messagesInner');
+  const div = document.createElement('div');
+  div.className = 'message ' + role + ' streaming';
+  const avatar = role === 'user' ? '🧑' : '🐋';
+  const name = role === 'user' ? 'You' : 'OrcaMax';
+  div.innerHTML = `
+    <div class="message-avatar">${avatar}</div>
+    <div class="message-body">
+      <div class="message-name">${name} <span class="stream-status"></span></div>
+      <div class="message-content"></div>
+    </div>
+  `;
+  inner.appendChild(div);
+  document.getElementById('messages').scrollTop = 999999;
+  return div;
+}
+
+function setStreamingStatus(div, status) {
+  const el = div.querySelector('.stream-status');
+  if (el) el.textContent = status ? `· ${status}` : '';
+}
+
+function updateStreamingContent(div, content) {
+  const el = div.querySelector('.message-content');
+  if (el) {
+    el.textContent = content;
+    document.getElementById('messages').scrollTop = 999999;
+  }
+}
+
+function addSourceTag(div, label) {
+  const name = div.querySelector('.message-name');
+  if (name && !name.querySelector('.source-tag')) {
+    const tag = document.createElement('span');
+    tag.className = 'source-tag source-' + label;
+    tag.textContent = label === 'cached' ? '⚡ cached' : '⚡ instant';
+    name.appendChild(tag);
+  }
+}
+
+function finalizeStreaming(div) {
+  div.classList.remove('streaming');
+}
+
+function addMessage(role, content, thinking = false) {
+  const inner = document.getElementById('messagesInner');
+  const div = document.createElement('div');
+  div.className = 'message ' + role + (thinking ? ' thinking' : '');
+  const avatar = role === 'user' ? '🧑' : '🐋';
+  const name = role === 'user' ? 'You' : 'OrcaMax';
+  const contentHtml = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  div.innerHTML = `
+    <div class="message-avatar">${avatar}</div>
+    <div class="message-body">
+      <div class="message-name">${name}</div>
+      <div class="message-content">${contentHtml}</div>
+    </div>
+  `;
+  inner.appendChild(div);
+  document.getElementById('messages').scrollTop = 999999;
+  return div;
+}
+
+// === SKILLS PANEL & AUTO-SUGGEST ===
+let skillsPanelOpen = false;
+let skillSuggestTimer = null;
+
+function toggleSkillsPanel() {
+  skillsPanelOpen = !skillsPanelOpen;
+  const panel = document.getElementById('skillsPanel');
+  if (skillsPanelOpen) {
+    panel.classList.add('show');
+    document.getElementById('skillsSearch').focus();
+    // Load all skills by default
+    onSkillSearchInput('');
+  } else {
+    panel.classList.remove('show');
+  }
+}
+
+function closeSkillsPanel() {
+  skillsPanelOpen = false;
+  document.getElementById('skillsPanel').classList.remove('show');
+}
+
+async function onSkillSearchInput(query) {
+  try {
+    const r = await fetch('/api/skills/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query || '', top_k: 20, min_score: 0.10 })
+    });
+    const data = await r.json();
+    renderSkillsList(data.results || []);
+  } catch (e) {
+    // ignore
+  }
+}
+
+function renderSkillsList(skills) {
+  const list = document.getElementById('skillsList');
+  if (skills.length === 0) {
+    list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;">No matching skills</div>';
+    return;
+  }
+  list.innerHTML = skills.map(s => `
+    <div class="skill-item" onclick="viewSkill('${escapeHtml(s.name)}')">
+      <div class="skill-info">
+        <div class="skill-name">${escapeHtml(s.name)}</div>
+        <div class="skill-desc">${escapeHtml(s.description || '')}</div>
+      </div>
+      <div class="skill-score">${(s.score * 100).toFixed(0)}%</div>
+    </div>
+  `).join('');
+}
+
+async function viewSkill(name) {
+  try {
+    const r = await fetch('/api/skills/' + encodeURIComponent(name));
+    const data = await r.json();
+    if (data.skill) {
+      const s = data.skill;
+      alert(
+        `⚡ ${s.name}\n\n` +
+        `Description: ${s.description || '(none)'}\n\n` +
+        `Triggers: ${(s.trigger_keywords || []).join(', ') || '(none)'}\n\n` +
+        `Procedure:\n${(s.procedure || '(none)').substring(0, 500)}${(s.procedure || '').length > 500 ? '...' : ''}`
+      );
+    }
+  } catch (e) {}
+}
+
+async function reindexSkills() {
+  addMessage('assistant', '⚙️ Reindexing all skills (this may take a moment)...');
+  closeSkillsPanel();
+  try {
+    const r = await fetch('/api/skills/reindex', { method: 'POST' });
+    const data = await r.json();
+    addMessage('assistant', `✅ Reindexed ${data.reindexed || 0} skills.`);
+  } catch (e) {
+    addMessage('assistant', '⚠️ Reindex failed: ' + e.message);
+  }
+}
+
+// === AUTO-SUGGEST as user types ===
+async function checkSkillSuggest(textarea) {
+  const text = textarea.value.trim();
+  const chips = document.getElementById('suggestChips');
+  if (text.length < 8 || text.startsWith('/')) {
+    chips.classList.remove('show');
+    return;
+  }
+  // Debounce
+  clearTimeout(skillSuggestTimer);
+  skillSuggestTimer = setTimeout(async () => {
+    try {
+      const r = await fetch('/api/skills/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: text, top_k: 4, min_score: 0.45 })
+      });
+      const data = await r.json();
+      if (data.results && data.results.length > 0) {
+        chips.innerHTML = '<div class="suggest-hint">⚡ Matching skills (auto-selected for your query):</div>' +
+          data.results.map(s => `
+            <div class="suggest-chip" title="${escapeHtml(s.description || '')}">
+              <span>${escapeHtml(s.name)}</span>
+              <span class="suggest-score">${(s.score * 100).toFixed(0)}%</span>
+            </div>
+          `).join('');
+        chips.classList.add('show');
+      } else {
+        chips.classList.remove('show');
+      }
+    } catch (e) {
+      chips.classList.remove('show');
+    }
+  }, 400);
+}
+
+// === LEARN DIALOG ===
+function showLearnSkillDialog() {
+  document.getElementById('learnModal').classList.add('show');
+  closeSkillsPanel();
+}
+function closeLearnDialog() {
+  document.getElementById('learnModal').classList.remove('show');
+}
+async function submitLearnSkill() {
+  const name = document.getElementById('learnName').value.trim();
+  const description = document.getElementById('learnDesc').value.trim();
+  const procedure = document.getElementById('learnProc').value.trim();
+  if (!name || !description || !procedure) {
+    alert('Please fill in all fields.');
+    return;
+  }
+  try {
+    const r = await fetch('/api/skills/learn', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description, procedure, tab_id: activeTabId })
+    });
+    const data = await r.json();
+    if (data.error) {
+      alert('Error: ' + data.error);
+    } else {
+      closeLearnDialog();
+      addMessage('assistant', `✅ Learned new skill: **${data.learned.name}**\n\n${data.learned.description}`);
+      // Reindex so it's searchable
+      fetch('/api/skills/reindex', { method: 'POST' });
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// === IMPORT DIALOG ===
+function showImportSkillDialog() {
+  document.getElementById('importModal').classList.add('show');
+  closeSkillsPanel();
+}
+function closeImportDialog() {
+  document.getElementById('importModal').classList.remove('show');
+}
+async function submitImportSkill() {
+  const text = document.getElementById('importText').value.trim();
+  if (!text) {
+    alert('Please paste a skill JSON.');
+    return;
+  }
+  try {
+    const r = await fetch('/api/skills/import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const data = await r.json();
+    if (data.error) {
+      alert('Error: ' + data.error);
+    } else {
+      closeImportDialog();
+      addMessage('assistant', `✅ Imported skill: **${data.imported.name}**`);
+      fetch('/api/skills/reindex', { method: 'POST' });
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// Click outside to close skills panel
+document.addEventListener('click', (e) => {
+  if (skillsPanelOpen) {
+    const panel = document.getElementById('skillsPanel');
+    if (panel && !panel.contains(e.target) && !e.target.closest('[data-nav="skills"]')) {
+      closeSkillsPanel();
+    }
+  }
+});
+
+// === UPLOAD HANDLING ===
+async function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const btn = document.getElementById('attachBtn');
+  btn.disabled = true;
+  btn.classList.add('uploading');
+  btn.textContent = '⏳';
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const r = await fetch('/api/upload', { method: 'POST', body: formData });
+    const data = await r.json();
+    if (data.error) {
+      addMessage('assistant', '⚠️ Upload failed: ' + data.error);
+    } else {
+      uploadedFiles.push(data);
+      renderChips();
+      addMessage('assistant', `✅ Ingested **${data.original_name}** (${data.chunks} chunks, ${(data.size_bytes/1024).toFixed(1)} KB). Ask me anything about it.`);
+    }
+  } catch (e) {
+    addMessage('assistant', '⚠️ Upload error: ' + e.message);
+  }
+  btn.disabled = false;
+  btn.classList.remove('uploading');
+  btn.textContent = '+';
+  event.target.value = '';  // allow re-upload of same file
+  loadStatus();
+}
+
+function renderChips() {
+  const wrap = document.getElementById('uploadChips');
+  wrap.innerHTML = uploadedFiles.map((f, i) =>
+    `<div class="chip" title="${f.preview || ''}">
+      <span class="chip-icon">📎</span>
+      <span>${f.original_name}</span>
+      <span class="chip-x" onclick="removeChip(${i})">×</span>
+    </div>`
+  ).join('');
+}
+
+function removeChip(idx) {
+  uploadedFiles.splice(idx, 1);
+  renderChips();
+}
+
+// === SESSION RESTORE ===
+async function restoreSession() {
+  try {
+    const r = await fetch('/api/tabs');
+    const data = await r.json();
+    if (!data || !data.tabs) return;
+    // Render tabs bar
+    renderTabs(data.tabs, data.active_tab_id);
+    activeTabId = data.active_tab_id;
+    // Load messages for active tab
+    if (activeTabId) {
+      await loadTabMessages(activeTabId);
+    }
+    sessionRestored = true;
+  } catch (e) {
+    // Silently fail; user starts fresh
+  }
+}
+
+async function loadTabMessages(tabId) {
+  try {
+    const r = await fetch('/api/tabs/' + encodeURIComponent(tabId));
+    const data = await r.json();
+    if (data.error || !data.tab) return;
+    // Clear current messages
+    const inner = document.getElementById('messagesInner');
+    inner.innerHTML = '';
+    const msgs = data.tab.messages || [];
+    if (msgs.length === 0) {
+      // Re-add welcome
+      const welcome = document.createElement('div');
+      welcome.className = 'welcome';
+      welcome.innerHTML = '<h1>🐋 OrcaMax Code</h1><p>Local AI assistant. <strong>Independent</strong>. <strong>Yours</strong>.</p><p style="margin-top: 12px; font-size: 12px;">Press <code>/</code> for commands. <code>Enter</code> to send.</p>';
+      inner.appendChild(welcome);
+    } else {
+      for (const m of msgs) {
+        addMessage(m.role === 'user' ? 'user' : 'assistant', m.content);
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+function renderTabs(tabs, activeId) {
+  const bar = document.getElementById('tabsBar');
+  // Keep the + button at end
+  const addBtn = bar.querySelector('.tab-add');
+  bar.innerHTML = '';
+  for (const t of tabs) {
+    const tabEl = document.createElement('div');
+    tabEl.className = 'tab' + (t.id === activeId ? ' active' : '');
+    tabEl.dataset.id = t.id;
+    tabEl.title = t.title + ' (' + t.message_count + ' messages)';
+    tabEl.innerHTML = `
+      <span class="tab-title">${escapeHtml(t.title)}</span>
+      <span class="tab-close" onclick="event.stopPropagation(); closeTab('${t.id}')" title="Close">×</span>
+    `;
+    tabEl.onclick = () => switchToTab(t.id);
+    bar.appendChild(tabEl);
+  }
+  bar.appendChild(addBtn);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+}
+
+async function createNewTab() {
+  if (isProcessing) return;
+  try {
+    const r = await fetch('/api/tabs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'New chat' })
+    });
+    const data = await r.json();
+    if (data.tab) {
+      activeTabId = data.tab.id;
+      await refreshTabs();
+      await loadTabMessages(activeTabId);
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+async function refreshTabs() {
+  try {
+    const r = await fetch('/api/tabs');
+    const data = await r.json();
+    if (data.tabs) {
+      renderTabs(data.tabs, data.active_tab_id || activeTabId);
+    }
+  } catch (e) {}
+}
+
+async function switchToTab(tabId) {
+  if (isProcessing) return;
+  if (tabId === activeTabId) return;
+  try {
+    const r = await fetch('/api/tabs/switch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tab_id: tabId })
+    });
+    const data = await r.json();
+    if (data.tab) {
+      activeTabId = data.tab.id;
+      await refreshTabs();
+      await loadTabMessages(activeTabId);
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+async function closeTab(tabId) {
+  if (isProcessing) return;
+  try {
+    const r = await fetch('/api/tabs/close', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tab_id: tabId })
+    });
+    const data = await r.json();
+    if (data.ok) {
+      // If we closed the active tab, switch to whatever the server picked
+      activeTabId = data.active_tab_id;
+      await refreshTabs();
+      if (activeTabId) {
+        await loadTabMessages(activeTabId);
+      } else {
+        // No tabs left
+        document.getElementById('messagesInner').innerHTML = '';
+        await createNewTab();
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+async function clearSession() {
+  try {
+    await fetch('/api/session/clear', { method: 'POST' });
+    location.reload();
+  } catch (e) {
+    location.reload();
+  }
+}
+
+// Initial
+loadStatus();
+restoreSession();
+setInterval(loadStatus, 10000);  // 10s polling so pre-warm status is reflected
+</script>
+
+</body>
+</html>

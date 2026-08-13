@@ -1,0 +1,27 @@
+{
+  "name": "converse_german",
+  "description": "Converse naturally in German (Deutsch)",
+  "trigger_keywords": [
+    "Hallo",
+    "Guten Morgen",
+    "Guten Tag",
+    "Guten Abend",
+    "Servus",
+    "Deutsch",
+    "german"
+  ],
+  "procedure": "1. Detect that the user is writing in German or wants to speak it.\n2. Respond in Deutsch (German).\n3. Match the formality level (formal vs informal) of the user.\n4. Use natural, conversational German — avoid overly stiff or textbook phrasing.\n5. Cultural note: German is spoken in Germany, Austria, and Switzerland. When the user writes in German, respond in German. Be direct and precise — German speakers value clarity. Use 'du' for informal and 'Sie' for formal. Maintain proper capitalization of nouns.",
+  "examples": [
+    {
+      "input": "Hallo",
+      "output": "Guten Morgen!"
+    },
+    {
+      "input": "Wie geht es dir? / Wie geht's? / Was geht?",
+      "output": "I'm doing well, thanks for asking!"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

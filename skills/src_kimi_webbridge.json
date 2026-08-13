@@ -1,0 +1,16 @@
+{
+  "name": "src_kimi_webbridge",
+  "description": "|",
+  "trigger_keywords": [
+    "kimi",
+    "webbridge"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Kimi WebBridge\n\nControl the user's real browser (with their login sessions) via a local daemon at `http://127.0.0.1:10086`.\n\n## Tools\n\n| Tool | Args | Returns | Note |\n|------|------|---------|------|\n| `navigate` | `url`, `newTab`(bool), `group_title` | `{success, url, tabId}` | First call opens a tab — see [Tabs](#tabs-and-the-current-tab). `group_title` sets the group's visible label |\n| `find_tab` | `url`, `active`(bool) | `{success, url, tabId, borrowed}` | Re-select a tab **this session** opened; `active:true` borrows the tab the **user** is viewing — see [Tabs](#tabs-and-the-current-tab) |\n| `snapshot` | — | `{url, title, tree}` with `@e` refs | **Accessibility tree** (text) — use this to read page content and locate elements |\n| `click` | `selector` (@e ref or CSS) | `{success, tag, text}` | Synthetic `el.click()` |\n| `fill` | `selector`, `value` | `{success, tag, mode}` | Works on `<input>`/`<textarea>` AND `[contenteditable]` (ProseMirror/Lexical/Slate). `mode` is `\"value\"` or `\"contenteditable\"` |\n| `evaluate` | `code` (supports async/await) | `{type, value}` | |\n| `cdp` | `method`, `params` | raw CDP response | Raw `chrome.debugger` passthrough — what `evaluate` is to JS, `cdp` is to CDP. Low-level escape hatch for cases the tools above don't cover |\n| `screenshot` | `format`(png\\|jpeg), `quality`(0-100), optional `selector` (@e/CSS), optional `path` | `{format, path, sizeBytes, mimeType}` | Returns a file path, not base64 — see [Screenshots](#screenshots) |\n| `network` | `cmd`(start\\|stop\\|list\\|detail), `filter`, `requestId` | request/response data | |\n| `upload` | `selector`, `files`(string[]) | `{success, fileCount}` | |\n| `save_as_pdf` | `paper_format`, `landscape`, `scale`, `print_background`, optional `path` | `{path, sizeBytes, mimeType, pageTitle}` | Render current page → PDF, returns a file path — see [Save as PDF](#save-the-current-page-as-pdf) |\n| `list_tabs` | — | `{success, tabs:[{tabId, url, title, active, groupTitle}]}` | Inspect tabs in the current session |\n| `close_tab` | — | `{success, closed: bool}` | Close the current tab in the session |\n| `close_session` | — | `{success, closed: int}` | Close all tabs in the session — `closed` is the count. See [Sessions](#sessions) for when to call |\n\n### Tabs and the current tab\n\nSingle-tab tools (`snapshot`, `click`, `fill`, `screenshot`, `save_as_pdf`) act on the **current tab** — the one you most recently opened with `navigate` or selected with `find_tab`.\n\n- **Opening pages**: use `newTab:true` when pages should coexist (comparing, cross-referencing); omit it to send the current tab to a new URL.\n- **Going back to an earlier tab**: call `find_tab` to make a tab **you opened earlier in this session** the current one again. Pass the tab's **full URL** — take it from `list_tabs` or the earlier `navigate` result. A bare root domain (`kimi.com`) may miss a `www.kimi.com` tab, so prefer the exact URL. By default `find_tab` searches **only this session's own tabs** — it never ",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: kimi-webbridge"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "src_test",
+  "description": "Use when writing or reviewing tests, or when asked how to write a good single test. Encodes the per-test rules behind the \"test the contract / responsibility, not the implementation\" principle — name and structure one behavior per `it`, drive through the public surface, stub only true external bound",
+  "trigger_keywords": [
+    "use",
+    "when",
+    "writing",
+    "reviewing",
+    "tests",
+    "when",
+    "asked",
+    "how",
+    "test"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Tests — write & review\n\nPer-test rules that operationalize one principle: **test the contract / responsibility, not the implementation**. This is the how-to for a single `it`, and the lens for reviewing one.\n\n## Two modes, one rule set\n\n- **Write mode** — authoring a test. Apply the rules below to produce it.\n- **Review mode** — auditing an existing test or test diff. Apply the same rules as a checklist; report each violation with `file:line`, the rule it breaks, and the fix. See \"Review mode\" near the end.\n\nThe rules are identical in both modes — only the posture changes (produce vs. audit).\n\n## Test contract, not implementation\n\n- Drive the system through its **public control plane** and assert on **observable effects** (returned values, persisted state, emitted events, injected messages), never on source details.\n- Resolve collaborators through their contract — the interface plus its identifier — not the module that binds a concrete implementation.\n- Do not reach into private fields or add backdoors \"for testing\". If you feel the need, the seam is wrong — fix the design, not the test.\n\n## One behavior per `it`\n\nEach `it` covers exactly one responsibility / scenario. If the name needs \"and\", split it.\n\n```ts\nit('returns 401 when the caller is unauthorized', ...);\nit('does not double-fire when the same tick repeats', ...);\n```\n\n## Name and structure\n\n- `describe('<slice> (<responsibilities>)'` — name the **responsibility**, not the class.\n- An `it(...)` reads as a sentence, but it must still encode three things — the **behavior / method**, the **state or condition**, and the **expected outcome**: `it('<behavior> when <condition>, <outcome>')`. A name like `does X when Y` with no result is too vague to fail usefully.\n  - Use spaces, not the Java-style `method_state_outcome` underscores — that convention exists only because Java test methods cannot contain spaces. A string-named test reads fine as a sentence.\n  - Good: `it('returns 401 when the caller is unauthorized')` · `it('advances the cursor and does not double-fire on a repeat tick')`\n  - Bad: `it('works')` · `it('handles auth correctly')` — no condition, no outcome\n- Arrange / Act / Assert. A short `// Given` `// When` `// Then` is fine when it aids reading; do not paste it mechanically on trivial tests.\n\n## Build a small rig\n\nWhen several tests share setup, write a factory (`rig()`, `createHost()`, whatever fits the codebase) that returns the **smallest surface the test needs**. Tests reach into the rig; they do not rebuild the world each time. Keep the rig dumb: wiring only, no assertions.\n\n## Stub only the real external boundary\n\nDefault to real collaborators wired the way production wires them. Stub the **minimum seam** that is genuinely external:\n\n- A remote / model / service boundary — spy on the contract method (the interface), and capture what the system sends across it. Do not stand up the real external thing.\n- Network / other-process boundaries — stub at the boundary, not the i",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: test"
+}

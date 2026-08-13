@@ -1,0 +1,23 @@
+{
+  "name": "src_example_command",
+  "description": "An example user-invoked skill that demonstrates frontmatter options and the skills/<name>/SKILL.md layout",
+  "trigger_keywords": [
+    "example",
+    "user",
+    "invoked",
+    "skill",
+    "that",
+    "demonstrates",
+    "frontmatter",
+    "options",
+    "command"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Example Command (Skill Format)\n\nThis demonstrates the `skills/<name>/SKILL.md` layout for user-invoked slash commands. It is functionally identical to the legacy `commands/example-command.md` format — both are loaded the same way; only the file layout differs.\n\n## Arguments\n\nThe user invoked this with: $ARGUMENTS\n\n## Instructions\n\nWhen this skill is invoked:\n\n1. Parse the arguments provided by the user\n2. Perform the requested action using allowed tools\n3. Report results back to the user\n\n## Frontmatter Options Reference\n\nSkills in this layout support these frontmatter fields:\n\n- **name**: Skill identifier (matches directory name)\n- **description**: Short description shown in /help\n- **argument-hint**: Hints for command arguments shown to user\n- **allowed-tools**: Pre-approved tools for this skill (reduces permission prompts)\n- **model**: Override the model (e.g., \"haiku\", \"sonnet\", \"opus\")\n\n## Example Usage\n\n```\n/example-command my-argument\n/example-command arg1 arg2\n```",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: example-command"
+}

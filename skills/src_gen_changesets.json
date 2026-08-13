@@ -1,0 +1,23 @@
+{
+  "name": "src_gen_changesets",
+  "description": "Use when generating changesets in the kimi-code repository, including package bump selection, internal package and CLI bundle handling, bump levels, major confirmation, and English changelog wording.",
+  "trigger_keywords": [
+    "use",
+    "when",
+    "generating",
+    "changesets",
+    "the",
+    "kimi",
+    "code",
+    "repository",
+    "gen"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Generate Changesets\n\n`kimi-code` uses changesets to manage versions and changelogs. The current user-facing published package is:\n\n- `@moonshot-ai/kimi-code`: the CLI\n\nAll other `@moonshot-ai/*` packages are treated as internal packages, including `@moonshot-ai/kimi-code-sdk`, `agent-core`, `kosong`, `kaos`, `kimi-code-oauth`, `kimi-telemetry`, and `migration-legacy`.\n\n`@moonshot-ai/pi-tui` is a special internal package: it is a private fork (`private: true`) that is never published, but it keeps its own changelog through changesets. It is an exception to Core Rule 4 — see the dedicated section below.\n\nOnly the CLI changelog gets a curated, user-facing presentation (the docs-site changelog sync). The SDK and other internal package changelogs are raw changesets output kept for version history — nobody curates them, so write those entries honestly and technically; their wording does not need to suit end users.\n\n## Core Rules\n\n1. **Inspect the actual changes first.** Use `git status` / `git diff --name-only` to identify which packages were actually changed.\n2. **List packages that changesets can release.** If a changed package is ignored in `.changeset/config.json`, do not put that ignored package in frontmatter together with a non-ignored package; changesets rejects mixed ignored/non-ignored frontmatter.\n3. **Map ignored internal changes to the affected released package.** If an ignored internal package changes CLI output or behavior, list `@moonshot-ai/kimi-code` and describe the actual user-visible or release-artifact change in the changelog text.\n4. **Internal package source changes that enter the CLI bundle must manually list the CLI — when they get a changeset at all.** `@moonshot-ai/kimi-code` inline-bundles `@moonshot-ai/*` source, but those internal packages are devDependencies from the CLI's perspective, so changesets will not automatically propagate bumps. If a change enters the CLI output and is user-perceivable, list `@moonshot-ai/kimi-code`. See rule 6 for when to skip the changeset entirely.\n5. **Docs-only and tests-only changes usually do not need a changeset.** README, internal docs, and `test/` changes that do not enter package output do not trigger a CLI bump.\n6. **Skip changes users cannot perceive — write no changeset at all.** The CLI changelog is user-facing; a changeset is a changelog entry, not a shipping gate. Internal changes merged to `main` still ship in the next release triggered by any user-facing changeset, so skipping the changeset loses nothing. Do not write changesets for:\n   - `agent-core-v2` internal architecture: new services, refactors, config-persistence or journal/wire mechanisms.\n   - `kap-server` WebSocket / REST protocol changes consumed only by the bundled web UI, kimi-inspect, or other dev tooling (new endpoints, subscribe protocols, stream baselines).\n   - Behavior that only takes effect on the experimental engine (e.g. experimental `kimi -p`), unless it exposes documented user configuration such as a",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: gen-changesets"
+}

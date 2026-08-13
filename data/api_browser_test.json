@@ -1,0 +1,11 @@
+﻿{
+    "ok":  true,
+    "result":  {
+                   "ok":  true,
+                   "returncode":  0,
+                   "result":  "{\"ok\":true,\"url\":\"http://127.0.0.1:7777/\",\"title\":\"OrcaMax Code\",\"local_only\":true}\n",
+                   "stderr":  "",
+                   "local_only":  true
+               },
+    "api_version":  "1.0"
+}

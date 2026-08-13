@@ -1,0 +1,16 @@
+{
+  "name": "test_skill_a",
+  "description": "Test skill A: respond in Arabic poetry style.",
+  "trigger_keywords": [
+    "poetry",
+    "شعر",
+    "verse"
+  ],
+  "input_schema": {
+    "text": "topic"
+  },
+  "procedure": "Use the topic and produce 2 lines of Arabic poetry in فعولن active meter.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true
+}

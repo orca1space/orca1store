@@ -1,0 +1,38 @@
+﻿{
+    "timestamp":  "2026-08-13",
+    "project":  "Hermes/OrcaMax",
+    "local_only_runtime":  true,
+    "service":  {
+                    "url":  "http://127.0.0.1:7777",
+                    "root_http_ok":  true,
+                    "api_status_ok":  true
+                },
+    "probe":  {
+                  "built_release_offline":  true,
+                  "executable":  "D:\\Hermes\\bin\\probe.exe",
+                  "version":  "probe-code 0.6.0",
+                  "search_test":  true,
+                  "symbols_test":  true,
+                  "embedded_tree_sitter":  true
+              },
+    "tree_sitter":  {
+                        "embedded_in_probe":  true,
+                        "cli_build_offline":  false,
+                        "cli_build_reason":  "Cargo cache lacks ansi_colours dependency"
+                    },
+    "local_adapters":  {
+                           "file":  "D:\\Hermes\\core\\local_imports.py",
+                           "python_compile_ok":  true,
+                           "code_search_added":  true,
+                           "code_symbols_added":  true,
+                           "code_query_added":  true,
+                           "playwright_status_updated":  true
+                       },
+    "playwright_mcp":  {
+                           "npm_dependencies_installed":  true,
+                           "cli_help_ok":  true,
+                           "chromium_installed_local":  true,
+                           "runtime_external_downloads_disabled_by_project_policy":  true,
+                           "npm_audit_summary":  "4 vulnerabilities reported by npm audit: 1 low, 2 moderate, 1 high"
+                       }
+}

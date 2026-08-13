@@ -1,0 +1,432 @@
+/**
+ * Integration tests for ProbeAgent with MCP support
+ */
+
+import { jest } from '@jest/globals';
+import { ProbeAgent } from '../../src/agent/ProbeAgent.js';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { mkdtemp, writeFile, rm } from 'fs/promises';
+import { tmpdir } from 'os';
+import { createStandardMockServer } from '../mcp/inProcessMcpServer.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+describe('ProbeAgent MCP Integration', () => {
+  let tempDir;
+  let mockServers = [];
+
+  beforeEach(async () => {
+    tempDir = await mkdtemp(join(tmpdir(), 'probe-agent-mcp-test-'));
+    mockServers = [];
+  });
+
+  afterEach(async () => {
+    // Stop any in-process MCP servers
+    for (const server of mockServers) {
+      await server.stop();
+    }
+    if (tempDir) {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+    // Clean up environment variables
+    delete process.env.ENABLE_MCP;
+    delete process.env.MCP_CONFIG_PATH;
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
+  });
+
+  describe('MCP Disabled (Default)', () => {
+    test('should initialize ProbeAgent without MCP by default', async () => {
+      const agent = new ProbeAgent({
+        debug: false,
+        path: tempDir
+      });
+
+      expect(agent.enableMcp).toBe(false);
+      expect(agent.mcpBridge).toBeNull();
+
+      await agent.cleanup();
+    });
+
+    test('should work normally without MCP features', async () => {
+      // Set a dummy API key for testing
+      process.env.ANTHROPIC_API_KEY = 'test-key';
+
+      const agent = new ProbeAgent({
+        debug: false,
+        path: tempDir
+      });
+
+      // Verify system message doesn't include MCP tools section
+      const systemMessage = await agent.getSystemMessage();
+      expect(systemMessage).not.toContain('MCP Tools');
+
+      await agent.cleanup();
+    });
+  });
+
+  describe('MCP Enabled via Options', () => {
+    test('should initialize ProbeAgent with MCP enabled via options', async () => {
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      expect(agent.enableMcp).toBe(true);
+
+      // MCP bridge may be null if no servers are configured, which is expected
+      // The important thing is that enableMcp is true
+
+      await agent.cleanup();
+    });
+
+    test('should initialize ProbeAgent with MCP enabled via environment', async () => {
+      process.env.ENABLE_MCP = '1';
+
+      const agent = new ProbeAgent({
+        debug: false,
+        path: tempDir
+      });
+
+      expect(agent.enableMcp).toBe(true);
+
+      await agent.cleanup();
+    });
+  });
+
+  describe('MCP Configuration', () => {
+    test('should initialize MCP with mock server configuration', async () => {
+      const mockServer = createStandardMockServer('mock-test');
+      mockServers.push(mockServer);
+      await mockServer.start();
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        mcpConfig: { mcpServers: { 'mock-test': mockServer.getClientConfig() } },
+        debug: false,
+        path: tempDir
+      });
+
+      // Explicitly initialize MCP (normally happens inside run())
+      await agent.initializeMCP();
+
+      // Check if MCP bridge was initialized
+      expect(agent.mcpBridge).not.toBeNull();
+      const toolNames = agent.mcpBridge.getToolNames();
+      console.log('Available MCP tools:', toolNames);
+
+      expect(toolNames.some(name => name.includes('foobar'))).toBe(true);
+
+      await agent.cleanup();
+    }, 5000);
+
+    test('should handle MCP initialization failure gracefully', async () => {
+      // Create invalid MCP configuration
+      const mcpConfig = {
+        mcpServers: {
+          'invalid-server': {
+            command: 'nonexistent-command',
+            args: ['--invalid'],
+            transport: 'stdio',
+            enabled: true
+          }
+        }
+      };
+
+      const configPath = join(tempDir, 'invalid-mcp-config.json');
+      await writeFile(configPath, JSON.stringify(mcpConfig, null, 2));
+
+      process.env.MCP_CONFIG_PATH = configPath;
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      // Wait for initialization attempt
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Should not crash, but MCP bridge should have no connected tools due to failed connection
+      if (agent.mcpBridge) {
+        expect(agent.mcpBridge.getToolNames().length).toBe(0);
+      } else {
+        expect(agent.mcpBridge).toBeNull();
+      }
+
+      await agent.cleanup();
+    }, 10000);
+  });
+
+  describe('MCP Tools via Native Tool Calling', () => {
+    test('should include MCP tools in _buildNativeTools when bridge is available', async () => {
+      const { z } = await import('zod');
+
+      // Mock MCP bridge with the current API surface (Vercel AI SDK tools)
+      const mockMcpBridge = {
+        getToolNames: jest.fn(() => ['test_foobar', 'test_calculator']),
+        getVercelTools: jest.fn((filterNames) => {
+          const tools = {
+            test_foobar: {
+              description: 'Mock foobar tool',
+              parameters: z.object({}),
+              execute: jest.fn(async () => 'foobar result')
+            },
+            test_calculator: {
+              description: 'Mock calculator tool',
+              parameters: z.object({}),
+              execute: jest.fn(async () => 'calculator result')
+            }
+          };
+          if (filterNames) {
+            const filtered = {};
+            for (const name of filterNames) {
+              if (tools[name]) filtered[name] = tools[name];
+            }
+            return filtered;
+          }
+          return tools;
+        }),
+        isMcpTool: (name) => ['test_foobar', 'test_calculator'].includes(name),
+        mcpTools: {
+          test_foobar: {
+            description: 'Mock foobar tool',
+            execute: jest.fn(async () => 'foobar result')
+          },
+          test_calculator: {
+            description: 'Mock calculator tool',
+            execute: jest.fn(async () => 'calculator result')
+          }
+        },
+        cleanup: jest.fn()
+      };
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      // Manually set mock bridge for testing
+      agent.mcpBridge = mockMcpBridge;
+
+      // Build native tools and verify MCP tools are included
+      const tools = agent._buildNativeTools({});
+
+      expect(tools).toHaveProperty('test_foobar');
+      expect(tools).toHaveProperty('test_calculator');
+
+      // Verify getVercelTools was called
+      expect(mockMcpBridge.getVercelTools).toHaveBeenCalled();
+
+      await agent.cleanup();
+    });
+
+    test('should not include MCP tools in native tools when no tools available', async () => {
+      // Mock empty MCP bridge
+      const mockMcpBridge = {
+        getToolNames: () => [],
+        getVercelTools: jest.fn(() => ({})),
+        isMcpTool: () => false,
+        mcpTools: {},
+        cleanup: jest.fn()
+      };
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      agent.mcpBridge = mockMcpBridge;
+
+      const tools = agent._buildNativeTools({});
+
+      // Should have standard tools but no MCP tools
+      // No extra MCP tools should be present
+      const toolNames = Object.keys(tools);
+      const mcpToolNames = toolNames.filter(name => mockMcpBridge.isMcpTool(name));
+      expect(mcpToolNames).toHaveLength(0);
+
+      await agent.cleanup();
+    });
+
+    test('should not include MCP section in system message (tools are native now)', async () => {
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      // Even with MCP enabled, system message should not have XML tool definitions
+      const systemMessage = await agent.getSystemMessage();
+      expect(systemMessage).not.toContain('MCP Tools (JSON parameters in <params> tag)');
+      expect(systemMessage).not.toContain('For MCP tools, use JSON format within the params tag');
+
+      await agent.cleanup();
+    });
+  });
+
+  describe('Tool Execution with MCP', () => {
+    test('should route MCP tool calls correctly', async () => {
+      // Mock successful tool execution
+      const mockExecute = jest.fn().mockResolvedValue('Mock tool result');
+
+      const mockMcpBridge = {
+        getToolNames: () => ['test_tool'],
+        isMcpTool: (name) => name === 'test_tool',
+        mcpTools: {
+          'test_tool': {
+            execute: mockExecute
+          }
+        }
+      };
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      agent.mcpBridge = mockMcpBridge;
+
+      // The tool execution is internal to the agent, but we can verify
+      // that the bridge is properly set up for tool routing
+      expect(agent.mcpBridge.isMcpTool('test_tool')).toBe(true);
+      expect(agent.mcpBridge.isMcpTool('native_tool')).toBe(false);
+
+      await agent.cleanup();
+    });
+
+    test('should handle MCP tool execution errors', async () => {
+      // Mock failing tool execution
+      const mockExecute = jest.fn().mockRejectedValue(new Error('Tool execution failed'));
+
+      const mockMcpBridge = {
+        getToolNames: () => ['failing_tool'],
+        isMcpTool: (name) => name === 'failing_tool',
+        mcpTools: {
+          'failing_tool': {
+            execute: mockExecute
+          }
+        }
+      };
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      agent.mcpBridge = mockMcpBridge;
+
+      // Verify error handling setup
+      expect(agent.mcpBridge.isMcpTool('failing_tool')).toBe(true);
+
+      await agent.cleanup();
+    });
+  });
+
+  describe('ProbeAgent Cleanup with MCP', () => {
+    test('should cleanup MCP bridge properly', async () => {
+      const mockCleanup = jest.fn().mockResolvedValue(undefined);
+
+      const mockMcpBridge = {
+        getToolNames: () => [],
+        cleanup: mockCleanup
+      };
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      agent.mcpBridge = mockMcpBridge;
+
+      await agent.cleanup();
+
+      expect(mockCleanup).toHaveBeenCalled();
+    });
+
+    test('should handle cleanup errors gracefully', async () => {
+      const mockCleanup = jest.fn().mockRejectedValue(new Error('Cleanup failed'));
+
+      const mockMcpBridge = {
+        getToolNames: () => [],
+        cleanup: mockCleanup
+      };
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        debug: false,
+        path: tempDir
+      });
+
+      agent.mcpBridge = mockMcpBridge;
+
+      // Should not throw even if MCP cleanup fails
+      await expect(agent.cleanup()).resolves.not.toThrow();
+
+      expect(mockCleanup).toHaveBeenCalled();
+    });
+
+    test('should cleanup without MCP bridge', async () => {
+      const agent = new ProbeAgent({
+        enableMcp: false,
+        debug: false,
+        path: tempDir
+      });
+
+      expect(agent.mcpBridge).toBeNull();
+
+      // Should not throw when no MCP bridge exists
+      await expect(agent.cleanup()).resolves.not.toThrow();
+    });
+  });
+
+  describe('Real Mock Server Integration', () => {
+    test('should connect to and use mock MCP server', async () => {
+      const mockServer = createStandardMockServer('mock-integration');
+      mockServers.push(mockServer);
+      await mockServer.start();
+
+      process.env.ANTHROPIC_API_KEY = 'test-key'; // Required for ProbeAgent
+
+      const agent = new ProbeAgent({
+        enableMcp: true,
+        mcpConfig: { mcpServers: { 'mock-integration': mockServer.getClientConfig() } },
+        debug: true,
+        path: tempDir
+      });
+
+      // Explicitly initialize MCP (normally happens inside run())
+      await agent.initializeMCP();
+
+      const toolNames = agent.mcpBridge.getToolNames();
+      console.log('Successfully connected to mock server with tools:', toolNames);
+
+      // Verify expected tools are available
+      expect(toolNames.some(name => name.includes('foobar'))).toBe(true);
+      expect(toolNames.some(name => name.includes('calculator'))).toBe(true);
+      expect(toolNames.some(name => name.includes('echo'))).toBe(true);
+
+      // Verify MCP tools are available via getVercelTools (native tool calling)
+      const vercelTools = agent.mcpBridge.getVercelTools();
+      const vercelToolNames = Object.keys(vercelTools);
+      expect(vercelToolNames.some(name => name.includes('foobar'))).toBe(true);
+      expect(vercelToolNames.some(name => name.includes('calculator'))).toBe(true);
+
+      // Verify MCP tools are included in _buildNativeTools
+      const nativeTools = agent._buildNativeTools({});
+      expect(Object.keys(nativeTools).some(name => name.includes('foobar'))).toBe(true);
+      expect(Object.keys(nativeTools).some(name => name.includes('calculator'))).toBe(true);
+
+      await agent.cleanup();
+    }, 5000);
+  });
+});

@@ -1,0 +1,25 @@
+{
+  "name": "src_build_mcp_app",
+  "description": "This skill should be used when the user wants to build an \"MCP app\", add \"interactive UI\" or \"widgets\" to an MCP server, \"render components in chat\", build \"MCP UI resources\", make a tool that shows a \"form\", \"picker\", \"dashboard\" or \"confirmation dialog\" inline in the conversation, or mentions \"app",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "wants",
+    "build",
+    "mcp",
+    "app"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Build an MCP App (Interactive UI Widgets)\n\nAn MCP app is a standard MCP server that **also serves UI resources** — interactive components rendered inline in the chat surface. Build once, runs in Claude *and* ChatGPT and any other host that implements the apps surface.\n\nThe UI layer is **additive**. Under the hood it's still tools, resources, and the same wire protocol. If you haven't built a plain MCP server before, the `build-mcp-server` skill covers the base layer. This skill adds widgets on top.\n\n> **Testing in Claude:** Add the server as a custom connector in claude.ai (via a Cloudflare tunnel for local dev) — this exercises the real iframe sandbox and `hostContext`. See https://claude.com/docs/connectors/building/testing.\n\n## Claude host specifics\n\n| `_meta.ui.*` key | Where | Effect |\n|---|---|---|\n| `resourceUri` | tool | Which `ui://` resource the host renders for this tool's results. |\n| `visibility: [\"app\"]` | tool | Hide a widget-only helper tool (e.g. geometry/image fetcher called via `callServerTool`) from Claude's tool list. |\n| `prefersBorder: false` | resource | Drop the host's outer card border (mobile). |\n| `csp.{connectDomains, resourceDomains, baseUriDomains}` | resource | Declare external origins; default is block-all. `frameDomains` is currently restricted in Claude. |\n\n- `hostContext.safeAreaInsets: {top, right, bottom, left}` (px) — honor these for notches and the composer overlay.\n- Directory submission requires OAuth or **authless** (`none`) — static bearer is private-deploy only and blocks listing — plus tool `annotations` and 3–5 PNG screenshots; see `references/directory-checklist.md`.\n\n---\n\n## When a widget beats plain text\n\nDon't add UI for its own sake — most tools are fine returning text or JSON. Add a widget when one of these is true:\n\n| Signal | Widget type |\n|---|---|\n| Tool needs structured input Claude can't reliably infer | Form |\n| User must pick from a list Claude can't rank (files, contacts, records) | Picker / table |\n| Destructive or billable action needs explicit confirmation | Confirm dialog |\n| Output is spatial or visual (charts, maps, diffs, previews) | Display widget |\n| Long-running job the user wants to watch | Progress / live status |\n\nIf none apply, skip the widget. Text is faster to build and faster for the user.\n\n---\n\n## Widgets vs Elicitation — route correctly\n\nBefore building a widget, check if **elicitation** covers it. Elicitation is spec-native, zero UI code, works in any compliant host.\n\n| Need | Elicitation | Widget |\n|---|---|---|\n| Confirm yes/no | ✅ | overkill |\n| Pick from short enum | ✅ | overkill |\n| Fill a flat form (name, email, date) | ✅ | overkill |\n| Pick from a large/searchable list | ❌ (no scroll/search) | ✅ |\n| Visual preview before choosing | ❌ | ✅ |\n| Chart / map / diff view | ❌ | ✅ |\n| Live-updating progress | ❌ | ✅ |\n\nIf elicitation covers it, use it. See `../build-mcp-server/references/elicitation.md`.\n\n---\n\n## Architecture: two deployment shapes\n\n### Remote MCP a",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: build-mcp-app"
+}

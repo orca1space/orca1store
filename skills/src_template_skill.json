@@ -1,0 +1,23 @@
+{
+  "name": "src_template_skill",
+  "description": "Replace with description of the skill and when Claude should use it.",
+  "trigger_keywords": [
+    "replace",
+    "with",
+    "description",
+    "the",
+    "skill",
+    "and",
+    "when",
+    "claude",
+    "template"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Insert instructions below",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: template-skill"
+}

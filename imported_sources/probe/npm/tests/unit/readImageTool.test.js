@@ -1,0 +1,514 @@
+import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+
+// Mock all the heavy dependencies that ProbeAgent uses
+jest.mock('@ai-sdk/anthropic', () => ({}));
+jest.mock('@ai-sdk/openai', () => ({}));
+jest.mock('@ai-sdk/google', () => ({}));
+jest.mock('@ai-sdk/amazon-bedrock', () => ({}));
+jest.mock('ai', () => ({
+  generateText: jest.fn(),
+  streamText: jest.fn(),
+  tool: jest.fn((config) => ({
+    name: config.name,
+    description: config.description,
+    inputSchema: config.inputSchema,
+    execute: config.execute
+  }))
+}));
+
+import { ProbeAgent } from '../../src/agent/ProbeAgent.js';
+import { writeFileSync, unlinkSync, existsSync, mkdirSync, rmSync } from 'fs';
+import { join } from 'path';
+
+describe('ReadImage Tool', () => {
+  let testDir;
+  let agent;
+  let testImagePath;
+
+  beforeEach(() => {
+    // Create a test directory structure
+    testDir = join(process.cwd(), 'test-readimage-temp');
+    if (!existsSync(testDir)) {
+      mkdirSync(testDir, { recursive: true });
+    }
+
+    // Create a simple 1x1 PNG image
+    const simplePng = Buffer.from([
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+      0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+      0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+      0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41,
+      0x54, 0x78, 0x9C, 0x62, 0x00, 0x02, 0x00, 0x00,
+      0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
+      0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+      0x42, 0x60, 0x82
+    ]);
+
+    testImagePath = join(testDir, 'test-screenshot.png');
+    writeFileSync(testImagePath, simplePng);
+
+    // Initialize agent with the test directory
+    agent = new ProbeAgent({
+      debug: false,
+      path: testDir
+    });
+  });
+
+  afterEach(() => {
+    // Cleanup
+    if (existsSync(testDir)) {
+      rmSync(testDir, { recursive: true, force: true });
+    }
+  });
+
+  describe('Tool availability', () => {
+    test('readImage tool should be available in toolImplementations', () => {
+      expect(agent.toolImplementations).toHaveProperty('readImage');
+      expect(agent.toolImplementations.readImage).toHaveProperty('execute');
+      expect(typeof agent.toolImplementations.readImage.execute).toBe('function');
+    });
+
+    test('readImage tool should be in allowed tools by default', () => {
+      expect(agent.allowedTools.isEnabled('readImage')).toBe(true);
+    });
+  });
+
+  describe('Tool execution', () => {
+    test('should successfully load image when given valid path', async () => {
+      const result = await agent.toolImplementations.readImage.execute({
+        path: testImagePath
+      });
+
+      expect(result).toContain('Image loaded successfully');
+      expect(result).toContain(testImagePath);
+
+      // Verify image was actually loaded into pendingImages
+      expect(agent.pendingImages.has(testImagePath)).toBe(true);
+
+      // Verify it can be retrieved
+      const loadedImages = agent.getCurrentImages();
+      expect(loadedImages.length).toBeGreaterThan(0);
+      expect(loadedImages[0]).toMatch(/^data:image\/png;base64,/);
+    });
+
+    test('should throw error when path parameter is missing', async () => {
+      await expect(
+        agent.toolImplementations.readImage.execute({})
+      ).rejects.toThrow('File path is required');
+    });
+
+    test('should throw error when image file does not exist', async () => {
+      const nonExistentPath = join(testDir, 'nonexistent.png');
+
+      await expect(
+        agent.toolImplementations.readImage.execute({
+          path: nonExistentPath
+        })
+      ).rejects.toThrow();
+    });
+
+    test('should handle relative paths correctly', async () => {
+      // Create image in a subdirectory
+      const subDir = join(testDir, 'images');
+      mkdirSync(subDir, { recursive: true });
+
+      const simplePng = Buffer.from([
+        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+        0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+        0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+        0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41,
+        0x54, 0x78, 0x9C, 0x62, 0x00, 0x02, 0x00, 0x00,
+        0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
+        0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+        0x42, 0x60, 0x82
+      ]);
+
+      const imagePath = join(subDir, 'relative.png');
+      writeFileSync(imagePath, simplePng);
+
+      const result = await agent.toolImplementations.readImage.execute({
+        path: imagePath
+      });
+
+      expect(result).toContain('Image loaded successfully');
+      expect(agent.pendingImages.has(imagePath)).toBe(true);
+    });
+
+    test('should support multiple image formats', async () => {
+      const formats = ['test.png', 'test.jpg', 'test.jpeg', 'test.webp', 'test.bmp'];
+
+      // Create a simple PNG for all tests (format validation happens elsewhere)
+      const simplePng = Buffer.from([
+        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+        0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+        0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+        0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41,
+        0x54, 0x78, 0x9C, 0x62, 0x00, 0x02, 0x00, 0x00,
+        0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
+        0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+        0x42, 0x60, 0x82
+      ]);
+
+      for (const filename of formats) {
+        const imagePath = join(testDir, filename);
+        writeFileSync(imagePath, simplePng);
+
+        const result = await agent.toolImplementations.readImage.execute({
+          path: imagePath
+        });
+
+        expect(result).toContain('Image loaded successfully');
+        expect(agent.pendingImages.has(imagePath)).toBe(true);
+      }
+    });
+
+    test('should not load the same image twice', async () => {
+      // Load image first time
+      await agent.toolImplementations.readImage.execute({
+        path: testImagePath
+      });
+
+      const imagesAfterFirst = agent.getCurrentImages().length;
+
+      // Load same image again
+      await agent.toolImplementations.readImage.execute({
+        path: testImagePath
+      });
+
+      const imagesAfterSecond = agent.getCurrentImages().length;
+
+      // Should still have same number of images (no duplicate)
+      expect(imagesAfterSecond).toBe(imagesAfterFirst);
+    });
+  });
+
+  describe('Security', () => {
+    test('should respect allowed folders security', async () => {
+      // Create agent with restricted allowed folders
+      const restrictedAgent = new ProbeAgent({
+        debug: false,
+        path: testDir,
+        allowedFolders: [testDir] // Only allow test directory
+      });
+
+      // Try to load image outside allowed folder
+      const outsidePath = '/tmp/malicious.png';
+
+      await expect(
+        restrictedAgent.toolImplementations.readImage.execute({
+          path: outsidePath
+        })
+      ).rejects.toThrow();
+    });
+
+    test('should validate file size limits', async () => {
+      // The loadImageIfValid method should enforce MAX_IMAGE_FILE_SIZE (20MB)
+      // This test verifies the tool respects that limit
+      const result = await agent.toolImplementations.readImage.execute({
+        path: testImagePath
+      });
+
+      expect(result).toContain('Image loaded successfully');
+    });
+
+    test('should prevent path traversal attacks with .. sequences', async () => {
+      const restrictedAgent = new ProbeAgent({
+        debug: false,
+        path: testDir,
+        allowedFolders: [testDir]
+      });
+
+      // Try path traversal attack
+      const traversalPath = join(testDir, '..', '..', 'etc', 'passwd');
+
+      await expect(
+        restrictedAgent.toolImplementations.readImage.execute({
+          path: traversalPath
+        })
+      ).rejects.toThrow();
+    });
+
+    test('should prevent path traversal in extension extraction', async () => {
+      // This tests that basename is used to extract extension safely
+      const restrictedAgent = new ProbeAgent({
+        debug: false,
+        path: testDir,
+        allowedFolders: [testDir]
+      });
+
+      // Path designed to look like valid extension but contains traversal
+      const maliciousPath = 'malicious.png/../../../etc/passwd';
+
+      await expect(
+        restrictedAgent.toolImplementations.readImage.execute({
+          path: maliciousPath
+        })
+      ).rejects.toThrow();
+    });
+
+    test('should handle normalized path prefix attacks', async () => {
+      // Test that /allowed/path doesn't match /allowed/pathsuffix
+      const restrictedAgent = new ProbeAgent({
+        debug: false,
+        path: testDir,
+        allowedFolders: [testDir]
+      });
+
+      // Create a sibling directory name that starts with testDir name
+      const siblingPath = testDir + '-sibling/image.png';
+
+      await expect(
+        restrictedAgent.toolImplementations.readImage.execute({
+          path: siblingPath
+        })
+      ).rejects.toThrow();
+    });
+
+    test('should reject invalid extensions even without apiType set', async () => {
+      // Test that extension validation happens regardless of apiType
+      const agentWithoutApiType = new ProbeAgent({
+        debug: false,
+        path: testDir
+      });
+      // Ensure apiType is not set
+      agentWithoutApiType.apiType = null;
+
+      // Try to load a file with invalid extension
+      await expect(
+        agentWithoutApiType.toolImplementations.readImage.execute({
+          path: join(testDir, 'malicious.exe')
+        })
+      ).rejects.toThrow(/Unsupported file format/);
+    });
+
+    test('should reject path traversal disguised as valid extension', async () => {
+      const restrictedAgent = new ProbeAgent({
+        debug: false,
+        path: testDir,
+        allowedFolders: [testDir]
+      });
+
+      // Path that looks like it has a valid extension but is actually traversal
+      // basename('malicious.png/../../../etc/passwd') = 'passwd'
+      // extension of 'passwd' = 'passwd' (not in allowed list)
+      await expect(
+        restrictedAgent.toolImplementations.readImage.execute({
+          path: 'malicious.png/../../../etc/passwd'
+        })
+      ).rejects.toThrow(/Unsupported file format/);
+    });
+  });
+
+  describe('Provider-specific format restrictions (GitHub issue #305)', () => {
+    test('should reject SVG files when using Google provider', async () => {
+      // Create an agent with Google provider
+      // Note: We need to manually set apiType since mocks prevent normal initialization
+      const googleAgent = new ProbeAgent({
+        debug: false,
+        path: testDir
+      });
+      googleAgent.apiType = 'google';  // Simulate Google provider
+
+      // Create a simple SVG file
+      const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+      const svgPath = join(testDir, 'test.svg');
+      writeFileSync(svgPath, svgContent);
+
+      // Attempting to read SVG should throw error
+      await expect(
+        googleAgent.toolImplementations.readImage.execute({
+          path: svgPath
+        })
+      ).rejects.toThrow(/not supported by the current AI provider/);
+    });
+
+    test('should allow SVG files when using Anthropic provider', async () => {
+      // Create an agent with Anthropic provider
+      // Note: We need to manually set apiType since mocks prevent normal initialization
+      const anthropicAgent = new ProbeAgent({
+        debug: false,
+        path: testDir
+      });
+      anthropicAgent.apiType = 'anthropic';  // Simulate Anthropic provider
+
+      // Create a simple SVG file
+      const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+      const svgPath = join(testDir, 'test-anthropic.svg');
+      writeFileSync(svgPath, svgContent);
+
+      // Attempting to read SVG should succeed
+      const result = await anthropicAgent.toolImplementations.readImage.execute({
+        path: svgPath
+      });
+
+      expect(result).toContain('Image loaded successfully');
+    });
+
+    test('loadImageIfValid should load SVG (provider filtering handled by readImage tool)', async () => {
+      // Note: loadImageIfValid is a low-level method that only checks general format support.
+      // Provider-specific filtering (e.g., SVG not supported by Google Gemini) is handled
+      // by the readImage tool which provides explicit error messages.
+      const agent = new ProbeAgent({
+        debug: false,
+        path: testDir
+      });
+
+      const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+      const svgPath = join(testDir, 'test-load.svg');
+      writeFileSync(svgPath, svgContent);
+
+      // loadImageIfValid should succeed - it doesn't do provider-specific filtering
+      const result = await agent.loadImageIfValid(svgPath);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('readMedia tool and PDF support', () => {
+    test('readMedia tool should be available in toolImplementations', () => {
+      expect(agent.toolImplementations).toHaveProperty('readMedia');
+      expect(agent.toolImplementations.readMedia).toHaveProperty('execute');
+      expect(typeof agent.toolImplementations.readMedia.execute).toBe('function');
+    });
+
+    test('readImage and readMedia should point to the same execute function', () => {
+      expect(agent.toolImplementations.readImage.execute).toBe(
+        agent.toolImplementations.readMedia.execute
+      );
+    });
+
+    test('should load PDF files successfully', async () => {
+      // Create a minimal PDF file
+      const pdfContent = Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF');
+      const pdfPath = join(testDir, 'test-doc.pdf');
+      writeFileSync(pdfPath, pdfContent);
+
+      const result = await agent.toolImplementations.readMedia.execute({
+        path: pdfPath
+      });
+
+      expect(result).toContain('Document loaded successfully');
+      expect(result).toContain(pdfPath);
+      expect(agent.pendingImages.has(pdfPath)).toBe(true);
+    });
+
+    test('PDF should be stored as document type in pendingImages', async () => {
+      const pdfContent = Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF');
+      const pdfPath = join(testDir, 'test-type.pdf');
+      writeFileSync(pdfPath, pdfContent);
+
+      await agent.toolImplementations.readMedia.execute({ path: pdfPath });
+
+      const entry = agent.pendingImages.get(pdfPath);
+      expect(entry).toBeDefined();
+      expect(typeof entry).toBe('object');
+      expect(entry.type).toBe('document');
+      expect(entry.mimeType).toBe('application/pdf');
+      expect(entry.filename).toBe('test-type.pdf');
+      expect(typeof entry.data).toBe('string'); // base64
+    });
+
+    test('getCurrentMedia should return file parts for PDFs', async () => {
+      agent.clearLoadedImages();
+
+      const pdfContent = Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF');
+      const pdfPath = join(testDir, 'test-media.pdf');
+      writeFileSync(pdfPath, pdfContent);
+
+      await agent.toolImplementations.readMedia.execute({ path: pdfPath });
+
+      const media = agent.getCurrentMedia();
+      expect(media.length).toBe(1);
+      expect(media[0].type).toBe('file');
+      expect(media[0].mediaType).toBe('application/pdf');
+      expect(media[0].filename).toBe('test-media.pdf');
+    });
+
+    test('getCurrentImages should NOT include PDFs (backward compat)', async () => {
+      agent.clearLoadedImages();
+
+      // Load a PDF
+      const pdfContent = Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF');
+      const pdfPath = join(testDir, 'test-filter.pdf');
+      writeFileSync(pdfPath, pdfContent);
+      await agent.toolImplementations.readMedia.execute({ path: pdfPath });
+
+      // Load an image
+      await agent.toolImplementations.readMedia.execute({ path: testImagePath });
+
+      // getCurrentImages should only return the image
+      const images = agent.getCurrentImages();
+      expect(images.length).toBe(1);
+      expect(images[0]).toMatch(/^data:image\/png;base64,/);
+
+      // getCurrentMedia should return both
+      const media = agent.getCurrentMedia();
+      expect(media.length).toBe(2);
+    });
+
+    test('readMedia via readImage alias should work for PDFs too', async () => {
+      const pdfContent = Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF');
+      const pdfPath = join(testDir, 'test-alias.pdf');
+      writeFileSync(pdfPath, pdfContent);
+
+      // Use the readImage alias to load a PDF
+      const result = await agent.toolImplementations.readImage.execute({
+        path: pdfPath
+      });
+
+      expect(result).toContain('Document loaded successfully');
+    });
+  });
+
+  describe('Integration with message flow', () => {
+    test('loaded images should be available in getCurrentImages', async () => {
+      agent.clearLoadedImages();
+
+      await agent.toolImplementations.readImage.execute({
+        path: testImagePath
+      });
+
+      const images = agent.getCurrentImages();
+      expect(images.length).toBe(1);
+      expect(images[0]).toMatch(/^data:image\/png;base64,/);
+    });
+
+    test('should work alongside processImageReferences method (for explicit image processing)', async () => {
+      // Note: Automatic image processing after tool results was removed in GitHub issue #305
+      // The processImageReferences method still exists for explicit use when needed
+
+      // Clear any existing images
+      agent.clearLoadedImages();
+
+      // Manually call processImageReferences (this is no longer called automatically)
+      const toolResultWithImage = `Found the file at ${testImagePath}`;
+      await agent.processImageReferences(toolResultWithImage);
+
+      const imagesFromProcessing = agent.getCurrentImages().length;
+
+      // Now explicitly read another image using readImage tool
+      const anotherImage = join(testDir, 'another.png');
+      const simplePng = Buffer.from([
+        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+        0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+        0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+        0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41,
+        0x54, 0x78, 0x9C, 0x62, 0x00, 0x02, 0x00, 0x00,
+        0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
+        0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+        0x42, 0x60, 0x82
+      ]);
+      writeFileSync(anotherImage, simplePng);
+
+      await agent.toolImplementations.readImage.execute({
+        path: anotherImage
+      });
+
+      const totalImages = agent.getCurrentImages().length;
+      expect(totalImages).toBeGreaterThan(imagesFromProcessing);
+    });
+  });
+});

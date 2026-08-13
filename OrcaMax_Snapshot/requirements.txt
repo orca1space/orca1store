@@ -1,0 +1,19 @@
+# OrcaMax Code — Python dependencies
+# Install with:  pip install -r requirements.txt
+# OrcaMax Code is 100% local. No cloud SDKs, no telemetry.
+
+# LLM inference (llama.cpp binding)
+llama-cpp-python>=0.3.2
+
+# Embeddings (used by KB + skill search)
+sentence-transformers>=3.0.0
+
+# Numerical
+numpy>=1.26.0
+
+# HTTP server uses stdlib (http.server, socketserver)
+# - no Flask/FastAPI needed
+
+# All other imports (json, re, threading, sqlite3, pathlib, hashlib,
+# urllib, http.server, socketserver) are part of the Python standard
+# library.

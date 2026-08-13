@@ -1,0 +1,15 @@
+{
+  "name": "phrases_english",
+  "description": "Common everyday phrases in English",
+  "trigger_keywords": [
+    "common phrases in English",
+    "how to say in English",
+    "عبارات English",
+    "كيف أقول بـEnglish"
+  ],
+  "procedure": "Provide common English phrases for daily use:\n- how_are_you: How are you? / How's it going? / What's up?\n- thank_you: Thank you / Thanks / Thanks a lot / Much appreciated\n- please: Please / If you don't mind\n- yes_no: Yes / No / Yeah / Nope / Sure\n- goodbye: Goodbye / Bye / See you / Take care / Farewell\n- sorry: Sorry / My apologies / Pardon me\n- i_understand: I understand / Got it / Understood / Makes sense\n- i_dont_understand: I don't understand / Could you clarify? / Please explain",
+  "examples": [],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

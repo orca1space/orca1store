@@ -1,0 +1,23 @@
+{
+  "name": "src_example_skill",
+  "description": "This skill should be used when the user asks to \"demonstrate skills\", \"show skill format\", \"create a skill template\", or discusses skill development patterns. Provides a reference template for creating Claude Code plugin skills.",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "example"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Example Skill\n\nThis skill demonstrates the structure and format for Claude Code plugin skills.\n\n## Overview\n\nSkills are model-invoked capabilities that Claude autonomously uses based on task context. Unlike commands (user-invoked) or agents (spawned by Claude), skills provide contextual guidance that Claude incorporates into its responses.\n\n## When This Skill Applies\n\nThis skill activates when the user's request involves:\n- Creating or understanding plugin skills\n- Skill template or reference needs\n- Skill development patterns\n\n## Skill Structure\n\n### Required Files\n\n```\nskills/\n└── skill-name/\n    └── SKILL.md          # Main skill definition (required)\n```\n\n### Optional Supporting Files\n\n```\nskills/\n└── skill-name/\n    ├── SKILL.md          # Main skill definition\n    ├── README.md         # Additional documentation\n    ├── references/       # Reference materials\n    │   └── patterns.md\n    ├── examples/         # Example files\n    │   └── sample.md\n    └── scripts/          # Helper scripts\n        └── helper.sh\n```\n\n## Frontmatter Options\n\nSkills support these frontmatter fields:\n\n- **name** (required): Skill identifier\n- **description** (required): Trigger conditions - describe when Claude should use this skill\n- **version** (optional): Semantic version number\n- **license** (optional): License information or reference\n\n## Writing Effective Descriptions\n\nThe description field is crucial - it tells Claude when to invoke the skill.\n\n**Good description patterns:**\n```yaml\ndescription: This skill should be used when the user asks to \"specific phrase\", \"another phrase\", mentions \"keyword\", or discusses topic-area.\n```\n\n**Include:**\n- Specific trigger phrases users might say\n- Keywords that indicate relevance\n- Topic areas the skill covers\n\n## Skill Content Guidelines\n\n1. **Clear purpose**: State what the skill helps with\n2. **When to use**: Define activation conditions\n3. **Structured guidance**: Organize information logically\n4. **Actionable instructions**: Provide concrete steps\n5. **Examples**: Include practical examples when helpful\n\n## Best Practices\n\n- Keep skills focused on a single domain\n- Write descriptions that clearly indicate when to activate\n- Include reference materials in subdirectories for complex skills\n- Test that the skill activates for expected queries\n- Avoid overlap with other skills' trigger conditions",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: example-skill"
+}

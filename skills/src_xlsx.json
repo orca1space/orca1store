@@ -1,0 +1,23 @@
+{
+  "name": "src_xlsx",
+  "description": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing formulas, formatting, charting, cleaning messy data); create a new spr",
+  "trigger_keywords": [
+    "use",
+    "this",
+    "skill",
+    "any",
+    "time",
+    "spreadsheet",
+    "file",
+    "the",
+    "xlsx"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# XLSX creation, editing, and analysis\n\n| Task | Approach |\n|---|---|\n| **Create** or **edit** with formulas/formatting | `openpyxl` — see gotchas below |\n| **Bulk data** in or out | `pandas` (`read_excel`, `to_excel`) |\n| **Quick look** at a sheet | `markitdown file.xlsx` — `## SheetName` per sheet; reads `.xlsm` too. No cell coordinates, so don't plan edits from it |\n| **Read** a model (formulas *and* values) | two `load_workbook` passes — see gotchas |\n\n> `openpyxl`, `pandas`, and `markitdown` are preinstalled — do not run `pip install` first; write the script and import directly. Only if an import fails (or the `markitdown` command is missing): `pip install` the missing package.\n\n> Script paths below are relative to this skill's directory.\n\n## Requirements for every output\n\n- **Professional font** (Arial, Times New Roman) throughout, unless the user says otherwise.\n- **Zero formula errors.** Never ship while `recalc.py` reports `errors_found`. If you think an error predates you, prove it: load the *original* with `data_only=True` and look at that cell. An error you introduced looks exactly like one you inherited.\n- **Use formulas, never hardcoded results.** Write `sheet['B10'] = '=SUM(B2:B9)'`, not the Python-computed total. The sheet must recalculate when its inputs change.\n- **Follow the user's spec literally.** Exact tab names, exact column headers, and the formula they spelled out. A redesign that computes something else fails, however elegant.\n- **Document every assumption and hardcoded number** where the reader will see it — a cell comment, or an adjacent cell at a table's end. Cite a real source when one exists (`Source: Company 10-K, FY2024, Page 45, Revenue Note, [SEC EDGAR URL]`); when the number came from the user, say so plainly.\n- **A workbook *you create* for someone to fill in** needs a short legend naming which cells to edit, and one example row of realistic values showing the expected format. Never add such a row to a file you were asked to edit.\n- **Editing an existing file: match its conventions exactly.** They override every guideline here. Find its designated input cells first — a distinct font color, fill, or shading marks them — write only there, and leave every existing formula untouched.\n\n## Recalculate (mandatory whenever the file contains formulas)\n\nopenpyxl writes formulas as strings with **no cached values**. Until you recalculate, every\nformula cell reads back as `None` to anything reading cached values — `pandas`,\n`load_workbook(data_only=True)`, and most previewers.\n\n```bash\npython scripts/recalc.py output.xlsx [timeout_seconds]   # default 30\n```\n\nLibreOffice computes every formula, the file is **rewritten in place**, and you get JSON:\n`status` (`success` | `errors_found`), `total_formulas`, `total_errors`, and an\n`error_summary` naming up to 100 cells per error type (`locations_truncated` says how many it\nwithheld — trust `total_errors`, not the length of the list). Fix what it names and run it\nagain. **JSON ",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: xlsx"
+}

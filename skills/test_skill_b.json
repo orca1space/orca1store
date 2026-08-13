@@ -1,0 +1,17 @@
+{
+  "name": "test_skill_b",
+  "description": "Test skill B: explain a code snippet in plain language.",
+  "trigger_keywords": [
+    "code",
+    "explain",
+    "كود",
+    "اشرح"
+  ],
+  "input_schema": {
+    "text": "code snippet"
+  },
+  "procedure": "Read the snippet, identify the function, explain step by step in the user's language.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true
+}

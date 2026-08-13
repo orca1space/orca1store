@@ -1,0 +1,56 @@
+[
+  {
+    "file": "D:\\Hermes\\core\\local_imports.py",
+    "symbols": [
+      {
+        "name": "ROOT",
+        "kind": "variable",
+        "signature": "ROOT = ...",
+        "line": 14,
+        "end_line": 14
+      },
+      {
+        "name": "SOURCES",
+        "kind": "variable",
+        "signature": "SOURCES = ...",
+        "line": 15,
+        "end_line": 15
+      },
+      {
+        "name": "_local_path",
+        "kind": "function",
+        "signature": "def _local_path(value: Any) -> Path:",
+        "line": 18,
+        "end_line": 22
+      },
+      {
+        "name": "_tool",
+        "kind": "function",
+        "signature": "def _tool(name: str) -> str | None:",
+        "line": 25,
+        "end_line": 26
+      },
+      {
+        "name": "_status",
+        "kind": "function",
+        "signature": "def _status(name: str, tool: Any, source: str) -> Dict[str, Any]:",
+        "line": 29,
+        "end_line": 32
+      },
+      {
+        "name": "_local_tool_env",
+        "kind": "function",
+        "signature": "def _local_tool_env() -> Dict[str, str]:",
+        "line": 35,
+        "end_line": 48
+      },
+      {
+        "name": "register_local_import_ops",
+        "kind": "function",
+        "signature": "def register_local_import_ops(op: Callable[[str], Callable]):",
+        "line": 51,
+        "end_line": 131
+      }
+    ]
+  }
+]

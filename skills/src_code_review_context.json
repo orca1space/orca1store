@@ -1,0 +1,19 @@
+{
+  "name": "src_code_review_context",
+  "description": "Model visible context",
+  "trigger_keywords": [
+    "model",
+    "visible",
+    "context",
+    "code",
+    "review"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "Codex maintains a context (history of messages) that is sent to the model in inference requests.\n\n1. No history rewrite - the context must be built up incrementally.\n2. Avoid frequent changes to context that cause cache misses.\n3. No unbounded items - everything injected in the model context must have a bounded size and a hard cap. \n4. No items larger than 10K tokens.\n5. Highlight new individual items that can cross >1k tokens as P0. These need an additional manual review.\n6. All injected fragments must be defined as structs in `core/context` and implement ContextualUserFragment trait",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: code-review-context"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "src_pre_changelog",
+  "description": "Use before merging a kimi-code release PR to preview the user-facing CLI changelog in Chinese. Reads the changelog that changesets pre-generated in the release PR, then reuses sync-changelog's strip / classify / translate logic to render a Chinese preview. Writes no files.",
+  "trigger_keywords": [
+    "use",
+    "before",
+    "merging",
+    "kimi",
+    "code",
+    "release",
+    "preview",
+    "the",
+    "pre",
+    "changelog"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Pre-Changelog\n\nPreview the user-facing **Chinese** changelog of an open `kimi-code` release PR **before** it is merged. Read-only: this skill writes no files and commits nothing.\n\nThis skill reuses `sync-changelog`'s strip / classify / translate rules. Read `sync-changelog` first; only the data source (release PR diff instead of a published `CHANGELOG.md`) and the output (preview instead of docs files) differ.\n\n## Workflow\n\n### 1. Locate the release PR\n\n```bash\ngh pr list --state open --search \"ci: release packages in:title\" \\\n  --json number,title,url,headRefName,baseRefName\n```\n\nPick the one with `headRefName: changeset-release/main`; record `number`, `url` as `<RELEASE>`. If none is open, nothing to preview — stop.\n\n### 2. Read the pre-generated CLI changelog block\n\nchangesets already pre-generates `apps/kimi-code/CHANGELOG.md` inside the release PR. Extract the new version block from the diff:\n\n```bash\ngh api repos/MoonshotAI/kimi-code/pulls/<RELEASE>/files \\\n  --jq '.[] | select(.filename==\"apps/kimi-code/CHANGELOG.md\") | .patch'\n```\n\nTake the added lines (`+`) from the top `## <version>` down to (but not including) the next `## `. That is the version block to preview.\n\nIf the CLI changelog is not in the diff (for example an SDK-only release), stop and tell the user — there is no user-facing CLI changelog to preview.\n\n### 3. Render the Chinese preview (reuse `sync-changelog`)\n\nProcess the version block exactly as `sync-changelog` does for the docs site, but only in memory:\n\n- **Strip** (`sync-changelog` step 3): drop the H1, the `### Patch Changes` / `### Minor Changes` / `### Major Changes` subheadings, PR links, and commit-hash links; keep only each entry's body text. The `Thanks [@user](...)!` credit (including the multi-author form) must be removed every time. Within each entry, drop SDK-only and provider-internal sentences (SDK capability mapping / API exposure, provider wire-format mechanics, internal XML markers, hook/event payload mechanics such as what an event reports or carries) and keep only the user-facing effect and required constraints.\n- **Merge and deduplicate** (`sync-changelog` step 4): merge micro-tweaks to the same surface into one higher-level entry; when three or more fixes target the same UI area or the same class of problem, merge them into one higher-level fix entry (do not merge broad or genuinely distinct fixes); and drop a server/API entry that only backs a web feature already listed.\n- **Collapse low-signal entries** (`sync-changelog` step 4): keep standalone only entries that pass both gates — the reader-action test (the reader must do or re-evaluate something) and the channel test (the product cannot push it into the user's path: hidden controls, habit invalidations, capabilities users would not know to seek — a control merely sitting in the UI is not surfacing, users do not explore). Polish keeps only must-react items; experiences the product shows at the moment of need (recovery cards, post-install guidanc",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: pre-changelog"
+}

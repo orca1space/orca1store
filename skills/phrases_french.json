@@ -1,0 +1,15 @@
+{
+  "name": "phrases_french",
+  "description": "Common everyday phrases in French",
+  "trigger_keywords": [
+    "common phrases in French",
+    "how to say in French",
+    "عبارات Français",
+    "كيف أقول بـFrançais"
+  ],
+  "procedure": "Provide common French phrases for daily use:\n- how_are_you: Comment ça va ? / Comment allez-vous ? / Ça va ?\n- thank_you: Merci / Merci beaucoup / Je vous remercie\n- please: S'il vous plaît / S'il te plaît\n- yes_no: Oui / Non / Bien sûr\n- goodbye: Au revoir / À bientôt / Salut / Adieu\n- sorry: Désolé / Pardon / Excusez-moi / Je m'excuse\n- i_understand: Je comprends / D'accord / Compris\n- i_dont_understand: Je ne comprends pas / Pouvez-vous clarifier ?",
+  "examples": [],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

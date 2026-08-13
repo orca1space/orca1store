@@ -1,0 +1,751 @@
+/**
+ * Enhanced MCP Client with support for all transport types
+ * Compatible with Claude's MCP configuration format
+ */
+
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
+import { WebSocketClientTransport } from '@modelcontextprotocol/sdk/client/websocket.js';
+import { loadMCPConfiguration, parseEnabledServers, DEFAULT_TIMEOUT } from './config.js';
+
+/**
+ * Check if a method is allowed based on server's method filter configuration
+ * Supports wildcard patterns (e.g., "*_read", "search_*", "prefix_*_suffix")
+ * @param {string} methodName - The method name to check
+ * @param {string[]|null} allowedMethods - Array of allowed method patterns (null = all allowed)
+ * @param {string[]|null} blockedMethods - Array of blocked method patterns (null = none blocked)
+ * @returns {boolean} Whether the method is allowed
+ */
+export function isMethodAllowed(methodName, allowedMethods, blockedMethods) {
+  /**
+   * Check if a method name matches a pattern
+   * Supports * wildcard which matches any characters
+   * @param {string} name - Method name to check
+   * @param {string} pattern - Pattern to match against (may contain *)
+   * @returns {boolean} Whether the name matches the pattern
+   */
+  const matchesPattern = (name, pattern) => {
+    if (!pattern.includes('*')) {
+      return name === pattern;
+    }
+    // Convert pattern to regex: escape special chars, replace * with .*
+    const regexPattern = pattern
+      .replace(/[.+?^${}()|[\]\\]/g, '\\$&')  // Escape special regex chars
+      .replace(/\*/g, '.*');                    // Replace * with .*
+    return new RegExp(`^${regexPattern}$`).test(name);
+  };
+
+  // If allowedMethods is specified (whitelist mode), only those methods are allowed
+  if (allowedMethods && allowedMethods.length > 0) {
+    return allowedMethods.some(pattern => matchesPattern(methodName, pattern));
+  }
+
+  // If blockedMethods is specified (blacklist mode), all methods except those are allowed
+  if (blockedMethods && blockedMethods.length > 0) {
+    return !blockedMethods.some(pattern => matchesPattern(methodName, pattern));
+  }
+
+  // No filter specified - all methods are allowed
+  return true;
+}
+
+/**
+ * Create transport based on configuration
+ * @param {Object} serverConfig - Server configuration
+ * @returns {Object} Transport instance
+ */
+export function createTransport(serverConfig) {
+  const { transport, command, args, url, env } = serverConfig;
+
+  // Allow pre-created transport instances (e.g., InMemoryTransport for testing)
+  if (serverConfig.transportInstance) {
+    return serverConfig.transportInstance;
+  }
+
+  switch (transport) {
+    case 'stdio':
+      return new StdioClientTransport({
+        command,
+        args: args || [],
+        env: env ? { ...process.env, ...env } : undefined
+      });
+
+    case 'sse':
+      if (!url) {
+        throw new Error('SSE transport requires a URL');
+      }
+      return new SSEClientTransport(new URL(url));
+
+    case 'websocket':
+    case 'ws':
+      if (!url) {
+        throw new Error('WebSocket transport requires a URL');
+      }
+      try {
+        return new WebSocketClientTransport(new URL(url));
+      } catch (error) {
+        throw new Error(`Invalid WebSocket URL: ${url}`);
+      }
+
+    case 'http':
+    case 'streamable':
+      // For HTTP, we'll use a custom implementation since the SDK
+      // doesn't provide a direct HTTP transport yet
+      if (!url) {
+        throw new Error('HTTP transport requires a URL');
+      }
+      // Return a custom HTTP transport wrapper
+      return createHttpTransport(url);
+
+    default:
+      throw new Error(`Unknown transport type: ${transport}`);
+  }
+}
+
+/**
+ * Create a custom HTTP transport wrapper
+ * This simulates MCP over HTTP REST endpoints
+ */
+function createHttpTransport(url) {
+  // This is a simplified HTTP transport
+  // In practice, you'd implement the full MCP protocol over HTTP
+  return {
+    async start() {
+      // Initialize HTTP connection
+      const response = await fetch(`${url}/initialize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          protocolVersion: '2024-11-05',
+          capabilities: {}
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP initialization failed: ${response.statusText}`);
+      }
+
+      return response.json();
+    },
+
+    async send(message) {
+      const response = await fetch(`${url}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP request failed: ${response.statusText}`);
+      }
+
+      return response.json();
+    },
+
+    async close() {
+      // Close HTTP connection
+      await fetch(`${url}/close`, {
+        method: 'POST'
+      }).catch(() => {
+        // Ignore close errors
+      });
+    }
+  };
+}
+
+/**
+ * MCP Client Manager - manages multiple MCP server connections
+ */
+export class MCPClientManager {
+  constructor(options = {}) {
+    this.clients = new Map();
+    this.tools = new Map();
+    this.debug = options.debug || process.env.DEBUG_MCP === '1';
+    this.config = null;
+    this.tracer = options.tracer || null;
+    // Optional event emitter for broadcasting tool call lifecycle to the agent (#522)
+    this.agentEvents = options.agentEvents || null;
+  }
+
+  /**
+   * Record an MCP telemetry event if tracer is available
+   * @param {string} eventType - Event type (e.g., 'server.connect', 'tool.discovered')
+   * @param {Object} data - Event data
+   */
+  recordMcpEvent(eventType, data = {}) {
+    if (this.tracer && typeof this.tracer.recordMcpEvent === 'function') {
+      this.tracer.recordMcpEvent(eventType, data);
+    }
+  }
+
+  /**
+   * Initialize MCP clients from configuration
+   * @param {Object} config - Optional configuration override
+   */
+  async initialize(config = null) {
+    // Load configuration
+    this.config = config || loadMCPConfiguration();
+    const servers = parseEnabledServers(this.config);
+
+    // Record initialization start
+    this.recordMcpEvent('initialization.started', {
+      serverCount: servers.length,
+      serverNames: servers.map(s => s.name)
+    });
+
+    // Always log the number of servers found
+    console.error(`[MCP INFO] Found ${servers.length} enabled MCP server${servers.length !== 1 ? 's' : ''}`);
+
+    if (servers.length === 0) {
+      console.error('[MCP INFO] No MCP servers configured or enabled');
+      console.error('[MCP INFO] 0 MCP tools available');
+      this.recordMcpEvent('initialization.completed', {
+        connected: 0,
+        total: 0,
+        toolCount: 0,
+        tools: []
+      });
+      return {
+        connected: 0,
+        total: 0,
+        tools: []
+      };
+    }
+
+    if (this.debug) {
+      console.error('[MCP DEBUG] Server details:');
+      servers.forEach(server => {
+        console.error(`[MCP DEBUG]   - ${server.name} (${server.transport})`);
+      });
+    }
+
+    // Connect to each enabled server
+    const connectionPromises = servers.map(server =>
+      this.connectToServer(server).catch(error => {
+        console.error(`[MCP ERROR] Failed to connect to ${server.name}:`, error.message);
+        return null;
+      })
+    );
+
+    const results = await Promise.all(connectionPromises);
+    const connectedCount = results.filter(Boolean).length;
+
+    // Always log connection results
+    if (connectedCount === 0) {
+      console.error(`[MCP ERROR] Failed to connect to all ${servers.length} server${servers.length !== 1 ? 's' : ''}`);
+      console.error('[MCP INFO] 0 MCP tools available');
+    } else if (connectedCount < servers.length) {
+      console.error(`[MCP INFO] Successfully connected to ${connectedCount}/${servers.length} servers`);
+      console.error(`[MCP INFO] ${this.tools.size} MCP tool${this.tools.size !== 1 ? 's' : ''} available`);
+    } else {
+      console.error(`[MCP INFO] Successfully connected to all ${connectedCount} server${connectedCount !== 1 ? 's' : ''}`);
+      console.error(`[MCP INFO] ${this.tools.size} MCP tool${this.tools.size !== 1 ? 's' : ''} available`);
+    }
+
+    if (this.debug && this.tools.size > 0) {
+      console.error('[MCP DEBUG] Available tools:');
+      Array.from(this.tools.keys()).forEach(toolName => {
+        console.error(`[MCP DEBUG]   - ${toolName}`);
+      });
+    }
+
+    // Record initialization completion
+    const toolNames = Array.from(this.tools.keys());
+    this.recordMcpEvent('initialization.completed', {
+      connected: connectedCount,
+      total: servers.length,
+      toolCount: this.tools.size,
+      tools: toolNames
+    });
+
+    return {
+      connected: connectedCount,
+      total: servers.length,
+      tools: toolNames
+    };
+  }
+
+  /**
+   * Connect to a single MCP server
+   * @param {Object} serverConfig - Server configuration
+   */
+  async connectToServer(serverConfig) {
+    const { name } = serverConfig;
+
+    // Record connection attempt
+    this.recordMcpEvent('server.connecting', {
+      serverName: name,
+      transport: serverConfig.transport,
+      hasAllowedMethods: !!(serverConfig.allowedMethods && serverConfig.allowedMethods.length > 0),
+      hasBlockedMethods: !!(serverConfig.blockedMethods && serverConfig.blockedMethods.length > 0)
+    });
+
+    try {
+      if (this.debug) {
+        console.error(`[MCP DEBUG] Connecting to ${name} via ${serverConfig.transport}...`);
+      }
+
+      // Create transport
+      const transport = createTransport(serverConfig);
+
+      // Create client
+      const client = new Client(
+        {
+          name: `probe-client-${name}`,
+          version: '1.0.0'
+        },
+        {
+          capabilities: {}
+        }
+      );
+
+      // Connect
+      await client.connect(transport);
+
+      // Store client
+      this.clients.set(name, {
+        client,
+        transport,
+        config: serverConfig
+      });
+
+      // Fetch and register tools
+      const toolsResponse = await client.listTools();
+      const totalToolCount = toolsResponse?.tools?.length || 0;
+      let registeredCount = 0;
+      let filteredCount = 0;
+      const registeredTools = [];
+      const filteredTools = [];
+
+      if (toolsResponse && toolsResponse.tools) {
+        const { allowedMethods, blockedMethods } = serverConfig;
+        const allToolNames = toolsResponse.tools.map(t => t.name);
+
+        // Record tools discovered from server
+        this.recordMcpEvent('tools.discovered', {
+          serverName: name,
+          toolCount: totalToolCount,
+          tools: allToolNames
+        });
+
+        for (const tool of toolsResponse.tools) {
+          // Apply method filtering based on server config
+          if (!isMethodAllowed(tool.name, allowedMethods, blockedMethods)) {
+            filteredCount++;
+            filteredTools.push(tool.name);
+            if (this.debug) {
+              console.error(`[MCP DEBUG]     Filtered out tool: ${tool.name} (not allowed by method filter)`);
+            }
+            continue;
+          }
+
+          // Add server prefix to avoid conflicts
+          const qualifiedName = `${name}_${tool.name}`;
+          this.tools.set(qualifiedName, {
+            ...tool,
+            serverName: name,
+            originalName: tool.name
+          });
+          registeredCount++;
+          registeredTools.push(qualifiedName);
+
+          if (this.debug) {
+            console.error(`[MCP DEBUG]     Registered tool: ${qualifiedName}`);
+          }
+        }
+
+        // Record method filtering results if any filtering was applied
+        if (filteredCount > 0) {
+          this.recordMcpEvent('tools.filtered', {
+            serverName: name,
+            filteredCount,
+            filteredTools,
+            allowedMethods: allowedMethods || [],
+            blockedMethods: blockedMethods || []
+          });
+        }
+
+        // Check for unmatched patterns in allowedMethods and warn users
+        if (allowedMethods && allowedMethods.length > 0) {
+          const unmatchedPatterns = allowedMethods.filter(pattern => {
+            // Check if this pattern matches at least one tool
+            return !allToolNames.some(toolName => isMethodAllowed(toolName, [pattern], null));
+          });
+
+          if (unmatchedPatterns.length > 0) {
+            console.error(`[MCP WARN] Server '${name}': The following allowedMethods patterns did not match any tools: ${unmatchedPatterns.join(', ')}`);
+            console.error(`[MCP WARN] Available methods from '${name}': ${allToolNames.join(', ')}`);
+          }
+        }
+
+        // Check for unmatched patterns in blockedMethods and warn users
+        if (blockedMethods && blockedMethods.length > 0) {
+          const unmatchedPatterns = blockedMethods.filter(pattern => {
+            // Check if this pattern matches at least one tool
+            return !allToolNames.some(toolName => !isMethodAllowed(toolName, null, [pattern]));
+          });
+
+          if (unmatchedPatterns.length > 0) {
+            console.error(`[MCP WARN] Server '${name}': The following blockedMethods patterns did not match any tools: ${unmatchedPatterns.join(', ')}`);
+            console.error(`[MCP WARN] Available methods from '${name}': ${allToolNames.join(', ')}`);
+          }
+        }
+      }
+
+      // Log connection result with filtering info
+      if (filteredCount > 0) {
+        console.error(`[MCP INFO] Connected to ${name}: ${registeredCount} tool${registeredCount !== 1 ? 's' : ''} loaded (${filteredCount} filtered out)`);
+      } else {
+        console.error(`[MCP INFO] Connected to ${name}: ${registeredCount} tool${registeredCount !== 1 ? 's' : ''} loaded`);
+      }
+
+      // Record successful connection
+      this.recordMcpEvent('server.connected', {
+        serverName: name,
+        transport: serverConfig.transport,
+        totalToolCount,
+        registeredCount,
+        filteredCount,
+        registeredTools
+      });
+
+      return true;
+    } catch (error) {
+      console.error(`[MCP ERROR] Error connecting to ${name}:`, error.message);
+      if (this.debug) {
+        console.error(`[MCP DEBUG] Full error details:`, error);
+      }
+
+      // Record connection failure
+      this.recordMcpEvent('server.connection_failed', {
+        serverName: name,
+        transport: serverConfig.transport,
+        error: error.message
+      });
+
+      return false;
+    }
+  }
+
+  /**
+   * Call a tool on its respective server
+   * @param {string} toolName - Qualified tool name (server_tool)
+   * @param {Object} args - Tool arguments
+   */
+  async callTool(toolName, args) {
+    const tool = this.tools.get(toolName);
+    if (!tool) {
+      this.recordMcpEvent('tool.call_failed', {
+        toolName,
+        error: 'Unknown tool'
+      });
+      throw new Error(`Unknown tool: ${toolName}`);
+    }
+
+    const clientInfo = this.clients.get(tool.serverName);
+    if (!clientInfo) {
+      this.recordMcpEvent('tool.call_failed', {
+        toolName,
+        serverName: tool.serverName,
+        error: 'Server not connected'
+      });
+      throw new Error(`Server ${tool.serverName} not connected`);
+    }
+
+    const startTime = Date.now();
+    const toolCallId = `mcp-${toolName}-${startTime}`;
+
+    // Record tool call start
+    this.recordMcpEvent('tool.call_started', {
+      toolName,
+      serverName: tool.serverName,
+      originalToolName: tool.originalName
+    });
+
+    // Emit toolCall event so the agent's activeTools map tracks MCP tool calls (#522)
+    if (this.agentEvents) {
+      this.agentEvents.emit('toolCall', {
+        toolCallId,
+        name: toolName,
+        args,
+        status: 'started',
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    try {
+      if (this.debug) {
+        console.error(`[MCP DEBUG] Calling ${toolName} with args:`, JSON.stringify(args, null, 2));
+      }
+
+      // Get timeout: per-server timeout takes priority over global timeout (default 30 seconds)
+      // Note: Timeout values are already validated at config load time by parseEnabledServers
+      const serverTimeout = clientInfo.config?.timeout;
+      const globalTimeout = this.config?.settings?.timeout ?? DEFAULT_TIMEOUT;
+      const timeout = serverTimeout ?? globalTimeout;
+
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`MCP tool call timeout after ${timeout}ms`));
+        }, timeout);
+      });
+
+      // Race between the actual call and timeout
+      // Pass timeout to SDK's callTool to override its default 60s timeout
+      const result = await Promise.race([
+        clientInfo.client.callTool({
+          name: tool.originalName,
+          arguments: args
+        }, undefined, { timeout }),
+        timeoutPromise
+      ]);
+
+      const durationMs = Date.now() - startTime;
+
+      if (this.debug) {
+        console.error(`[MCP DEBUG] Tool ${toolName} executed successfully`);
+      }
+
+      // Record successful tool call
+      this.recordMcpEvent('tool.call_completed', {
+        toolName,
+        serverName: tool.serverName,
+        originalToolName: tool.originalName,
+        durationMs
+      });
+
+      // Emit toolCall completion so agent's activeTools removes this entry (#522)
+      if (this.agentEvents) {
+        this.agentEvents.emit('toolCall', {
+          toolCallId,
+          name: toolName,
+          status: 'completed',
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      return result;
+    } catch (error) {
+      const durationMs = Date.now() - startTime;
+
+      console.error(`[MCP ERROR] Error calling tool ${toolName}:`, error.message);
+      if (this.debug) {
+        console.error(`[MCP DEBUG] Full error details:`, error);
+      }
+
+      // Record failed tool call
+      this.recordMcpEvent('tool.call_failed', {
+        toolName,
+        serverName: tool.serverName,
+        originalToolName: tool.originalName,
+        error: error.message,
+        durationMs,
+        isTimeout: error.message.includes('timeout')
+      });
+
+      // Emit toolCall error so agent's activeTools removes this entry (#522)
+      if (this.agentEvents) {
+        this.agentEvents.emit('toolCall', {
+          toolCallId,
+          name: toolName,
+          status: 'error',
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Call graceful_stop on all MCP servers that expose it.
+   * This signals agent-type MCP servers to wrap up their work.
+   * @returns {Promise<Array<{server: string, success: boolean, error?: string}>>}
+   */
+  async callGracefulStopAll() {
+    const results = [];
+    for (const [serverName, clientInfo] of this.clients) {
+      // Look for a graceful_stop tool on this server (qualified name: serverName_graceful_stop)
+      const qualifiedName = `${serverName}_graceful_stop`;
+      if (this.tools.has(qualifiedName)) {
+        if (this.debug) {
+          console.log(`[DEBUG] MCP callGracefulStopAll: calling graceful_stop on server "${serverName}"`);
+        }
+        try {
+          // Short timeout — this is a signal, not a long operation
+          const timeoutMs = 5000;
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('graceful_stop timeout')), timeoutMs)
+          );
+          await Promise.race([
+            clientInfo.client.callTool({ name: 'graceful_stop', arguments: {} }, undefined, { timeout: timeoutMs }),
+            timeoutPromise
+          ]);
+          results.push({ server: serverName, success: true });
+          if (this.debug) {
+            console.log(`[DEBUG] MCP callGracefulStopAll: server "${serverName}" acknowledged graceful_stop`);
+          }
+        } catch (e) {
+          results.push({ server: serverName, success: false, error: e.message });
+          if (this.debug) {
+            console.log(`[DEBUG] MCP callGracefulStopAll: server "${serverName}" graceful_stop failed: ${e.message}`);
+          }
+        }
+      }
+    }
+    if (this.debug) {
+      const withStop = results.length;
+      const total = this.clients.size;
+      console.log(`[DEBUG] MCP callGracefulStopAll: ${withStop}/${total} servers had graceful_stop tool`);
+    }
+    // Record telemetry event for the graceful_stop sweep
+    this.recordMcpEvent('graceful_stop.sweep_completed', {
+      servers_total: this.clients.size,
+      servers_with_graceful_stop: results.length,
+      servers_acknowledged: results.filter(r => r.success).length,
+      servers_failed: results.filter(r => !r.success).length,
+    });
+    return results;
+  }
+
+  /**
+   * Get all available tools with their schemas
+   * @returns {Object} Map of tool name to tool definition
+   */
+  getTools() {
+    const tools = {};
+    for (const [name, tool] of this.tools.entries()) {
+      tools[name] = {
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        serverName: tool.serverName
+      };
+    }
+    return tools;
+  }
+
+  /**
+   * Get tools formatted for Vercel AI SDK
+   * @returns {Object} Tools in Vercel AI SDK format
+   */
+  getVercelTools() {
+    const tools = {};
+
+    for (const [name, tool] of this.tools.entries()) {
+      // Create a wrapper that calls the MCP tool
+      tools[name] = {
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        execute: async (args) => {
+          const result = await this.callTool(name, args);
+          if (!result.content || !result.content[0]) {
+            return JSON.stringify(result);
+          }
+          // Check if response contains image content blocks
+          const hasImage = result.content.some(block => block.type === 'image');
+          if (hasImage) {
+            // Return the full content array so toModelOutput can convert it
+            return { _mcpContent: result.content };
+          }
+          // Text-only: return just the text
+          return result.content[0].text;
+        },
+        // Convert MCP content blocks (including images) to Vercel AI SDK format
+        toModelOutput: ({ output }) => {
+          if (output && typeof output === 'object' && output._mcpContent) {
+            const parts = [];
+            for (const block of output._mcpContent) {
+              if (block.type === 'text') {
+                parts.push({ type: 'text', text: block.text });
+              } else if (block.type === 'image') {
+                parts.push({ type: 'image-data', data: block.data, mediaType: block.mimeType });
+              }
+            }
+            return { type: 'content', value: parts };
+          }
+          return { type: 'text', value: typeof output === 'string' ? output : JSON.stringify(output) };
+        }
+      };
+    }
+
+    return tools;
+  }
+
+  /**
+   * Disconnect all clients
+   */
+  async disconnect() {
+    const disconnectPromises = [];
+    const serverNames = Array.from(this.clients.keys());
+
+    if (this.clients.size === 0) {
+      if (this.debug) {
+        console.error('[MCP DEBUG] No MCP clients to disconnect');
+      }
+      return;
+    }
+
+    // Record disconnection start
+    this.recordMcpEvent('disconnection.started', {
+      serverCount: this.clients.size,
+      serverNames
+    });
+
+    if (this.debug) {
+      console.error(`[MCP DEBUG] Disconnecting from ${this.clients.size} MCP server${this.clients.size !== 1 ? 's' : ''}...`);
+    }
+
+    for (const [name, clientInfo] of this.clients.entries()) {
+      disconnectPromises.push(
+        clientInfo.client.close()
+          .then(() => {
+            if (this.debug) {
+              console.error(`[MCP DEBUG] Disconnected from ${name}`);
+            }
+            this.recordMcpEvent('server.disconnected', {
+              serverName: name
+            });
+          })
+          .catch(error => {
+            console.error(`[MCP ERROR] Error disconnecting from ${name}:`, error.message);
+            this.recordMcpEvent('server.disconnect_failed', {
+              serverName: name,
+              error: error.message
+            });
+          })
+      );
+    }
+
+    await Promise.all(disconnectPromises);
+    this.clients.clear();
+    this.tools.clear();
+
+    // Record disconnection completion
+    this.recordMcpEvent('disconnection.completed', {
+      serverCount: serverNames.length,
+      serverNames
+    });
+
+    if (this.debug) {
+      console.error('[MCP DEBUG] All MCP connections closed');
+    }
+  }
+}
+
+/**
+ * Create and initialize MCP client manager with default configuration
+ */
+export async function createMCPManager(options = {}) {
+  const manager = new MCPClientManager(options);
+  await manager.initialize();
+  return manager;
+}
+
+export default {
+  MCPClientManager,
+  createMCPManager,
+  createTransport,
+  isMethodAllowed
+};

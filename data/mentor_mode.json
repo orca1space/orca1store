@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "mode": "connected",
+  "mentor": "Manus",
+  "session_id": "mentor_a3664c30eeb1",
+  "capture_enabled": true,
+  "promotion_enabled": true,
+  "started_at": "2026-08-13T09:04:06Z",
+  "last_transition_at": "2026-08-13T09:04:06Z",
+  "observations": 9,
+  "promotions": 0,
+  "external_connection": false,
+  "local_only": true,
+  "internal_reasoning_excluded": true
+}

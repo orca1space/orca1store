@@ -1,0 +1,24 @@
+{
+  "name": "src_build_mcpb",
+  "description": "This skill should be used when the user wants to \"package an MCP server\", \"bundle an MCP\", \"make an MCPB\", \"ship a local MCP server\", \"distribute a local MCP\", discusses \".mcpb files\", mentions bundling a Node or Python runtime with their MCP server, or needs an MCP server that interacts with the lo",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "wants",
+    "build",
+    "mcpb"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Build an MCPB (Bundled Local MCP Server)\n\nMCPB is a local MCP server **packaged with its runtime**. The user installs one file; it runs without needing Node, Python, or any toolchain on their machine. It's the sanctioned way to distribute local MCP servers.\n\n> MCPB is the **secondary** distribution path. Anthropic recommends remote MCP servers for directory listing — see https://claude.com/docs/connectors/building/what-to-build.\n\n**Use MCPB when the server must run on the user's machine** — reading local files, driving a desktop app, talking to localhost services, OS-level APIs. If your server only hits cloud APIs, you almost certainly want a remote HTTP server instead (see `build-mcp-server`). Don't pay the MCPB packaging tax for something that could be a URL.\n\n---\n\n## What an MCPB bundle contains\n\n```\nmy-server.mcpb              (zip archive)\n├── manifest.json           ← identity, entry point, config schema, compatibility\n├── server/                 ← your MCP server code\n│   ├── index.js\n│   └── node_modules/       ← bundled dependencies (or vendored)\n└── icon.png\n```\n\nThe host reads `manifest.json`, launches `server.mcp_config.command` as a **stdio** MCP server, and pipes messages. From your code's perspective it's identical to a local stdio server — the only difference is packaging.\n\n---\n\n## Manifest\n\n```json\n{\n  \"$schema\": \"https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json\",\n  \"manifest_version\": \"0.4\",\n  \"name\": \"local-files\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Read, search, and watch files on the local filesystem.\",\n  \"author\": { \"name\": \"Your Name\" },\n  \"server\": {\n    \"type\": \"node\",\n    \"entry_point\": \"server/index.js\",\n    \"mcp_config\": {\n      \"command\": \"node\",\n      \"args\": [\"${__dirname}/server/index.js\"],\n      \"env\": {\n        \"ROOT_DIR\": \"${user_config.rootDir}\"\n      }\n    }\n  },\n  \"user_config\": {\n    \"rootDir\": {\n      \"type\": \"directory\",\n      \"title\": \"Root directory\",\n      \"description\": \"Directory to expose. Defaults to ~/Documents.\",\n      \"default\": \"${HOME}/Documents\",\n      \"required\": true\n    }\n  },\n  \"compatibility\": {\n    \"claude_desktop\": \">=1.0.0\",\n    \"platforms\": [\"darwin\", \"win32\", \"linux\"]\n  }\n}\n```\n\n**`server.type`** — `node`, `python`, or `binary`. Informational; the actual launch comes from `mcp_config`.\n\n**`server.mcp_config`** — the literal command/args/env to spawn. Use `${__dirname}` for bundle-relative paths and `${user_config.<key>}` to substitute install-time config. **There's no auto-prefix** — the env var names your server reads are exactly what you put in `env`.\n\n**`user_config`** — install-time settings surfaced in the host's UI. `type: \"directory\"` renders a native folder picker. `sensitive: true` stores in OS keychain. See `references/manifest-schema.md` for all fields.\n\n---\n\n## Server code: same as local stdio\n\nThe server itself is a standard stdio MCP server. Nothing MCPB-specific in the tool logic.\n\n```typescript\nimport { McpServer } f",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: build-mcpb"
+}

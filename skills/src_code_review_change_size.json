@@ -1,0 +1,20 @@
+{
+  "name": "src_code_review_change_size",
+  "description": "Change size guidance (800 lines)",
+  "trigger_keywords": [
+    "change",
+    "size",
+    "guidance",
+    "lines",
+    "code",
+    "review"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "Unless the change is mechanical the total number of changed lines should not exceed 800 lines.\nFor complex logic changes the size should be under 500 lines.\n\nIf the change is larger, explain whether it can be split into reviewable stages and identify the smallest coherent stage to land first.\nBase the staging suggestion on the actual diff, dependencies, and affected call sites.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: code-review-change-size"
+}

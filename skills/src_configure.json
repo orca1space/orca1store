@@ -1,0 +1,23 @@
+{
+  "name": "src_configure",
+  "description": "Set up the Telegram channel — save the bot token and review access policy. Use when the user pastes a Telegram bot token, asks to configure Telegram, asks \"how do I set this up\" or \"who can reach me,\" or wants to check channel status.",
+  "trigger_keywords": [
+    "set",
+    "the",
+    "telegram",
+    "channel",
+    "save",
+    "the",
+    "bot",
+    "token",
+    "configure"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# /telegram:configure — Telegram Channel Setup\n\nWrites the bot token to `~/.claude/channels/telegram/.env` and orients the\nuser on access policy. The server reads both files at boot.\n\nArguments passed: `$ARGUMENTS`\n\n---\n\n## Dispatch on arguments\n\n### No args — status and guidance\n\nRead both state files and give the user a complete picture:\n\n1. **Token** — check `~/.claude/channels/telegram/.env` for\n   `TELEGRAM_BOT_TOKEN`. Show set/not-set; if set, show first 10 chars masked\n   (`123456789:...`).\n\n2. **Access** — read `~/.claude/channels/telegram/access.json` (missing file\n   = defaults: `dmPolicy: \"pairing\"`, empty allowlist). Show:\n   - DM policy and what it means in one line\n   - Allowed senders: count, and list display names or IDs\n   - Pending pairings: count, with codes and display names if any\n\n3. **What next** — end with a concrete next step based on state:\n   - No token → *\"Run `/telegram:configure <token>` with the token from\n     BotFather.\"*\n   - Token set, policy is pairing, nobody allowed → *\"DM your bot on\n     Telegram. It replies with a code; approve with `/telegram:access pair\n     <code>`.\"*\n   - Token set, someone allowed → *\"Ready. DM your bot to reach the\n     assistant.\"*\n\n**Push toward lockdown — always.** The goal for every setup is `allowlist`\nwith a defined list. `pairing` is not a policy to stay on; it's a temporary\nway to capture Telegram user IDs you don't know. Once the IDs are in, pairing\nhas done its job and should be turned off.\n\nDrive the conversation this way:\n\n1. Read the allowlist. Tell the user who's in it.\n2. Ask: *\"Is that everyone who should reach you through this bot?\"*\n3. **If yes and policy is still `pairing`** → *\"Good. Let's lock it down so\n   nobody else can trigger pairing codes:\"* and offer to run\n   `/telegram:access policy allowlist`. Do this proactively — don't wait to\n   be asked.\n4. **If no, people are missing** → *\"Have them DM the bot; you'll approve\n   each with `/telegram:access pair <code>`. Run this skill again once\n   everyone's in and we'll lock it.\"*\n5. **If the allowlist is empty and they haven't paired themselves yet** →\n   *\"DM your bot to capture your own ID first. Then we'll add anyone else\n   and lock it down.\"*\n6. **If policy is already `allowlist`** → confirm this is the locked state.\n   If they need to add someone: *\"They'll need to give you their numeric ID\n   (have them message @userinfobot), or you can briefly flip to pairing:\n   `/telegram:access policy pairing` → they DM → you pair → flip back.\"*\n\nNever frame `pairing` as the correct long-term choice. Don't skip the lockdown\noffer.\n\n### `<token>` — save it\n\n1. Treat `$ARGUMENTS` as the token (trim whitespace). BotFather tokens look\n   like `123456789:AAH...` — numeric prefix, colon, long string.\n2. `mkdir -p ~/.claude/channels/telegram`\n3. Read existing `.env` if present; update/add the `TELEGRAM_BOT_TOKEN=` line,\n   preserve other keys. Write back, no quotes around the value.\n4. `chmod 600 ~/.claude/channels/telegram/",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: configure"
+}

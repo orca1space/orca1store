@@ -1,0 +1,10 @@
+# Cross-compilation configuration for probe
+# This configures the cross tool for ARM64 Linux builds
+
+[build.env]
+passthrough = [
+    "CARGO_INCREMENTAL",
+    "CARGO_TERM_COLOR",
+]
+
+# Cross uses prebuilt images for musl targets; no per-target overrides needed.

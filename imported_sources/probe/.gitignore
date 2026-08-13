@@ -1,0 +1,136 @@
+# Rust specific ignores
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+.vscode
+# Uncomment the line below if this is a library (keep it commented if it's an application)
+# Cargo.lock
+
+# JSON files
+*.json
+!Cargo.json
+!package.json
+!tsconfig.json
+
+# YAML files
+*.yml
+*.yaml
+# Exception for GitHub workflows
+!.github/workflows/*.yml
+!.github/workflows/*.yaml
+
+# Node.js specific ignores
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+package-lock.json
+# Uncomment the line below if you want to include package-lock.json in version control
+# !package-lock.json
+
+# Build outputs
+/dist/
+/build/
+npm/build/
+npm/cjs/
+/out/
+/.next/
+/.nuxt/
+/.output/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+*.jsonl
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Testing
+/coverage
+.nyc_output
+npm/coverage/
+**/coverage/
+.jest-cache/
+**/.jest-cache/
+test-results/
+junit.xml
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# Rust analyzer
+rust-project.json
+
+# Debug files
+*.stackdump
+
+# Protocol Buffer files
+*.proto
+*_pb2.py
+*.pb.css
+*.pb.h
+*.pb.*
+
+
+.vitepress
+.aider*
+
+# Chat debug files
+examples/chat/probe-debug*.txt
+
+# BERT model files (too large for git)
+examples/reranker/models/*/pytorch_model.bin
+examples/reranker/models/*/model.safetensors
+examples/reranker/models/*/vocab.txt
+examples/reranker/cross_encoder_test_results.json
+*.tgz
+
+# Vow - AI accountability files
+.vow*
+
+# PID files (daemon/tests)
+*.pid

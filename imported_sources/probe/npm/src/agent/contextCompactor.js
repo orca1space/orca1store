@@ -1,0 +1,295 @@
+/**
+ * Context Window Compactor
+ *
+ * Handles context window overflow by intelligently removing intermediate agentic
+ * monologue sections while preserving user messages, final answers, and the most
+ * recent monologue.
+ */
+
+/**
+ * Context limit error patterns to detect from various AI providers
+ * Simple substring matching similar to RetryManager's approach
+ */
+const CONTEXT_LIMIT_ERROR_PATTERNS = [
+  // Anthropic
+  'context_length_exceeded',
+  'prompt is too long',
+
+  // OpenAI
+  'maximum context length',
+  'context length is',
+
+  // Google/Gemini
+  'input token count exceeds',
+  'token limit exceeded',
+
+  // Generic patterns
+  'context window',
+  'too many tokens',
+  'token limit',
+  'context limit',
+  'exceed',  // Catches "exceeds", "exceed maximum", etc.
+  'over the limit',
+  'maximum tokens'
+];
+
+/**
+ * Check if an error message indicates a context window limit was exceeded
+ * Uses simple substring matching for reliability and maintainability
+ *
+ * @param {Error|string} error - The error object or error message
+ * @returns {boolean} - True if the error indicates context limit exceeded
+ */
+export function isContextLimitError(error) {
+  if (!error) return false;
+
+  // Get error message in various forms
+  const errorMessage = (typeof error === 'string' ? error : (error?.message || '')).toLowerCase();
+  const errorString = error.toString().toLowerCase();
+
+  // Check if any pattern matches
+  for (const pattern of CONTEXT_LIMIT_ERROR_PATTERNS) {
+    const lowerPattern = pattern.toLowerCase();
+    if (errorMessage.includes(lowerPattern) || errorString.includes(lowerPattern)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if an assistant message represents a completion (final answer).
+ * A completion is an assistant message with no tool calls and non-empty text content.
+ * Also supports backward compatibility with old attempt_completion tool calls.
+ */
+function messageContainsCompletion(msg) {
+  // Backward compat: detect old attempt_completion tool calls in historical conversations
+  if (Array.isArray(msg.toolInvocations)) {
+    if (msg.toolInvocations.some(t => t.toolName === 'attempt_completion')) return true;
+  }
+  if (Array.isArray(msg.tool_calls)) {
+    if (msg.tool_calls.some(t => t.function?.name === 'attempt_completion')) return true;
+  }
+  if (Array.isArray(msg.content)) {
+    if (msg.content.some(p => p.type === 'tool-call' && p.toolName === 'attempt_completion')) return true;
+    // New detection: assistant message with text parts but no tool-call parts
+    const hasToolCalls = msg.content.some(p => p.type === 'tool-call');
+    const hasText = msg.content.some(p => (p.type === 'text' && p.text?.trim()));
+    if (!hasToolCalls && hasText) return true;
+  }
+  // Text content: no tool calls means this is a final text response
+  const text = typeof msg.content === 'string' ? msg.content : '';
+  if (text.includes('attempt_completion')) return true;
+  // New: assistant message with text content and no tool invocations/calls is a completion
+  const hasNoToolCalls = !Array.isArray(msg.toolInvocations) && !Array.isArray(msg.tool_calls);
+  if (hasNoToolCalls && text.trim().length > 0) return true;
+  return false;
+}
+
+/**
+ * Identify message boundaries in conversation history
+ * Structure: <user> -> <internal agentic monologue> -> <final-agent-answer>
+ *
+ * A "segment" is:
+ * - user message (role: 'user')
+ * - followed by 0+ assistant messages (internal monologue)
+ * - ending with a final answer (assistant message with no tool calls)
+ *
+ * @param {Array} messages - Array of message objects with {role, content}
+ * @returns {Array} - Array of segments, each containing {userIndex, monologueIndices, finalIndex}
+ */
+export function identifyMessageSegments(messages) {
+  const segments = [];
+  let currentSegment = null;
+
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i];
+
+    // Skip system messages
+    if (msg.role === 'system') {
+      continue;
+    }
+
+    // Tool result message (native tool calling format)
+    if (msg.role === 'tool' && currentSegment) {
+      currentSegment.monologueIndices.push(i);
+      continue;
+    }
+
+    // User message starts a new segment
+    if (msg.role === 'user') {
+      // Save previous segment if it exists
+      if (currentSegment) {
+        segments.push(currentSegment);
+      }
+
+      // Start new segment
+      currentSegment = {
+        userIndex: i,
+        monologueIndices: [],
+        finalIndex: null
+      };
+    }
+
+    // Assistant message is part of monologue
+    if (msg.role === 'assistant' && currentSegment) {
+      // Check if this is a completion message (no tool calls, or legacy attempt_completion)
+      const hasCompletion = messageContainsCompletion(msg);
+
+      if (hasCompletion) {
+        currentSegment.monologueIndices.push(i);
+        currentSegment.finalIndex = i;
+        segments.push(currentSegment);
+        currentSegment = null;
+      } else {
+        // Regular monologue message
+        currentSegment.monologueIndices.push(i);
+      }
+    }
+  }
+
+  // Save any remaining segment
+  if (currentSegment) {
+    segments.push(currentSegment);
+  }
+
+  return segments;
+}
+
+/**
+ * Compact messages by removing intermediate monologues
+ *
+ * Strategy:
+ * 1. Keep all user messages
+ * 2. Keep all final answers (completion messages)
+ * 3. Remove intermediate monologue messages from completed segments
+ * 4. Keep the most recent (active) segment intact
+ *
+ * @param {Array} messages - Array of message objects
+ * @param {Object} options - Compaction options
+ * @param {boolean} [options.keepLastSegment=true] - Keep the most recent segment intact
+ * @param {number} [options.minSegmentsToKeep=1] - Minimum number of recent segments to preserve fully
+ * @returns {Array} - Compacted message array
+ */
+export function compactMessages(messages, options = {}) {
+  const {
+    keepLastSegment = true,
+    minSegmentsToKeep = 1
+  } = options;
+
+  if (!messages || messages.length === 0) {
+    return messages;
+  }
+
+  // Identify segments
+  const segments = identifyMessageSegments(messages);
+
+  if (segments.length === 0) {
+    return messages;
+  }
+
+  // Determine which segments to keep fully vs compact
+  const segmentsToPreserve = keepLastSegment
+    ? Math.max(minSegmentsToKeep, 1)
+    : minSegmentsToKeep;
+
+  const compactableSegments = segments.slice(0, -segmentsToPreserve);
+  const preservedSegments = segments.slice(-segmentsToPreserve);
+
+  // Build set of indices to keep
+  const indicesToKeep = new Set();
+
+  // Keep system messages
+  messages.forEach((msg, idx) => {
+    if (msg.role === 'system') {
+      indicesToKeep.add(idx);
+    }
+  });
+
+  // For compactable segments: keep user message and final answer only
+  compactableSegments.forEach(segment => {
+    indicesToKeep.add(segment.userIndex);
+    if (segment.finalIndex !== null) {
+      indicesToKeep.add(segment.finalIndex);
+    }
+  });
+
+  // For preserved segments: keep everything
+  preservedSegments.forEach(segment => {
+    indicesToKeep.add(segment.userIndex);
+    segment.monologueIndices.forEach(idx => indicesToKeep.add(idx));
+    if (segment.finalIndex !== null) {
+      indicesToKeep.add(segment.finalIndex);
+    }
+  });
+
+  // Filter messages
+  const compactedMessages = messages.filter((_, idx) => indicesToKeep.has(idx));
+
+  return compactedMessages;
+}
+
+/**
+ * Calculate reduction statistics
+ * @param {Array} originalMessages - Original message array
+ * @param {Array} compactedMessages - Compacted message array
+ * @returns {Object} - Statistics about the compaction
+ */
+export function calculateCompactionStats(originalMessages, compactedMessages) {
+  const originalCount = originalMessages.length;
+  const compactedCount = compactedMessages.length;
+  const removed = originalCount - compactedCount;
+  const reductionPercent = originalCount > 0
+    ? ((removed / originalCount) * 100).toFixed(1)
+    : 0;
+
+  // Estimate token savings (rough approximation)
+  const estimateTokens = (msgs) => {
+    return msgs.reduce((sum, msg) => {
+      const content = typeof msg.content === 'string'
+        ? msg.content
+        : JSON.stringify(msg.content);
+      // Rough estimate: 1 token ≈ 4 characters
+      return sum + Math.ceil(content.length / 4);
+    }, 0);
+  };
+
+  const originalTokens = estimateTokens(originalMessages);
+  const compactedTokens = estimateTokens(compactedMessages);
+  const tokensSaved = originalTokens - compactedTokens;
+
+  return {
+    originalCount,
+    compactedCount,
+    removed,
+    reductionPercent: parseFloat(reductionPercent),
+    originalTokens,
+    compactedTokens,
+    tokensSaved
+  };
+}
+
+/**
+ * Main compaction handler for ProbeAgent
+ * Detects context limit errors and performs intelligent compaction
+ *
+ * @param {Error} error - The error from the AI provider
+ * @param {Array} messages - Current message array
+ * @param {Object} options - Compaction options
+ * @returns {Object|null} - { compacted: true, messages, stats } or null if not applicable
+ */
+export function handleContextLimitError(error, messages, options = {}) {
+  if (!isContextLimitError(error)) {
+    return null;
+  }
+
+  const compactedMessages = compactMessages(messages, options);
+  const stats = calculateCompactionStats(messages, compactedMessages);
+
+  return {
+    compacted: true,
+    messages: compactedMessages,
+    stats
+  };
+}

@@ -1,0 +1,15 @@
+{
+  "name": "phrases_german",
+  "description": "Common everyday phrases in German",
+  "trigger_keywords": [
+    "common phrases in German",
+    "how to say in German",
+    "عبارات Deutsch",
+    "كيف أقول بـDeutsch"
+  ],
+  "procedure": "Provide common German phrases for daily use:\n- how_are_you: Wie geht es dir? / Wie geht's? / Was geht?\n- thank_you: Danke / Vielen Dank / Danke schön / Danke sehr\n- please: Bitte\n- yes_no: Ja / Nein / Klar / Sicher\n- goodbye: Auf Wiedersehen / Tschüss / Bis später / Ciao\n- sorry: Entschuldigung / Es tut mir leid / Sorry\n- i_understand: Ich verstehe / Verstanden / Klar\n- i_dont_understand: Ich verstehe nicht / Kannst du das erklären?",
+  "examples": [],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

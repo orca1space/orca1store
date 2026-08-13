@@ -1,0 +1,24 @@
+{
+  "name": "src_plugin_settings",
+  "description": "This skill should be used when the user asks about \"plugin settings\", \"store plugin configuration\", \"user-configurable plugin\", \".local.md files\", \"plugin state files\", \"read YAML frontmatter\", \"per-project plugin settings\", or wants to make plugin behavior configurable. Documents the .claude/plugin",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "plugin",
+    "settings"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Plugin Settings Pattern for Claude Code Plugins\n\n## Overview\n\nPlugins can store user-configurable settings and state in `.claude/plugin-name.local.md` files within the project directory. This pattern uses YAML frontmatter for structured configuration and markdown content for prompts or additional context.\n\n**Key characteristics:**\n- File location: `.claude/plugin-name.local.md` in project root\n- Structure: YAML frontmatter + markdown body\n- Purpose: Per-project plugin configuration and state\n- Usage: Read from hooks, commands, and agents\n- Lifecycle: User-managed (not in git, should be in `.gitignore`)\n\n## File Structure\n\n### Basic Template\n\n```markdown\n---\nenabled: true\nsetting1: value1\nsetting2: value2\nnumeric_setting: 42\nlist_setting: [\"item1\", \"item2\"]\n---\n\n# Additional Context\n\nThis markdown body can contain:\n- Task descriptions\n- Additional instructions\n- Prompts to feed back to Claude\n- Documentation or notes\n```\n\n### Example: Plugin State File\n\n**.claude/my-plugin.local.md:**\n```markdown\n---\nenabled: true\nstrict_mode: false\nmax_retries: 3\nnotification_level: info\ncoordinator_session: team-leader\n---\n\n# Plugin Configuration\n\nThis plugin is configured for standard validation mode.\nContact @team-lead with questions.\n```\n\n## Reading Settings Files\n\n### From Hooks (Bash Scripts)\n\n**Pattern: Check existence and parse frontmatter**\n\n```bash\n#!/bin/bash\nset -euo pipefail\n\n# Define state file path\nSTATE_FILE=\".claude/my-plugin.local.md\"\n\n# Quick exit if file doesn't exist\nif [[ ! -f \"$STATE_FILE\" ]]; then\n  exit 0  # Plugin not configured, skip\nfi\n\n# Parse YAML frontmatter (between --- markers)\nFRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' \"$STATE_FILE\")\n\n# Extract individual fields\nENABLED=$(echo \"$FRONTMATTER\" | grep '^enabled:' | sed 's/enabled: *//' | sed 's/^\"\\(.*\\)\"$/\\1/')\nSTRICT_MODE=$(echo \"$FRONTMATTER\" | grep '^strict_mode:' | sed 's/strict_mode: *//' | sed 's/^\"\\(.*\\)\"$/\\1/')\n\n# Check if enabled\nif [[ \"$ENABLED\" != \"true\" ]]; then\n  exit 0  # Disabled\nfi\n\n# Use configuration in hook logic\nif [[ \"$STRICT_MODE\" == \"true\" ]]; then\n  # Apply strict validation\n  # ...\nfi\n```\n\nSee `examples/read-settings-hook.sh` for complete working example.\n\n### From Commands\n\nCommands can read settings files to customize behavior:\n\n```markdown\n---\ndescription: Process data with plugin\nallowed-tools: [\"Read\", \"Bash\"]\n---\n\n# Process Command\n\nSteps:\n1. Check if settings exist at `.claude/my-plugin.local.md`\n2. Read configuration using Read tool\n3. Parse YAML frontmatter to extract settings\n4. Apply settings to processing logic\n5. Execute with configured behavior\n```\n\n### From Agents\n\nAgents can reference settings in their instructions:\n\n```markdown\n---\nname: configured-agent\ndescription: Agent that adapts to project settings\n---\n\nCheck for plugin settings at `.claude/my-plugin.local.md`.\nIf present, parse YAML frontmatter and adapt behavior according to:\n- enabled: Whether plugin is active\n- mode: Processing mode (strict, standard, lenient)\n- Addit",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: plugin-settings"
+}

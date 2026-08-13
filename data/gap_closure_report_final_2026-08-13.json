@@ -1,0 +1,45 @@
+﻿{
+    "timestamp":  "2026-08-13",
+    "project":  "Hermes/OrcaMax",
+    "service":  {
+                    "url":  "http://127.0.0.1:7777",
+                    "status_api_ok":  true,
+                    "pid":  "22916-or-restarted"
+                },
+    "tests":  {
+                  "full_local_test_pass":  22,
+                  "full_local_test_fail":  0,
+                  "full_local_test_error":  0,
+                  "python_compile_ok":  true
+              },
+    "probe":  {
+                  "release_offline_build_ok":  true,
+                  "path":  "D:\\Hermes\\bin\\probe.exe",
+                  "search_ok":  true,
+                  "symbols_api_ok":  true,
+                  "tree_sitter_parser":  "embedded in Probe",
+                  "lookup_fallback_added":  "D:\\Hermes\\bin"
+              },
+    "playwright":  {
+                       "dependencies_local":  true,
+                       "chromium_local":  true,
+                       "browser_smoke_local_api_ok":  true,
+                       "external_url_blocked":  true,
+                       "helper":  "D:\\Hermes\\core\\local_browser_smoke.js"
+                   },
+    "adapters":  {
+                     "file":  "D:\\Hermes\\core\\local_imports.py",
+                     "operations":  [
+                                        "imports.code_search",
+                                        "imports.code_symbols",
+                                        "imports.code_query",
+                                        "imports.browser_smoke"
+                                    ],
+                     "compile_ok":  true
+                 },
+    "remaining":  {
+                      "standalone_tree_sitter_cli":  "closed",
+                      "npm_audit":  "4 vulnerabilities reported by npm audit (1 low, 2 moderate, 1 high)",
+                      "runtime_external_network":  "blocked by local-only policy"
+                  }
+}

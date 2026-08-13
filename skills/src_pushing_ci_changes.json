@@ -1,0 +1,22 @@
+{
+  "name": "src_pushing_ci_changes",
+  "description": "Pushing GitHub Actions changes, resolving push rejection, requesting upload exceptions.",
+  "trigger_keywords": [
+    "pushing",
+    "github",
+    "actions",
+    "changes",
+    "resolving",
+    "push",
+    "rejection",
+    "requesting"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "The Codex repository prevents anyone from uploading changes to its CI configuration unless they've\nbeen granted a temporary role.\n\nIn order to push changes to `.github/**/*.yml` and related files you'll need the user to read\ngo/workflow-approvals and request an approval through that flow. It is not possible for you to\nmake progress by requesting an exemption yourself.\n\nIf you know you're about to push changes that would fail due to these restrictions you should still\ntry to push anyways to confirm the user's account doesn't already have the necessary approval.\n\nIf you encounter a failed push due to these restrictions, share the go/workflow-approvals link with\nthe user and ask them to return control to you once the approval has propagated to GitHub.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: pushing-ci-changes"
+}

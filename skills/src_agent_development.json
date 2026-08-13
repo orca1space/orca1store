@@ -1,0 +1,24 @@
+{
+  "name": "src_agent_development",
+  "description": "This skill should be used when the user asks to \"create an agent\", \"add an agent\", \"write a subagent\", \"agent frontmatter\", \"when to use description\", \"agent examples\", \"agent tools\", \"agent colors\", \"autonomous agent\", or needs guidance on agent structure, system prompts, triggering conditions, or ",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "agent",
+    "development"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Agent Development for Claude Code Plugins\n\n## Overview\n\nAgents are autonomous subprocesses that handle complex, multi-step tasks independently. Understanding agent structure, triggering conditions, and system prompt design enables creating powerful autonomous capabilities.\n\n**Key concepts:**\n- Agents are FOR autonomous work, commands are FOR user-initiated actions\n- Markdown file format with YAML frontmatter\n- Triggering via description field with examples\n- System prompt defines agent behavior\n- Model and color customization\n\n## Agent File Structure\n\n### Complete Format\n\n```markdown\n---\nname: agent-identifier\ndescription: Use this agent when [triggering conditions]. Typical triggers include [scenario 1 in prose], [scenario 2 in prose], and [scenario 3 in prose]. See \"When to invoke\" in the agent body for worked scenarios.\nmodel: inherit\ncolor: blue\ntools: [\"Read\", \"Write\", \"Grep\"]\n---\n\nYou are [agent role description]...\n\n## When to invoke\n\n[Two to four representative scenarios written as prose, e.g.:]\n- **[Scenario name].** [What the situation looks like and what the agent should do.]\n- **[Scenario name].** [Same.]\n\n**Your Core Responsibilities:**\n1. [Responsibility 1]\n2. [Responsibility 2]\n\n**Analysis Process:**\n[Step-by-step workflow]\n\n**Output Format:**\n[What to return]\n```\n\n## Frontmatter Fields\n\n### name (required)\n\nAgent identifier used for namespacing and invocation.\n\n**Format:** lowercase, numbers, hyphens only\n**Length:** 3-50 characters\n**Pattern:** Must start and end with alphanumeric\n\n**Good examples:**\n- `code-reviewer`\n- `test-generator`\n- `api-docs-writer`\n- `security-analyzer`\n\n**Bad examples:**\n- `helper` (too generic)\n- `-agent-` (starts/ends with hyphen)\n- `my_agent` (underscores not allowed)\n- `ag` (too short, < 3 chars)\n\n### description (required)\n\nDefines when Claude should trigger this agent. **This is the most critical field** — it is loaded into context whenever the agent is registered, so the harness can decide when to dispatch.\n\n**Must include:**\n1. Triggering conditions (\"Use this agent when...\")\n2. A short prose summary of the typical trigger scenarios\n3. A pointer to a \"When to invoke\" section in the agent body for the detailed worked scenarios\n\n**Format:**\n```\nUse this agent when [conditions]. Typical triggers include [scenario 1 in prose], [scenario 2 in prose], and [scenario 3 in prose]. See \"When to invoke\" in the agent body for worked scenarios.\n```\n\n**Best practices:**\n- Name 2-4 trigger scenarios in the prose summary\n- Cover both proactive (assistant invokes itself) and reactive (user requests) triggering\n- Cover different phrasings of the same intent\n- Be specific about when NOT to use the agent\n- Put detailed scenarios in the body under \"When to invoke\" as a bullet list of prose descriptions\n\n### model (required)\n\nWhich model the agent should use.\n\n**Options:**\n- `inherit` - Use same model as parent (recommended)\n- `sonnet` - Claude Sonnet (balanced)\n- `opus` - Claude Opus (most capable, expensive)\n- `ha",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: agent-development"
+}

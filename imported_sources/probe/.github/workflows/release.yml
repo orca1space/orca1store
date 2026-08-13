@@ -1,0 +1,528 @@
+name: Build and Release Probe Binary
+
+on:
+  push:
+    tags:
+      - "v*" # Trigger on tags like v1.0.0, v1.1.0, etc.
+
+permissions:
+  contents: write # Required to upload release assets
+  id-token: write # Required for npm OIDC authentication
+
+jobs:
+  build-and-release:
+    name: Build and Release for ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            binary_ext: ""
+            archive_ext: "tar.gz"
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            binary_ext: ""
+            archive_ext: "tar.gz"
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            binary_ext: ""
+            archive_ext: "tar.gz"
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary_ext: ".exe"
+            archive_ext: "zip"
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            binary_ext: ""
+            archive_ext: "tar.gz"
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install Rust toolchain
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@1.96.1
+        with:
+          targets: ${{ matrix.target }}
+          components: rustfmt, clippy
+
+      # Setup Rust cache
+      - name: Setup Rust cache
+        uses: actions/cache@v4
+        timeout-minutes: 10
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('rust-toolchain', 'rust-toolchain.toml') || 'stable' }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}-
+            ${{ runner.os }}-${{ matrix.target }}-cargo-
+            ${{ runner.os }}-cargo-
+
+      # Install cross for musl targets
+      - name: Install cross (for musl targets)
+        if: contains(matrix.target, 'unknown-linux-musl')
+        run: |
+          cargo install cross --git https://github.com/cross-rs/cross
+
+      # Build the Rust project
+      - name: Build Release
+        timeout-minutes: 45
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          if [[ "$TARGET" == "x86_64-pc-windows-msvc" ]]; then
+            # For Windows, use static linking of the C++ runtime
+            mkdir -p .cargo
+            echo '[target.x86_64-pc-windows-msvc]' > .cargo/config.toml
+            echo 'rustflags = ["-C", "target-feature=+crt-static", "-C", "link-args=/DEBUG:NONE", "-C", "link-args=/NOLOGO"]' >> .cargo/config.toml
+            cargo build --release --target ${{ matrix.target }}
+          elif [[ "$TARGET" == *"unknown-linux-musl" ]]; then
+            # Use cross for musl targets so required C cross toolchains are provided.
+            cross build --release --target ${{ matrix.target }}
+          else
+            # For other platforms, use the default build
+            cargo build --release --target ${{ matrix.target }}
+          fi
+
+      # Package the binary into an archive
+      - name: Package Binary
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          BINARY_NAME="probe"
+          VERSION="${GITHUB_REF#refs/tags/}" # Extracts tag like v1.0.0
+          ARCHIVE_NAME="$BINARY_NAME-${VERSION}-${{ matrix.target }}"
+          mkdir -p "$ARCHIVE_NAME"
+
+          # Copy binary
+          cp "target/${{ matrix.target }}/release/${BINARY_NAME}${{ matrix.binary_ext }}" "$ARCHIVE_NAME/"
+
+          # Copy documentation and license files
+          cp README.md "${ARCHIVE_NAME}/" || true
+          cp LICENSE "${ARCHIVE_NAME}/" || true
+          cp ABOUT.MD "${ARCHIVE_NAME}/" || true
+
+          # Create archive
+          if [ "${{ matrix.archive_ext }}" = "tar.gz" ]; then
+            tar -czf "${ARCHIVE_NAME}.tar.gz" "${ARCHIVE_NAME}"
+            echo "ASSET=${ARCHIVE_NAME}.tar.gz" >> "$GITHUB_ENV"
+          elif [ "${{ matrix.archive_ext }}" = "zip" ]; then
+            # Use PowerShell's built-in Compress-Archive (Windows native, no third-party tools needed)
+            powershell -Command "Compress-Archive -Path '${ARCHIVE_NAME}' -DestinationPath '${ARCHIVE_NAME}.zip'"
+            echo "ASSET=${ARCHIVE_NAME}.zip" >> "$GITHUB_ENV"
+          fi
+
+          # Generate SHA256 checksum
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            certutil -hashfile "${ARCHIVE_NAME}.${{ matrix.archive_ext }}" SHA256 | grep -v "^SHA256" | grep -v "^CertUtil" > "${ARCHIVE_NAME}.${{ matrix.archive_ext }}.sha256"
+          else
+            shasum -a 256 "${ARCHIVE_NAME}.${{ matrix.archive_ext }}" > "${ARCHIVE_NAME}.${{ matrix.archive_ext }}.sha256"
+          fi
+          echo "CHECKSUM=${ARCHIVE_NAME}.${{ matrix.archive_ext }}.sha256" >> "$GITHUB_ENV"
+
+      # Upload artifact for npm packaging and release
+      - name: Upload artifact for npm packaging
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.target }}
+          path: ${{ env.ASSET }}
+          retention-days: 1
+
+      # Upload checksum for release
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum-${{ matrix.target }}
+          path: ${{ env.CHECKSUM }}
+          retention-days: 1
+
+  # Create GitHub release with all assets (runs once after all builds complete)
+  create-release:
+    name: Create GitHub Release
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: binary-*
+          merge-multiple: false
+
+      - name: Download all checksum artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          pattern: checksum-*
+          merge-multiple: false
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -type f \( -name "*.tar.gz" -o -name "*.zip" \) -exec cp {} release-assets/ \;
+          find checksums -type f -name "*.sha256" -exec cp {} release-assets/ \;
+          echo "Release assets:"
+          ls -la release-assets/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Publishing to crates.io
+  publish-crates-io:
+    name: Publish to crates.io
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    if: "!contains(github.ref_name, 'rc')"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@1.96.1
+        with:
+          components: rustfmt, clippy
+
+      - name: Setup Rust cache
+        uses: actions/cache@v4
+        timeout-minutes: 10
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('rust-toolchain', 'rust-toolchain.toml') || 'stable' }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-
+            ${{ runner.os }}-cargo-
+
+      - name: Verify package can be published
+        run: cargo package --list
+
+      - name: Publish to crates.io
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+
+
+  publish-npm-package:
+    name: Publish Node.js Package to npm
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: extract_version
+        run: |
+          # Remove 'v' prefix from tag (e.g., v1.0.0 -> 1.0.0)
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Extracted version: $VERSION"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: cd npm && npm install
+
+      - name: Update package version
+        run: |
+          cd npm
+          # Update version in package.json without git operations
+          npm version "$VERSION" --no-git-tag-version
+          echo "Updated npm package.json to version $VERSION"
+
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: binary-*
+          merge-multiple: false
+
+      - name: Bundle binaries for npm package
+        run: |
+          # Create binaries directory
+          mkdir -p npm/bin/binaries
+
+          echo "Copying built binaries to npm package..."
+
+          # Copy all downloaded artifacts to npm binaries directory
+          # Each artifact is in its own directory: artifacts/binary-{target}/*.tar.gz or *.zip
+          find artifacts -type f \( -name "*.tar.gz" -o -name "*.zip" \) -exec cp {} npm/bin/binaries/ \;
+
+          # Verify all files were copied
+          echo "Bundled binaries:"
+          ls -lh npm/bin/binaries/
+
+          # Verify we have exactly 5 binaries (count only .tar.gz and .zip files)
+          BINARY_COUNT=$(find npm/bin/binaries/ -type f \( -name "*.tar.gz" -o -name "*.zip" \) | wc -l)
+          echo "Found ${BINARY_COUNT} binary archives"
+          if [ "$BINARY_COUNT" -ne 5 ]; then
+            echo "ERROR: Expected 5 binary archives, found ${BINARY_COUNT}"
+            ls -la npm/bin/binaries/
+            exit 1
+          fi
+
+          # Verify total size (should be ~25-30MB)
+          du -sh npm/bin/binaries/
+
+      - name: Build all npm packages
+        run: cd npm && npm run build
+
+      - name: Publish to npm
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd npm
+          # Publish alpha/beta as 'next', rc as both 'latest' and 'rc', stable as 'latest'
+          # Note: npm requires explicit --tag for prerelease versions
+          if [[ "$VERSION" == *-alpha* ]] || [[ "$VERSION" == *-beta* ]]; then
+            npm publish --access public --provenance --tag next
+          elif [[ "$VERSION" == *-rc* ]]; then
+            npm publish --access public --provenance --tag latest
+            npm dist-tag add "@probelabs/probe@$VERSION" rc || true
+          else
+            npm publish --access public --provenance --tag latest
+          fi
+
+  publish-probe-chat-package:
+    name: Publish Probe Chat Package to npm
+    needs: publish-npm-package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: extract_version
+        run: |
+          # Remove 'v' prefix from tag (e.g., v1.0.0 -> 1.0.0)
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Extracted version: $VERSION"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: cd examples/chat && npm install
+
+      - name: Run tests
+        run: cd examples/chat && npm test
+
+      - name: Verify package contents
+        run: |
+          cd examples/chat
+          echo "Verifying package contents with npm pack..."
+          npm pack --dry-run 2>&1 | tee pack-output.txt
+
+          # Verify critical files are included
+          for file in ChatSessionManager.js webServer.js index.js probeChat.js; do
+            if ! grep -q "$file" pack-output.txt; then
+              echo "ERROR: $file is missing from package!"
+              exit 1
+            fi
+          done
+          echo "All critical files verified in package"
+
+      - name: Update package version
+        run: |
+          cd examples/chat
+          # Update version in package.json without git operations
+          npm version "$VERSION" --no-git-tag-version
+          echo "Updated probe-chat package.json to version $VERSION"
+
+      - name: Publish to npm
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd examples/chat
+          # Publish alpha/beta as 'next', rc as both 'latest' and 'rc', stable as 'latest'
+          # Note: npm requires explicit --tag for prerelease versions
+          if [[ "$VERSION" == *-alpha* ]] || [[ "$VERSION" == *-beta* ]]; then
+            npm publish --access public --provenance --tag next
+          elif [[ "$VERSION" == *-rc* ]]; then
+            npm publish --access public --provenance --tag latest
+            npm dist-tag add "probe-chat@$VERSION" rc || true
+          else
+            npm publish --access public --provenance --tag latest
+          fi
+
+# The publish-probe-web-package job has been removed as the web functionality
+# has been merged into the probe-chat package
+
+  update-visor:
+    name: Update Probe in Visor
+    needs: publish-npm-package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: probelabs
+          repositories: visor
+
+      - name: Checkout visor repo
+        uses: actions/checkout@v4
+        with:
+          repository: probelabs/visor
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Update probe version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "Updating @probelabs/probe to version $VERSION"
+          npm install "@probelabs/probe@$VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "chore: update @probelabs/probe to ${{ github.ref_name }}"
+          branch: update-probe-${{ github.ref_name }}
+          title: "chore: update @probelabs/probe to ${{ github.ref_name }}"
+          body: |
+            This PR updates `@probelabs/probe` to version `${{ github.ref_name }}`.
+
+            Triggered by release: ${{ github.repository }}@${{ github.ref_name }}
+
+            ## Changes
+            - Updates `@probelabs/probe` dependency to `${{ github.ref_name }}`
+
+            🤖 Auto-generated by release workflow
+
+  publish-docker-images:
+    name: Publish Docker Images
+    needs: [create-release, publish-npm-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_HUB_USERNAME || 'probelabs' }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Extract version from tag
+        id: extract_version
+        run: |
+          # Keep the full tag (e.g., v1.0.0) to match binary naming
+          VERSION="${GITHUB_REF#refs/tags/}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Extracted version: $VERSION"
+
+      - name: Download Linux binaries from published release
+        run: |
+          # Create binaries directory
+          mkdir -p binaries/amd64 binaries/arm64
+          
+          # Download and extract x86_64 binary
+          wget -O probe-${{ env.VERSION }}-x86_64-unknown-linux-musl.tar.gz \
+            "https://github.com/${{ github.repository }}/releases/download/${{ env.VERSION }}/probe-${{ env.VERSION }}-x86_64-unknown-linux-musl.tar.gz"
+          
+          # Download and extract aarch64 binary  
+          wget -O probe-${{ env.VERSION }}-aarch64-unknown-linux-musl.tar.gz \
+            "https://github.com/${{ github.repository }}/releases/download/${{ env.VERSION }}/probe-${{ env.VERSION }}-aarch64-unknown-linux-musl.tar.gz"
+          
+          # Extract binaries to architecture-specific directories
+          tar -xzf probe-${{ env.VERSION }}-x86_64-unknown-linux-musl.tar.gz
+          tar -xzf probe-${{ env.VERSION }}-aarch64-unknown-linux-musl.tar.gz
+          
+          cp probe-${{ env.VERSION }}-x86_64-unknown-linux-musl/probe binaries/amd64/
+          cp probe-${{ env.VERSION }}-aarch64-unknown-linux-musl/probe binaries/arm64/
+          
+          # Verify binaries exist and are executable
+          ls -la binaries/amd64/ binaries/arm64/
+          file binaries/amd64/probe binaries/arm64/probe
+          chmod +x binaries/amd64/probe binaries/arm64/probe
+
+      # Build and push Probe CLI image
+      - name: Build and push Probe Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ vars.DOCKER_HUB_USERNAME || 'probelabs' }}/probe:${{ env.VERSION }}
+            ${{ vars.DOCKER_HUB_USERNAME || 'probelabs' }}/probe:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+      # Build and push Probe Chat image
+      - name: Build and push Probe Chat Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./examples/chat
+          file: ./examples/chat/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ vars.DOCKER_HUB_USERNAME || 'probelabs' }}/probe-chat:${{ env.VERSION }}
+            ${{ vars.DOCKER_HUB_USERNAME || 'probelabs' }}/probe-chat:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}

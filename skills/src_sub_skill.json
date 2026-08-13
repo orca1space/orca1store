@@ -1,0 +1,23 @@
+{
+  "name": "src_sub_skill",
+  "description": "Discover and reorganize the skill inventory into hierarchical sub-skill bundles. Use when the user asks to review, group, or consolidate skills into a parent bundle.",
+  "trigger_keywords": [
+    "discover",
+    "and",
+    "reorganize",
+    "the",
+    "skill",
+    "inventory",
+    "into",
+    "hierarchical",
+    "sub"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Sub-skill\n\nContainer skill for analyzing the local skill inventory and reorganizing it into hierarchical sub-skill bundles (`has-sub-skill: true` parents with children inside).\n\n## When to use\n\n- The user asks to review, reorganize, or consolidate skills.\n- There are many loosely-related skills that might benefit from hierarchical grouping.\n- The user wants to evaluate whether a new skill should be a sub-skill of an existing one.\n\n## Sub-skills\n\n- **`sub-skill.review`** — Analyze the current inventory and propose candidate sub-skill groupings.\n- **`sub-skill.consolidate`** — Apply an approved grouping by moving skills into a parent bundle, with timestamped backups.\n\nThe usual flow is `sub-skill.review` first (read-only proposal), then `sub-skill.consolidate` after the user approves a plan. Never run consolidate without an explicit go-ahead from the user.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: sub-skill"
+}

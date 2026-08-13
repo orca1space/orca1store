@@ -1,0 +1,23 @@
+{
+  "name": "src_cardputer_buddy",
+  "description": "Iterate on the Cardputer-Adv MicroPython app bundle (Claude Buddy, Snake, Hello) after the device is already provisioned via m5-onboard. Use when the user wants to add a new app, push a single changed .py without re-flashing, watch device serial logs, or run a one-shot REPL command. Trigger on \"add ",
+  "trigger_keywords": [
+    "iterate",
+    "the",
+    "cardputer",
+    "adv",
+    "micropython",
+    "app",
+    "bundle",
+    "claude",
+    "buddy"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Cardputer Buddy app bundle\n\nThe `buddy/` directory in the local `build-with-claude` clone is the MicroPython payload that `m5-onboard` installs onto `/flash/`. Work inside that clone.\n\n## Device layout\n\n```\n/flash/\n├── main.py              launcher menu (replaces UIFlow's boot flow)\n├── buddy_*.py           shared libs (BLE, UI, state, protocol, chars)\n├── burst_frames.py      sprite frames\n└── apps/\n    ├── claude_buddy.py  BLE client → Claude Desktop's Hardware Buddy\n    ├── hello_cardputer.py\n    └── snake.py\n```\n\n`main.py` scans `/flash/apps/` at boot and lists every `.py` as a menu entry. Drop a file into `buddy/device/apps/`, push it, and it appears on next boot.\n\n## Adding an app\n\nCrib from `buddy/device/apps/hello_cardputer.py` — smallest example of keyboard polling, font, and exit conventions. Then push without re-flashing:\n\n```bash\npython3 onboard/scripts/install_apps.py --port <PORT> --src buddy\n```\n\n`<PORT>` is whatever `detect.py` reported last run (e.g. `/dev/cu.usbmodem1101`, `/dev/ttyACM0`, `COM3`).\n\n## Dev loop tooling (`buddy/scripts/`)\n\n```bash\n# Push a subset of files over USB-serial\npython3 buddy/scripts/push.py --port <PORT> --files apps/snake.py\n\n# Watch device logs\npython3 buddy/scripts/tail_serial.py --port <PORT>\n\n# One-shot REPL exec\npython3 buddy/scripts/repl_run.py --port <PORT> --script \"import os; print(os.listdir('/flash'))\"\n```",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: cardputer-buddy"
+}

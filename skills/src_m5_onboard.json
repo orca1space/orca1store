@@ -1,0 +1,23 @@
+{
+  "name": "src_m5_onboard",
+  "description": "End-to-end onboarding for a freshly-plugged-in M5Stack ESP32 device (Cardputer, Cardputer-Adv, Core, CoreS3, Stick) — detect on USB, flash UIFlow 2.0 firmware, and install the Claude Buddy MicroPython app bundle. Use whenever the user plugs in or wants to flash/provision/reset an M5Stack or ESP32 bo",
+  "trigger_keywords": [
+    "end",
+    "end",
+    "onboarding",
+    "for",
+    "freshly",
+    "plugged",
+    "stack",
+    "esp",
+    "onboard"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# M5Stack Onboarding\n\nThis skill automates the full cold-start workflow for an M5Stack ESP32 device: detect on USB, identify model, flash UIFlow 2.0, and push a MicroPython app bundle onto `/flash/` so the device boots into user software. The apps we ship (Claude Buddy, Snake, Hello) talk over BLE or USB. The workflow runs on macOS, Linux, and Windows; the skill was developed against an M5Stack Basic v2.6 (CH9102 bridge, ESP32-D0WDQ6-V3, 16 MB flash) and generalized to cover the rest of the Core family, with the Cardputer-Adv (ESP32-S3, native USB) as the current default target.\n\n## Where the scripts live\n\nThis skill ships as part of the `cwc-makers` plugin for reference, but the executable scripts and the `buddy/` app bundle live in a local clone of https://github.com/moremas/build-with-claude (the `/maker-setup` command creates this clone). Run every `scripts/*.py` invocation below from inside that clone's `onboard/` directory so `--apps buddy` resolves to the sibling `buddy/device/` payload.\n\n\n## When to use\n\nUse this when a user plugs in an M5Stack device and wants it provisioned. The decision tree:\n\n- **Fresh/unknown device** → run `onboard.py --apps buddy` end-to-end (detect → identify → flash → install apps). This is the default path.\n- **Already-flashed device, user just wants apps installed/refreshed** → run `install_apps.py --src buddy` (or any `--src <path>` to a directory of `.py` files).\n- **Flashed device, something feels broken** → run `smoke_test.py` (I2C + LCD + speaker + button check).\n- **User wants to know what's on the bus / what the device can do** → `smoke_test.py`.\n\nIf multiple devices are plugged in, ask which port to target — don't guess. If the user is provisioning a device they previously worked with (e.g. \"same thing as last time\" or \"another Buddy\"), default to `--apps buddy` unless they say otherwise.\n\n### Which variant to assume\n\nThe rig this skill lives on provisions **Cardputer-Adv** boards overwhelmingly, so `onboard.py` now defaults to `--variant cardputer-adv`. In practice that means:\n\n- If the user says nothing about the model, go with the default. They're almost certainly holding a Cardputer-Adv.\n- If the user says \"Cardputer\" (no \"Adv\"), ask — the two models share a form factor but take different firmware images, and flashing the wrong one boot-loops the device.\n- If the user names any other board (\"Core2\", \"CoreS3\", \"Basic\", \"Fire\"), pass the matching `--variant` explicitly — the default won't apply.\n- The chip is ESP32-S3 either way, and `detect.py` won't be able to tell Cardputer from Cardputer-Adv before UIFlow is flashed (same native USB-JTAG VID, no pre-flash I2C probe). So this is a user-intent question, not a hardware-fingerprint one.\n\n## The workflow\n\nThe main orchestrator is `scripts/onboard.py`. It drives the sub-scripts in order and handles the handoffs between them (waiting for reboots, capturing MAC, reporting progress). Prefer calling it directly over stitching the sub-scripts yourself unless",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: m5-onboard"
+}

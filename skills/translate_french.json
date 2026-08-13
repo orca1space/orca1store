@@ -1,0 +1,22 @@
+{
+  "name": "translate_french",
+  "description": "Translate text to or from French (Français)",
+  "trigger_keywords": [
+    "translate to French",
+    "ترجم إلى Français",
+    "in French",
+    "بـFrançais",
+    "translate French",
+    "ترجمة Français"
+  ],
+  "procedure": "1. Identify the source language and target language.\n2. If translating TO French: produce a natural, idiomatic French translation.\n3. If translating FROM French: detect target language and translate accurately.\n4. Preserve meaning, tone, and cultural nuances.\n5. If a phrase has no direct equivalent, provide the closest cultural match with a brief note.",
+  "examples": [
+    {
+      "input": "Translate 'hello' to French",
+      "output": "Bonjour"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "translate_german",
+  "description": "Translate text to or from German (Deutsch)",
+  "trigger_keywords": [
+    "translate to German",
+    "ترجم إلى Deutsch",
+    "in German",
+    "بـDeutsch",
+    "translate German",
+    "ترجمة Deutsch"
+  ],
+  "procedure": "1. Identify the source language and target language.\n2. If translating TO German: produce a natural, idiomatic German translation.\n3. If translating FROM German: detect target language and translate accurately.\n4. Preserve meaning, tone, and cultural nuances.\n5. If a phrase has no direct equivalent, provide the closest cultural match with a brief note.",
+  "examples": [
+    {
+      "input": "Translate 'hello' to German",
+      "output": "Hallo"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

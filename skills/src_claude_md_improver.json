@@ -1,0 +1,23 @@
+{
+  "name": "src_claude_md_improver",
+  "description": "Audit and improve CLAUDE.md files in repositories. Use when user asks to check, audit, update, improve, or fix CLAUDE.md files. Scans for all CLAUDE.md files, evaluates quality against templates, outputs quality report, then makes targeted updates. Also use when the user mentions \"CLAUDE.md maintena",
+  "trigger_keywords": [
+    "audit",
+    "and",
+    "improve",
+    "claude",
+    "files",
+    "repositories",
+    "use",
+    "when",
+    "improver"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# CLAUDE.md Improver\n\nAudit, evaluate, and improve CLAUDE.md files across a codebase to ensure Claude Code has optimal project context.\n\n**This skill can write to CLAUDE.md files.** After presenting a quality report and getting user approval, it updates CLAUDE.md files with targeted improvements.\n\n## Workflow\n\n### Phase 1: Discovery\n\nFind all CLAUDE.md files in the repository:\n\n```bash\nfind . -name \"CLAUDE.md\" -o -name \".claude.md\" -o -name \".claude.local.md\" 2>/dev/null | head -50\n```\n\n**File Types & Locations:**\n\n| Type | Location | Purpose |\n|------|----------|---------|\n| Project root | `./CLAUDE.md` | Primary project context (checked into git, shared with team) |\n| Local overrides | `./.claude.local.md` | Personal/local settings (gitignored, not shared) |\n| Global defaults | `~/.claude/CLAUDE.md` | User-wide defaults across all projects |\n| Package-specific | `./packages/*/CLAUDE.md` | Module-level context in monorepos |\n| Subdirectory | Any nested location | Feature/domain-specific context |\n\n**Note:** Claude auto-discovers CLAUDE.md files in parent directories, making monorepo setups work automatically.\n\n### Phase 2: Quality Assessment\n\nFor each CLAUDE.md file, evaluate against quality criteria. See [references/quality-criteria.md](references/quality-criteria.md) for detailed rubrics.\n\n**Quick Assessment Checklist:**\n\n| Criterion | Weight | Check |\n|-----------|--------|-------|\n| Commands/workflows documented | High | Are build/test/deploy commands present? |\n| Architecture clarity | High | Can Claude understand the codebase structure? |\n| Non-obvious patterns | Medium | Are gotchas and quirks documented? |\n| Conciseness | Medium | No verbose explanations or obvious info? |\n| Currency | High | Does it reflect current codebase state? |\n| Actionability | High | Are instructions executable, not vague? |\n\n**Quality Scores:**\n- **A (90-100)**: Comprehensive, current, actionable\n- **B (70-89)**: Good coverage, minor gaps\n- **C (50-69)**: Basic info, missing key sections\n- **D (30-49)**: Sparse or outdated\n- **F (0-29)**: Missing or severely outdated\n\n### Phase 3: Quality Report Output\n\n**ALWAYS output the quality report BEFORE making any updates.**\n\nFormat:\n\n```\n## CLAUDE.md Quality Report\n\n### Summary\n- Files found: X\n- Average score: X/100\n- Files needing update: X\n\n### File-by-File Assessment\n\n#### 1. ./CLAUDE.md (Project Root)\n**Score: XX/100 (Grade: X)**\n\n| Criterion | Score | Notes |\n|-----------|-------|-------|\n| Commands/workflows | X/20 | ... |\n| Architecture clarity | X/20 | ... |\n| Non-obvious patterns | X/15 | ... |\n| Conciseness | X/15 | ... |\n| Currency | X/15 | ... |\n| Actionability | X/15 | ... |\n\n**Issues:**\n- [List specific problems]\n\n**Recommended additions:**\n- [List what should be added]\n\n#### 2. ./packages/api/CLAUDE.md (Package-specific)\n...\n```\n\n### Phase 4: Targeted Updates\n\nAfter outputting the quality report, ask user for confirmation before updating.\n\n**Update Guidelines (Critical):**\n\n1. **Propose targeted addition",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: claude-md-improver"
+}

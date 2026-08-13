@@ -1,0 +1,24 @@
+{
+  "name": "src_gen_docs",
+  "description": "Update Kimi Code CLI user documentation after meaningful code changes that affect product behavior or user experience.",
+  "trigger_keywords": [
+    "update",
+    "kimi",
+    "code",
+    "cli",
+    "user",
+    "documentation",
+    "after",
+    "meaningful",
+    "gen",
+    "docs"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Gen Docs\n\n## Overview\n\nThis repository maintains bilingual user documentation under `docs/`. `docs/en/` and `docs/zh/` are mirrored pairs for most pages; update both in the same change. **Changelog is the exception** — English is the source, and Chinese is translated from English.\n\nUse this skill to update the corresponding documentation whenever the codebase has changes that affect product behavior or user experience.\n\nFor a **full pre-release audit** of all pages (detecting hallucinations and coverage gaps), use the `audit-docs` skill instead.\n\n## Prerequisites\n\nThis skill depends on the following being in place. If any are missing, stop and report to the user before continuing:\n\n- `docs/` directory with `docs/zh/`, `docs/en/`, and `docs/.vitepress/config.ts` set up (VitePress site).\n- `docs/AGENTS.md` style guide — defines source-of-truth rules, terminology table, typography, and writing style.\n- `docs/scripts/sync-changelog.mjs` — auto-syncs root `CHANGELOG.md` to `docs/en/release-notes/changelog.md`.\n- `translate-docs` skill in `.agents/skills/` — handles bilingual synchronization.\n\n## Workflow\n\n1. **Inspect changes**\n\n   - `git log main..HEAD --oneline` — commits on the current branch\n   - `git diff main..HEAD --stat` — file-level scope\n   - `ls .changeset/*.md` (excluding `README.md`) — pending changeset entries\n   - Read `CHANGELOG.md` and any subpackage `packages/*/CHANGELOG.md` for already-recorded entries.\n\n2. **Understand user-facing impact**\n\n   For each change, read the actual implementation when needed; **do not infer behavior from commit messages or PR titles alone**. Skip:\n\n   - Internal refactors with no externally visible behavior change\n   - Tests, CI, type-only changes\n   - Tooling / build-system changes that do not change how users invoke the CLI\n\n   If after the scan you conclude there is no user-facing impact, say so and stop.\n\n3. **Sync English changelog**\n\n   Run:\n\n   ```bash\n   node docs/scripts/sync-changelog.mjs\n   ```\n\n   This updates `docs/en/release-notes/changelog.md` from the root `CHANGELOG.md`. Never edit the docs changelog by hand.\n\n4. **Update user docs**\n\n   Following the rules in `docs/AGENTS.md`, edit the affected pages in whichever locale you are working in, then sync the mirror. Match terminology with the term table in `docs/AGENTS.md` and the existing wording in surrounding pages.\n\n   Cover all relevant sections:\n\n   - Guides (getting-started, use cases, interaction, sessions, IDE integration)\n   - Customization (skills, agents, MCP, hooks, plugins, etc.)\n   - Configuration (config files, env vars, providers, data locations)\n   - Reference (CLI subcommands, slash commands, keyboard shortcuts)\n   - Release notes (`docs/zh/release-notes/breaking-changes.md` if a breaking change is involved)\n\n5. **Sync bilingual content**\n\n   Invoke the `translate-docs` skill. It will:\n\n   - Sync updated non-changelog pages between `docs/en/` and `docs/zh/`\n   - Translate the English changelog → Chinese under `docs/zh/re",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: gen-docs"
+}

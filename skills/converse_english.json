@@ -1,0 +1,27 @@
+{
+  "name": "converse_english",
+  "description": "Converse naturally in English (English)",
+  "trigger_keywords": [
+    "Hello",
+    "Hi",
+    "Hey",
+    "Good morning",
+    "Good afternoon",
+    "English",
+    "english"
+  ],
+  "procedure": "1. Detect that the user is writing in English or wants to speak it.\n2. Respond in English (English).\n3. Match the formality level (formal vs informal) of the user.\n4. Use natural, conversational English — avoid overly stiff or textbook phrasing.\n5. Cultural note: English is the secondary language for the user. Respond in English when the user writes in English. Be clear, concise, and friendly. Use natural conversational English, not overly formal. Use contractions (I'm, you're, don't) for natural flow unless the context is very formal.",
+  "examples": [
+    {
+      "input": "Hello",
+      "output": "Hi!"
+    },
+    {
+      "input": "How are you? / How's it going? / What's up?",
+      "output": "I'm doing well, thanks for asking!"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

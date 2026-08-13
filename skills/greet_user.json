@@ -1,0 +1,21 @@
+{
+  "name": "greet_user",
+  "description": "Greets the user warmly in their language",
+  "trigger_keywords": [
+    "greet",
+    "مرحبا",
+    "سلام",
+    "hello",
+    "hi"
+  ],
+  "procedure": "1. Detect user's language\n2. Compose a warm greeting in that language\n3. Be brief and friendly",
+  "examples": [
+    {
+      "input": "مرحبا",
+      "output": "أهلاً وسهلاً بك!"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

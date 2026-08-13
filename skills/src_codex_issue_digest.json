@@ -1,0 +1,22 @@
+{
+  "name": "src_codex_issue_digest",
+  "description": "Run a GitHub issue digest for openai/codex by feature-area labels, all areas, and configurable time windows. Use when asked to summarize recent Codex bug reports or enhancement requests, especially for owner-specific labels such as tui, exec, app, or similar areas.",
+  "trigger_keywords": [
+    "run",
+    "github",
+    "issue",
+    "digest",
+    "for",
+    "openai",
+    "codex",
+    "feature"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Codex Issue Digest\n\n## Objective\n\nProduce a headline-first, insight-oriented digest of `openai/codex` issues for the requested feature-area labels over the previous 24 hours by default. Honor a different duration when the user asks for one, for example \"past week\" or \"48 hours\". Default to a summary-only response; include details only when requested.\n\nInclude only issues that currently have `bug` or `enhancement` plus at least one requested owner label. If the user asks for all areas or all labels, collect `bug`/`enhancement` issues across all labels.\n\n## Inputs\n\n- Feature-area labels, for example `tui exec`\n- `all areas` / `all labels` to scan all current feature labels\n- Optional repo override, default `openai/codex`\n- Optional time window, default previous 24 hours; examples: `48h`, `7d`, `1w`, `past week`\n\n## Workflow\n\n1. Run the collector from a current Codex repo checkout:\n\n```bash\npython3 .codex/skills/codex-issue-digest/scripts/collect_issue_digest.py --labels tui exec --window-hours 24\n```\n\nUse `--window \"past week\"` or `--window-hours 168` when the user asks for a non-default duration. Use `--all-labels` when the user says all areas or all labels.\n\n2. Use the JSON as the source of truth. It includes new issues, new issue comments, new reactions/upvotes, current labels, current reaction counts, model-ready `summary_inputs`, and detailed `digest_rows`.\n3. Choose the output mode from the user's request:\n   - Default mode: start the report with `## Summary` and do not emit `## Details`.\n   - Details-upfront mode: if the user asks for details, a table, a full digest, \"include details\", or similar, start with `## Summary`, then include `## Details`.\n   - Follow-up details mode: if the user asks for more detail after a summary-only digest, produce `## Details` from the existing collector JSON when it is still available; otherwise rerun the collector.\n4. In `## Summary`, write a headline-first executive summary:\n   - The first nonblank line under `## Summary` must be a single-line headline or judgment, not a bullet. It should be useful even if the reader stops there.\n   - On quiet days, prefer exactly: `No major issues reported by users.` Use this when there are no elevated rows, no newly repeated theme, and nothing that needs owner action.\n   - When users are surfacing notable issues, make the headline name the count or theme, for example `Two issues are being surfaced by users:`.\n   - Immediately under an active headline, list only the issues or themes driving attention, ordered by importance. Start each line with the row's `attention_marker` when present, then a concise owner-readable description and inline issue refs.\n   - Treat `🔥🔥` as headline-worthy and `🔥` as elevated. Do not add fire emoji yourself; only copy the row's `attention_marker`.\n   - Keep any extra summary detail after the headline to 1-3 terse lines, only when it adds a decision-relevant caveat, repeated theme, or owner action.\n   - Do not include routine counts, broad sta",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: codex-issue-digest"
+}

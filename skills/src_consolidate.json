@@ -1,0 +1,23 @@
+{
+  "name": "src_consolidate",
+  "description": "Apply an approved sub-skill grouping by moving user-specified skills into a parent bundle, with timestamped backups of every modified directory.",
+  "trigger_keywords": [
+    "apply",
+    "approved",
+    "sub",
+    "skill",
+    "grouping",
+    "moving",
+    "user",
+    "specified",
+    "consolidate"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Consolidate sub-skills (`sub-skill.consolidate`)\n\nExecute the reorganization by moving user-specified skills into a parent bundle, forming a sub-skill hierarchy.\n\n## When to use\n\n- The user has approved a grouping proposal (typically from `sub-skill.review`) and wants to apply it.\n- Migrating standalone skills into a new or existing parent bundle.\n\n## Process\n\n1. **Confirm the plan.** Restate which skills will move and where, and ask the user to confirm **before** making any file changes.\n2. **Back up every original skill directory.** Before moving anything, create a timestamped backup of each skill directory that will be modified.\n   - For a skill at `<root>/<skill-name>/SKILL.md`, back up the entire `<skill-name>` directory:\n     ```bash\n     cp -r <skill-name> \"<skill-name>.$(date +%Y%m%d-%H%M%S).bak\"\n     ```\n   - Keep all backups; never overwrite an existing backup file.\n3. **Create or update the parent bundle.**\n   - If the parent does not exist, create `<parent-name>/SKILL.md` with `has-sub-skill: true` in the frontmatter.\n   - If the parent already exists, ensure its frontmatter includes `has-sub-skill: true`.\n4. **Move child skills into the parent.** Move each child skill's entire directory under the parent bundle.\n   - Example: `web-search/` → `web-research/web-search/`\n5. **Keep documentation directory alignment.** When moving documentation, references, examples, assets, or other payload directories, align them with the new skill directory layout.\n   - Preserve relative links from `SKILL.md` to files such as `references/`, `assets/`, `examples/`, or templates.\n   - If a child skill moves from `<root>/<child>/` to `<root>/<parent>/<child>/`, its documentation payload should move with that child unless the approved plan says otherwise.\n   - Do not leave documentation in the old location or merge unrelated documentation directories together.\n6. **Verify the result.** List the new directory structure and confirm each moved skill still has a valid `SKILL.md` with required frontmatter (`name` and `description`). Check documentation directory alignment and relative links after the move.\n7. **Report the change.** Summarize what was moved, the new structure, any documentation directories that moved, and where backups are located.\n\n## Don'ts\n\n- **Never move skills without backing up first.**\n- **Never overwrite an existing backup** — always use a fresh timestamped suffix.\n- **Don't drop frontmatter or payload files** during the move; the entire directory must be preserved.\n- **Don't break documentation directory alignment** — references, assets, examples, and templates must stay aligned with the skill directory that uses them.\n- **Don't create deeply nested hierarchies** (3+ levels) unless the user explicitly requests it.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: consolidate"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "converse_arabic",
+  "description": "Converse naturally in Arabic (العربية)",
+  "trigger_keywords": [
+    "السلام عليكم",
+    "أهلاً وسهلاً",
+    "صباح الخير",
+    "مساء الخير",
+    "مرحبا",
+    "العربية",
+    "arabic"
+  ],
+  "procedure": "1. Detect that the user is writing in Arabic or wants to speak it.\n2. Respond in العربية (Arabic).\n3. Match the formality level (formal vs informal) of the user.\n4. Use natural, conversational Arabic — avoid overly stiff or textbook phrasing.\n5. Cultural note: Arabic is the primary language for the user. Respond in Arabic by default when the user writes in Arabic. Use Modern Standard Arabic (فصحى) for formal content, but you can use natural conversational Egyptian/Levantine dialects for casual chat. The user appreciates warm, friendly tone. Use appropriate honorifics when relevant.",
+  "examples": [
+    {
+      "input": "السلام عليكم",
+      "output": "أهلاً وسهلاً!"
+    },
+    {
+      "input": "كيف حالك؟ / إيش الأخبار؟",
+      "output": "I'm doing well, thanks for asking!"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "src_command_development",
+  "description": "This skill should be used when the user asks to \"create a slash command\", \"add a command\", \"write a custom command\", \"define command arguments\", \"use command frontmatter\", \"organize commands\", \"create command with file references\", \"interactive command\", \"use AskUserQuestion in command\", or needs gu",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "command",
+    "development"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Command Development for Claude Code\n\n> **Note:** The `.claude/commands/` directory is a legacy format. For new skills, use the `.claude/skills/<name>/SKILL.md` directory format. Both are loaded identically — the only difference is file layout. See the `skill-development` skill for the preferred format.\n\n## Overview\n\nSlash commands are frequently-used prompts defined as Markdown files that Claude executes during interactive sessions. Understanding command structure, frontmatter options, and dynamic features enables creating powerful, reusable workflows.\n\n**Key concepts:**\n\n- Markdown file format for commands\n- YAML frontmatter for configuration\n- Dynamic arguments and file references\n- Bash execution for context\n- Command organization and namespacing\n\n## Command Basics\n\n### What is a Slash Command?\n\nA slash command is a Markdown file containing a prompt that Claude executes when invoked. Commands provide:\n\n- **Reusability**: Define once, use repeatedly\n- **Consistency**: Standardize common workflows\n- **Sharing**: Distribute across team or projects\n- **Efficiency**: Quick access to complex prompts\n\n### Critical: Commands are Instructions FOR Claude\n\n**Commands are written for agent consumption, not human consumption.**\n\nWhen a user invokes `/command-name`, the command content becomes Claude's instructions. Write commands as directives TO Claude about what to do, not as messages TO the user.\n\n**Correct approach (instructions for Claude):**\n\n```markdown\nReview this code for security vulnerabilities including:\n\n- SQL injection\n- XSS attacks\n- Authentication issues\n\nProvide specific line numbers and severity ratings.\n```\n\n**Incorrect approach (messages to user):**\n\n```markdown\nThis command will review your code for security issues.\nYou'll receive a report with vulnerability details.\n```\n\nThe first example tells Claude what to do. The second tells the user what will happen but doesn't instruct Claude. Always use the first approach.\n\n### Command Locations\n\n**Project commands** (shared with team):\n\n- Location: `.claude/commands/`\n- Scope: Available in specific project\n- Label: Shown as \"(project)\" in `/help`\n- Use for: Team workflows, project-specific tasks\n\n**Personal commands** (available everywhere):\n\n- Location: `~/.claude/commands/`\n- Scope: Available in all projects\n- Label: Shown as \"(user)\" in `/help`\n- Use for: Personal workflows, cross-project utilities\n\n**Plugin commands** (bundled with plugins):\n\n- Location: `plugin-name/commands/`\n- Scope: Available when plugin installed\n- Label: Shown as \"(plugin-name)\" in `/help`\n- Use for: Plugin-specific functionality\n\n## File Format\n\n### Basic Structure\n\nCommands are Markdown files with `.md` extension:\n\n```\n.claude/commands/\n├── review.md           # /review command\n├── test.md             # /test command\n└── deploy.md           # /deploy command\n```\n\n**Simple command:**\n\n```markdown\nReview this code for security vulnerabilities including:\n\n- SQL injection\n- XSS attacks\n- Authentication bypass\n- Inse",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: command-development"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "src_plugin_structure",
+  "description": "This skill should be used when the user asks to \"create a plugin\", \"scaffold a plugin\", \"understand plugin structure\", \"organize plugin components\", \"set up plugin.json\", \"use ${CLAUDE_PLUGIN_ROOT}\", \"add commands/agents/skills/hooks\", \"configure auto-discovery\", or needs guidance on plugin director",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "plugin",
+    "structure"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Plugin Structure for Claude Code\n\n## Overview\n\nClaude Code plugins follow a standardized directory structure with automatic component discovery. Understanding this structure enables creating well-organized, maintainable plugins that integrate seamlessly with Claude Code.\n\n**Key concepts:**\n- Conventional directory layout for automatic discovery\n- Manifest-driven configuration in `.claude-plugin/plugin.json`\n- Component-based organization (commands, agents, skills, hooks)\n- Portable path references using `${CLAUDE_PLUGIN_ROOT}`\n- Explicit vs. auto-discovered component loading\n\n## Directory Structure\n\nEvery Claude Code plugin follows this organizational pattern:\n\n```\nplugin-name/\n├── .claude-plugin/\n│   └── plugin.json          # Required: Plugin manifest\n├── commands/                 # Slash commands (.md files)\n├── agents/                   # Subagent definitions (.md files)\n├── skills/                   # Agent skills (subdirectories)\n│   └── skill-name/\n│       └── SKILL.md         # Required for each skill\n├── hooks/\n│   └── hooks.json           # Event handler configuration\n├── .mcp.json                # MCP server definitions\n└── scripts/                 # Helper scripts and utilities\n```\n\n**Critical rules:**\n\n1. **Manifest location**: The `plugin.json` manifest MUST be in `.claude-plugin/` directory\n2. **Component locations**: All component directories (commands, agents, skills, hooks) MUST be at plugin root level, NOT nested inside `.claude-plugin/`\n3. **Optional components**: Only create directories for components the plugin actually uses\n4. **Naming convention**: Use kebab-case for all directory and file names\n\n## Plugin Manifest (plugin.json)\n\nThe manifest defines plugin metadata and configuration. Located at `.claude-plugin/plugin.json`:\n\n### Required Fields\n\n```json\n{\n  \"name\": \"plugin-name\"\n}\n```\n\n**Name requirements:**\n- Use kebab-case format (lowercase with hyphens)\n- Must be unique across installed plugins\n- No spaces or special characters\n- Example: `code-review-assistant`, `test-runner`, `api-docs`\n\n### Recommended Metadata\n\n```json\n{\n  \"name\": \"plugin-name\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Brief explanation of plugin purpose\",\n  \"author\": {\n    \"name\": \"Author Name\",\n    \"email\": \"author@example.com\",\n    \"url\": \"https://example.com\"\n  },\n  \"homepage\": \"https://docs.example.com\",\n  \"repository\": \"https://github.com/user/plugin-name\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"testing\", \"automation\", \"ci-cd\"]\n}\n```\n\n**Version format**: Follow semantic versioning (MAJOR.MINOR.PATCH)\n**Keywords**: Use for plugin discovery and categorization\n\n### Component Path Configuration\n\nSpecify custom paths for components (supplements default directories):\n\n```json\n{\n  \"name\": \"plugin-name\",\n  \"commands\": \"./custom-commands\",\n  \"agents\": [\"./agents\", \"./specialized-agents\"],\n  \"hooks\": \"./config/hooks.json\",\n  \"mcpServers\": \"./.mcp.json\"\n}\n```\n\n**Important**: Custom paths supplement defaults—they don't replace them. Components in both defa",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: plugin-structure"
+}

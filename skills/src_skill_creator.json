@@ -1,0 +1,23 @@
+{
+  "name": "src_skill_creator",
+  "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations.",
+  "trigger_keywords": [
+    "guide",
+    "for",
+    "creating",
+    "effective",
+    "skills",
+    "this",
+    "skill",
+    "should",
+    "creator"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Skill Creator\n\nThis skill provides guidance for creating effective skills.\n\n## About Skills\n\nSkills are modular, self-contained folders that extend Codex's capabilities by providing\nspecialized knowledge, workflows, and tools. Think of them as \"onboarding guides\" for specific\ndomains or tasks—they transform Codex from a general-purpose agent into a specialized agent\nequipped with procedural knowledge that no model can fully possess.\n\n### What Skills Provide\n\n1. Specialized workflows - Multi-step procedures for specific domains\n2. Tool integrations - Instructions for working with specific file formats or APIs\n3. Domain expertise - Company-specific knowledge, schemas, business logic\n4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks\n\n## Core Principles\n\n### Concise is Key\n\nThe context window is a public good. Skills share the context window with everything else Codex needs: system prompt, conversation history, other Skills' metadata, and the actual user request.\n\n**Default assumption: Codex is already very smart.** Only add context Codex doesn't already have. Challenge each piece of information: \"Does Codex really need this explanation?\" and \"Does this paragraph justify its token cost?\"\n\nPrefer concise examples over verbose explanations.\n\n### Set Appropriate Degrees of Freedom\n\nMatch the level of specificity to the task's fragility and variability:\n\n**High freedom (text-based instructions)**: Use when multiple approaches are valid, decisions depend on context, or heuristics guide the approach.\n\n**Medium freedom (pseudocode or scripts with parameters)**: Use when a preferred pattern exists, some variation is acceptable, or configuration affects behavior.\n\n**Low freedom (specific scripts, few parameters)**: Use when operations are fragile and error-prone, consistency is critical, or a specific sequence must be followed.\n\nThink of Codex as exploring a path: a narrow bridge with cliffs needs specific guardrails (low freedom), while an open field allows many routes (high freedom).\n\n### Protect Validation Integrity\n\nYou may use subagents during iteration to validate whether a skill works on realistic tasks or whether a suspected problem is real. This is most useful when you want an independent pass on the skill's behavior, outputs, or failure modes after a revision.  Only do this when it is possible to start new subagents.\n\nWhen using subagents for validation, treat that as an evaluation surface. The goal is to learn whether the skill generalizes, not whether another agent can reconstruct the answer from leaked context.\n\nPrefer raw artifacts such as example prompts, outputs, diffs, logs, or traces. Give the minimum task-local context needed to perform the validation. Avoid passing the intended answer, suspected bug, intended fix, or your prior conclusions unless the validation explicitly requires them.\n\n### Anatomy of a Skill\n\nEvery skill consists of a required SKILL.md file and optional bundled resources:\n\n```\nskil",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: skill-creator"
+}

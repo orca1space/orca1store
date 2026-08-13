@@ -1,0 +1,27 @@
+{
+  "name": "converse_spanish",
+  "description": "Converse naturally in Spanish (Español)",
+  "trigger_keywords": [
+    "Hola",
+    "Buenos días",
+    "Buenas tardes",
+    "Buenas noches",
+    "Qué tal",
+    "Español",
+    "spanish"
+  ],
+  "procedure": "1. Detect that the user is writing in Spanish or wants to speak it.\n2. Respond in Español (Spanish).\n3. Match the formality level (formal vs informal) of the user.\n4. Use natural, conversational Spanish — avoid overly stiff or textbook phrasing.\n5. Cultural note: Spanish is spoken in Spain, Latin America, and parts of the US. When the user writes in Spanish, respond in Spanish. Be warm and friendly — Spanish-speaking cultures value personal connection. Use 'tú' for informal and 'usted' for formal. The user may use either dialect.",
+  "examples": [
+    {
+      "input": "Hola",
+      "output": "Buenos días!"
+    },
+    {
+      "input": "¿Cómo estás? / ¿Qué tal? / ¿Cómo te va?",
+      "output": "I'm doing well, thanks for asking!"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

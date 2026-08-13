@@ -1,0 +1,17 @@
+{
+  "name": "src_code_breaking_changes",
+  "description": "Breaking changes",
+  "trigger_keywords": [
+    "breaking",
+    "changes",
+    "code"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "Search for breaking changes in external integration surfaces:\n- app-server APIs\n- CLI parameters\n- configuration loading\n- resuming sessions from existing rollouts\n\nDo not stop after finding one issue; analyze all possible ways breaking changes can happen.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: code-breaking-changes"
+}

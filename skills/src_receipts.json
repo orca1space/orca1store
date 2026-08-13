@@ -1,0 +1,22 @@
+{
+  "name": "src_receipts",
+  "description": "Generate a personal Claude Code usage & impact report (\"receipts\") from this machine's local session transcripts — for justifying Claude Code usage/spend to a manager, self-review, or \"what have I been using this for\" check-ins. Mines ~/.claude/projects locally (no extra API calls beyond one final w",
+  "trigger_keywords": [
+    "generate",
+    "personal",
+    "claude",
+    "code",
+    "usage",
+    "impact",
+    "report",
+    "receipts"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# /receipts — personal Claude Code impact report\n\nGenerates a markdown report of one developer's own Claude Code activity,\nbuilt entirely from local data:\n\n- **Source data**: this machine's session transcripts at `~/.claude/projects/**/*.jsonl`\n  (every session, every project, already on disk — nothing to set up).\n- **Cost**: the mining step is a local Node script — file I/O + regex, zero\n  API calls. The only model call is one final write-up over a small (~10-20KB)\n  JSON summary, regardless of how much history was scanned.\n- **Cross-reference**: local `git log` per repo (no network) to sanity-check\n  commit activity against CC session activity.\n\n## Step 1 — figure out the period\n\nParse `$ARGUMENTS`:\n- \"week\" → 7, \"month\" → 30 (default if nothing given), \"quarter\" → 90, \"year\" → 365\n- a bare number → that many days\n- a project name/substring (e.g. \"for anthropic\") → pass through as `--repo\n  <substr>`. It matches against the resolved project name, case-insensitively,\n  and scopes the entire report — totals included — to matching projects.\n\n## Step 2 — run the miner\n\nThe script `mine-transcripts.mjs` ships alongside this SKILL.md, under\n`scripts/`. Use its absolute path:\n\n```bash\nnode <skill-dir>/scripts/mine-transcripts.mjs --days <N> [--repo <substr>] --html /tmp/cc-receipt.html\n```\n\nUse that fixed temp path — the real `since`/`until` are computed by the script\nand only known once it has run, so don't try to put them in this filename.\nSteps 4 and 5 name the final files, by which point the JSON has the dates.\n\nThis prints one JSON object to stdout **and** writes a self-contained, styled\nHTML \"receipt\" to the `--html` path — built deterministically from the same\ndata (no extra model cost). The receipt carries an **Export CSV** button that\ndownloads the by-project table; the CSV is embedded in the page, so it works\noffline and there's nothing to wire up. **Do not** separately Read any\n`*.jsonl` transcript files — the script has already extracted everything\nrelevant. Re-reading raw transcripts would burn a huge number of tokens for no\nbenefit.\n\nIt reads every transcript file in the window and shells out to `git`, so it\ntakes a few seconds — roughly 1s for a week, 5s for a year on a large history.\nThat's local CPU time, not API spend. No need to warn the user.\n\n### What the numbers mean\n\nEverything here is scoped to **work done with Claude Code**, mapped to the\nproject it was done on. Two rules follow from that, and they explain most of\nthe shapes below:\n\n- **Claude Code's own machinery is not the dev's work.** The agent's\n  scratchpad, its per-session tool output, and `~/.claude` are excluded. Files\n  Claude wrote to talk to itself are not files the dev shipped.\n- **A project is where work landed, not where the shell was.** Each session is\n  attributed to the project(s) its file operations touched — reads included,\n  since reading a repo to answer a question is work in that repo — resolved to\n  the git root, or to the containing directory when it i",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: receipts"
+}

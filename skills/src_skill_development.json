@@ -1,0 +1,23 @@
+{
+  "name": "src_skill_development",
+  "description": "This skill should be used when the user wants to \"create a skill\", \"add a skill to plugin\", \"write a new skill\", \"improve skill description\", \"organize skill content\", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "wants",
+    "development"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Skill Development for Claude Code Plugins\n\nThis skill provides guidance for creating effective skills for Claude Code plugins.\n\n## About Skills\n\nSkills are modular, self-contained packages that extend Claude's capabilities by providing\nspecialized knowledge, workflows, and tools. Think of them as \"onboarding guides\" for specific\ndomains or tasks—they transform Claude from a general-purpose agent into a specialized agent\nequipped with procedural knowledge that no model can fully possess.\n\n### What Skills Provide\n\n1. Specialized workflows - Multi-step procedures for specific domains\n2. Tool integrations - Instructions for working with specific file formats or APIs\n3. Domain expertise - Company-specific knowledge, schemas, business logic\n4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks\n\n### Anatomy of a Skill\n\nEvery skill consists of a required SKILL.md file and optional bundled resources:\n\n```\nskill-name/\n├── SKILL.md (required)\n│   ├── YAML frontmatter metadata (required)\n│   │   ├── name: (required)\n│   │   └── description: (required)\n│   └── Markdown instructions (required)\n└── Bundled Resources (optional)\n    ├── scripts/          - Executable code (Python/Bash/etc.)\n    ├── references/       - Documentation intended to be loaded into context as needed\n    └── assets/           - Files used in output (templates, icons, fonts, etc.)\n```\n\n#### SKILL.md (required)\n\n**Metadata Quality:** The `name` and `description` in YAML frontmatter determine when Claude will use the skill. Be specific about what the skill does and when to use it. Use the third-person (e.g. \"This skill should be used when...\" instead of \"Use this skill when...\").\n\n#### Bundled Resources (optional)\n\n##### Scripts (`scripts/`)\n\nExecutable code (Python/Bash/etc.) for tasks that require deterministic reliability or are repeatedly rewritten.\n\n- **When to include**: When the same code is being rewritten repeatedly or deterministic reliability is needed\n- **Example**: `scripts/rotate_pdf.py` for PDF rotation tasks\n- **Benefits**: Token efficient, deterministic, may be executed without loading into context\n- **Note**: Scripts may still need to be read by Claude for patching or environment-specific adjustments\n\n##### References (`references/`)\n\nDocumentation and reference material intended to be loaded as needed into context to inform Claude's process and thinking.\n\n- **When to include**: For documentation that Claude should reference while working\n- **Examples**: `references/finance.md` for financial schemas, `references/mnda.md` for company NDA template, `references/policies.md` for company policies, `references/api_docs.md` for API specifications\n- **Use cases**: Database schemas, API documentation, domain knowledge, company policies, detailed workflow guides\n- **Benefits**: Keeps SKILL.md lean, loaded only when Claude determines it's needed\n- **Best practice**: If files are large (>10k words), include grep search patterns in SKILL.md\n- **Avoid",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: skill-development"
+}

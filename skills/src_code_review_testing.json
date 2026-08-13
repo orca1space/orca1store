@@ -1,0 +1,20 @@
+{
+  "name": "src_code_review_testing",
+  "description": "Test authoring guidance",
+  "trigger_keywords": [
+    "test",
+    "authoring",
+    "guidance",
+    "code",
+    "review",
+    "testing"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "For agent changes prefer integration tests over unit tests. Integration tests are under `core/suite` and use `test_codex` to set up a test instance of codex.\n\nFeatures that change the agent logic MUST add an integration test:\n- Provide a list of major logic changes and user-facing behaviors that need to be tested.\n\nIf unit tests are needed, put them in a dedicated test file (*_tests.rs).\nAvoid test-only functions in the main implementation.\n\nCheck whether there are existing helpers to make tests more streamlined and readable.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: code-review-testing"
+}

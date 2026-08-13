@@ -1,0 +1,23 @@
+{
+  "name": "src_path_types",
+  "description": "Choose Rust types for operating system paths across the Codex repository. Use when defining new path-bearing types or explicitly migrating existing ones.",
+  "trigger_keywords": [
+    "choose",
+    "rust",
+    "types",
+    "for",
+    "operating",
+    "system",
+    "paths",
+    "across",
+    "path"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Path Types\n\nApply this guidance when defining new types. Change existing code only when explicitly requested,\nand keep edits minimal and proportional. Treat these rules as the target state of an ongoing\nmigration; if compliance is difficult, ask the user how to proceed.\n\n- In app-server protocol types, use `LegacyAppPathString` for backwards compatibility during the URI\n  migration. At the protocol boundary, convert it to `PathUri` and use `PathUri` internally. For\n  host-local logic, such as some config values, use `AbsolutePathBuf` or `PathBuf` instead.\n- In exec-server protocol types, use `PathUri`. Internally, use `PathUri` or `AbsolutePathBuf` as\n  appropriate.\n- In dependencies shared by both servers, use `PathUri` or separate APIs that decouple their use\n  cases.\n- Tool call arguments that the model is expected to generate should be deserialized as regular\n  `String`s with feature-specific path handling code.\n\n## Migration requirements\n\nKeep these requirements in mind while migrating code to conform with the above guidelines:\n\n* existing app-server clients keep sending and receiving legacy native-path strings\n* app-server can retain and manipulate foreign-platform path URIs\n* exec-server APIs use file:// URIs\n* local-only operation must not change model-visible text\n* model tool arguments may contain raw relative or absolute paths for any OS\n* path reasoning must work before the related environment has come online\n* URIs cannot explicitly encode the executor’s path convention or operating system\n* users must not configure the environment’s OS/path convention explicitly\n* URIs should not yet be stored in rollouts, databases, or other persistent storage\n* path conversion errors: fail-closed for security-relevant paths, fail-open for UI/diagnostics\n* prefer small focused methods on `PathUri` or `LegacyAppPathString` over local helpers\n* represent `PathUri` values as URIs in diagnostics\n\nIt is OK if the conversion between paths and URIs is somewhat lossy as long as it will do the right\nthing for real users.\n\nMigrating to URIs should not add significant new failure modes. We will need to surface errors in\nsome places that were previously infallible but it should be kept to a minimum.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: path-types"
+}

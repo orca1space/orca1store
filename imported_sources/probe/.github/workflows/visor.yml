@@ -1,0 +1,46 @@
+name: Visor Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: probelabs/visor@main
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation-id: ${{ secrets.APP_INSTALLATION_ID }}
+          max-parallelism: '1'
+          debug: 'true'
+        env:
+          # AI Provider API Keys (configure one of these in your repository secrets)
+          # GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.GLM_API_KEY }}
+          ANTHROPIC_API_URL: 'https://api.z.ai/api/anthropic/v1'
+          # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Optional: Specify the AI model to use
+          MODEL_NAME: 'glm-4.5'
+
+      - name: Upload telemetry traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: telemetry-traces-${{ github.run_id }}
+          path: debug-artifacts/*.jsonl
+          retention-days: 7
+          if-no-files-found: ignore

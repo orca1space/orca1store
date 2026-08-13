@@ -1,0 +1,50 @@
+{
+  "policy": {
+    "runtime_mode": "local_only_mandatory",
+    "external_network_at_runtime": false,
+    "source_execution": "disabled_until_reviewed",
+    "imports_are_local_copies": true
+  },
+  "sources": [
+    {
+      "name": "markitdown",
+      "repository": "https://github.com/microsoft/markitdown",
+      "license": "MIT",
+      "purpose": "local document conversion to Markdown",
+      "status": "staged_for_local_adapter",
+      "runtime_rule": "local files only; URL and remote extras disabled"
+    },
+    {
+      "name": "ocrmypdf",
+      "repository": "https://github.com/ocrmypdf/ocrmypdf",
+      "license": "MPL-2.0",
+      "purpose": "local OCR for scanned PDFs",
+      "status": "staged_for_local_adapter",
+      "runtime_rule": "local files only; requires locally installed Tesseract and Ghostscript"
+    },
+    {
+      "name": "tree-sitter",
+      "repository": "https://github.com/tree-sitter/tree-sitter",
+      "license": "MIT",
+      "purpose": "local incremental syntax parsing and code structure extraction",
+      "status": "staged_dependency",
+      "runtime_rule": "no network path"
+    },
+    {
+      "name": "probe",
+      "repository": "https://github.com/probelabs/probe",
+      "license": "Apache-2.0",
+      "purpose": "local AST-aware code and Markdown search",
+      "status": "staged_for_local_adapter",
+      "runtime_rule": "search/extract/query only; agent providers and npx auto-download disabled"
+    },
+    {
+      "name": "playwright-mcp",
+      "repository": "https://github.com/microsoft/playwright-mcp",
+      "license": "Apache-2.0",
+      "purpose": "optional local browser automation capability",
+      "status": "staged_for_separate_local_integration",
+      "runtime_rule": "no npx auto-install; local Node/browser binaries only"
+    }
+  ]
+}

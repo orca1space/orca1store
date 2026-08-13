@@ -1,0 +1,416 @@
+{
+  "passed": 22,
+  "failed": 0,
+  "total": 22,
+  "results": [
+    {
+      "name": "python_imports",
+      "status": "PASS",
+      "detail": "1.0"
+    },
+    {
+      "name": "default_sources_are_local",
+      "status": "PASS",
+      "detail": [
+        {
+          "type": "kb_topic",
+          "config": {
+            "topic": "Python best practices",
+            "questions": 30
+          }
+        },
+        {
+          "type": "kb_topic",
+          "config": {
+            "topic": "Arabic language nuances",
+            "questions": 20
+          }
+        },
+        {
+          "type": "kb_topic",
+          "config": {
+            "topic": "Windows command line",
+            "questions": 25
+          }
+        },
+        {
+          "type": "kb_topic",
+          "config": {
+            "topic": "SQL fundamentals",
+            "questions": 25
+          }
+        },
+        {
+          "type": "self_train",
+          "config": {
+            "rounds": 50,
+            "per_round": 5
+          }
+        },
+        {
+          "type": "skill_usage_train",
+          "config": {
+            "per_skill": 5
+          }
+        },
+        {
+          "type": "skill_index_rebuild",
+          "config": {}
+        },
+        {
+          "type": "system_prompt_train",
+          "config": {
+            "max_additions": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "api_import_blocked",
+      "status": "PASS",
+      "detail": "local_only: external API import disabled"
+    },
+    {
+      "name": "hf_task_blocked",
+      "status": "PASS",
+      "detail": "local_only: external HF dataset disabled"
+    },
+    {
+      "name": "github_task_blocked",
+      "status": "PASS",
+      "detail": "local_only: external GitHub import disabled"
+    },
+    {
+      "name": "webui_loopback_binding",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "name": "model_offline_flags",
+      "status": "PASS",
+      "detail": true
+    },
+    {
+      "name": "http_",
+      "status": "PASS",
+      "detail": {
+        "status": 200,
+        "bytes": 43271
+      }
+    },
+    {
+      "name": "http_ops",
+      "status": "PASS",
+      "detail": {
+        "status": 200,
+        "bytes": 1054
+      }
+    },
+    {
+      "name": "op_system.ping",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": {
+          "pong": true,
+          "ts": 1786558958.4353778
+        },
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_system.info",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": {
+          "api_version": "1.0",
+          "hermes_root": "D:\\Hermes",
+          "data_dir": "D:\\Hermes\\data",
+          "data_dir_exists": true,
+          "uptime_hint": 1786558958.435466,
+          "python": "3.14.6",
+          "model_path": "",
+          "llm_loaded": false
+        },
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_system.list_ops",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": [
+          "api.import_full",
+          "api.import_skills_only",
+          "cache.clear",
+          "cache.peek",
+          "cache.stats",
+          "chat.send",
+          "checkpoint.list",
+          "config.get",
+          "graph.run",
+          "hitl.approve",
+          "hitl.list",
+          "hitl.reject",
+          "kb.add",
+          "kb.hybrid_search",
+          "kb.search",
+          "kb.stats",
+          "lessons.add",
+          "lessons.delete",
+          "lessons.list",
+          "loaders.ingest",
+          "memory.add_message",
+          "memory.clear",
+          "memory.get",
+          "memory_store.delete",
+          "memory_store.get",
+          "memory_store.list",
+          "memory_store.set",
+          "multi_agent.run",
+          "prompt.additions.add",
+          "prompt.additions.clear",
+          "prompt.additions.list",
+          "session.active",
+          "session.clear",
+          "session.close",
+          "session.create",
+          "session.switch",
+          "session.tabs",
+          "skills.create",
+          "skills.delete",
+          "skills.get",
+          "skills.import_api",
+          "skills.learn",
+          "skills.list",
+          "skills.reindex",
+          "skills.search",
+          "skills.update",
+          "system.info",
+          "system.list_ops",
+          "system.ping",
+          "system.shutdown",
+          "time_travel.history",
+          "training.add",
+          "training.pause",
+          "training.resume",
+          "training.start",
+          "training.status",
+          "training.stop"
+        ],
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_kb.stats",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": {
+          "count": 8868,
+          "dim": 384,
+          "total_chars": 6604676,
+          "file_size_kb": 115127.09
+        },
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_skills.list",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": [
+          "converse_arabic",
+          "converse_english",
+          "converse_french",
+          "converse_german",
+          "converse_spanish",
+          "greet_user",
+          "phrases_arabic",
+          "phrases_english",
+          "phrases_french",
+          "phrases_german",
+          "phrases_spanish",
+          "registry",
+          "src_access",
+          "src_agent_core_dev",
+          "src_agent_core_review",
+          "src_agent_development",
+          "src_algorithmic_art",
+          "src_babysit_pr",
+          "src_brand_guidelines",
+          "src_build_mcp_app",
+          "src_build_mcp_server",
+          "src_build_mcpb",
+          "src_canvas_design",
+          "src_cardputer_buddy",
+          "src_claude_api",
+          "src_claude_automation_recommender",
+          "src_claude_md_improver",
+          "src_claude_security",
+          "src_code_breaking_changes",
+          "src_code_review",
+          "src_code_review_change_size",
+          "src_code_review_context",
+          "src_code_review_testing",
+          "src_codex_bug",
+          "src_codex_issue_digest",
+          "src_codex_pr_body",
+          "src_command_development",
+          "src_configure",
+          "src_consolidate",
+          "src_doc_coauthoring",
+          "src_docx",
+          "src_example_command",
+          "src_example_skill",
+          "src_frontend_design",
+          "src_gen_changesets",
+          "src_gen_docs",
+          "src_hook_development",
+          "src_imagegen",
+          "src_internal_comms",
+          "src_kimi_datasource",
+          "src_kimi_webbridge",
+          "src_m5_onboard",
+          "src_mcp_builder",
+          "src_mcp_integration",
+          "src_openai_docs",
+          "src_path_types",
+          "src_pdf",
+          "src_playground",
+          "src_plugin_creator",
+          "src_plugin_settings",
+          "src_plugin_structure",
+          "src_pptx",
+          "src_pre_changelog",
+          "src_project_artifact",
+          "src_pushing_ci_changes",
+          "src_receipts",
+          "src_release_notes",
+          "src_remote_tests",
+          "src_review",
+          "src_review_agent",
+          "src_session_report",
+          "src_skill_creator",
+          "src_skill_development",
+          "src_skill_installer",
+          "src_slack_gif_creator",
+          "src_slop",
+          "src_sub_skill",
+          "src_sync_changelog",
+          "src_template_skill",
+          "src_test",
+          "src_test_tui",
+          "src_theme_factory",
+          "src_translate_docs",
+          "src_update_v8_version",
+          "src_web_artifacts_builder",
+          "src_webapp_testing",
+          "src_write_tui",
+          "src_writing_hookify_rules",
+          "src_xlsx",
+          "test_skill_a",
+          "test_skill_b",
+          "time_greeting",
+          "translate_arabic",
+          "translate_english",
+          "translate_french",
+          "translate_german",
+          "translate_spanish"
+        ],
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_session.active",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": {},
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_session.tabs",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": [
+          {
+            "id": "e2a134f3aa034575ba7edddb58769702",
+            "title": "Â·« «“Ìﬂ ⁄«„· «Ì…",
+            "last_active": 1786558522.1652787,
+            "message_count": 50,
+            "created_at": 1786300392.6914418
+          }
+        ],
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_memory.get",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": null,
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_cache.stats",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": {
+          "size": 15,
+          "max": 5000,
+          "total_hits": 9,
+          "path": "D:\\Hermes\\data\\response_cache.json"
+        },
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_checkpoint.list",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": [],
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_time_travel.history",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": [],
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_hitl.list",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": [],
+        "api_version": "1.0"
+      }
+    },
+    {
+      "name": "op_training.status",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "result": {
+          "running": false,
+          "state": "not started"
+        },
+        "api_version": "1.0"
+      }
+    }
+  ]
+}

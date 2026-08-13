@@ -1,0 +1,15 @@
+{
+  "name": "phrases_spanish",
+  "description": "Common everyday phrases in Spanish",
+  "trigger_keywords": [
+    "common phrases in Spanish",
+    "how to say in Spanish",
+    "عبارات Español",
+    "كيف أقول بـEspañol"
+  ],
+  "procedure": "Provide common Spanish phrases for daily use:\n- how_are_you: ¿Cómo estás? / ¿Qué tal? / ¿Cómo te va?\n- thank_you: Gracias / Muchas gracias / Te agradezco\n- please: Por favor\n- yes_no: Sí / No / Claro / Por supuesto\n- goodbye: Adiós / Hasta luego / Nos vemos / Chao\n- sorry: Lo siento / Perdón / Disculpa\n- i_understand: Entiendo / De acuerdo / Comprendido\n- i_dont_understand: No entiendo / ¿Puedes aclarar?",
+  "examples": [],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

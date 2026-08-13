@@ -1,0 +1,23 @@
+{
+  "name": "src_slop",
+  "description": "Invoke only when the user explicitly asks to review code through the \"single level of abstraction / layered error handling\" lens — a function does only its own layer's business logic while errors are handled above or below. The agent reports detections, raw-count measurements, and move directions. A",
+  "trigger_keywords": [
+    "invoke",
+    "only",
+    "when",
+    "the",
+    "user",
+    "explicitly",
+    "asks",
+    "review",
+    "slop"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Single Level of Abstraction & Layered Error Handling\n\nNorth star: **a function should read as a straight-line description of what its own layer does. Anything that is not that — input validation, error handling, error-to-response translation, logging, retries, low-level mechanics — belongs to a layer above or below, not inline.**\n\nThis is a review dimension, not a hard rule. See \"Exemption checklist\" at the end.\n\n## Scope of this skill — detect and measure\n\nThe agent applying this lens is a **sensor**. Its one job is to report *whether* a function mixes levels and *by how much*; deciding *how serious* it is belongs downstream. Severity labels (`Block` / `Request changes` / `Nit`) compress a continuous quantity into an uncalibrated three-point scale and are the main source of review-to-review variance, so they are produced downstream — by a deterministic rubric, anchored examples, or a human — from the facts the agent reports.\n\nThe agent's output is exactly these four things:\n\n- **Detection (yes/no):** does this statement / block / function violate a rule of the lens?\n- **Measurement (raw factual counts only):** mechanically countable quantities — body size, control-flow keywords, named syntactic shapes (see \"Quantify\"). Anything that first requires classifying a line (core/foreign, happy/error, high/low level) is recorded under detection, not here.\n- **Direction (where it moves):** for each foreign concern, the destination layer — push **down** into a value / parser / infra helper, or push **up** into the edge handler.\n- **Exemption flags:** which items, if any, hit the exemption checklist — recorded, not weighed.\n\nSeverity grades, merge/block verdicts, and \"is splitting worth it\" calls live downstream, derived from the four items above.\n\n## When to use\n\nApply this lens only when the user asks for it explicitly (for example \"用单一抽象层次审视一下\", \"check whether this function does too much\", \"errors should be handled above/below, right?\"). Leave general reviews and refactors to other lenses unless the user names this one.\n\n## The principle\n\nOne function, one level of abstraction, one responsibility. Three mutually reinforcing rules:\n\n1. **Single Level of Abstraction (SLAP).** Every statement inside a function sits at the same conceptual level. High-level intent (\"reserve inventory, charge payment, create the order\") must not be interleaved with low-level mechanics (building headers, escaping strings, opening sockets, parsing bytes). If some lines read as \"what\" and others as \"how\", they belong in different functions.\n2. **Error handling is its own concern (Clean Code).** A function either does the work or handles the error — not both. Business logic describes the happy path and *signals* failure (throw or return a result); the catch, mapping, logging, and recovery live in a dedicated handler, usually one layer up. Prefer exceptions / result types over threaded check-and-return ladders that interrupt the main flow.\n3. **Separation of concerns by layer.**",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: slop"
+}

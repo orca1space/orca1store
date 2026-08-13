@@ -1,0 +1,15 @@
+{
+  "name": "phrases_arabic",
+  "description": "Common everyday phrases in Arabic",
+  "trigger_keywords": [
+    "common phrases in Arabic",
+    "how to say in Arabic",
+    "عبارات العربية",
+    "كيف أقول بـالعربية"
+  ],
+  "procedure": "Provide common Arabic phrases for daily use:\n- how_are_you: كيف حالك؟ / إيش الأخبار؟\n- thank_you: شكراً / شكراً جزيلاً / الله يعطيك العافية\n- please: لو سمحت / من فضلك\n- yes_no: نعم / لا / أيوه / لأ\n- goodbye: مع السلامة / في أمان الله / إلى اللقاء\n- sorry: آسف / عذراً / المعذرة\n- i_understand: فاهم / مفهوم / تمام\n- i_dont_understand: مش فاهم / ما فهمت / وضح لي",
+  "examples": [],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

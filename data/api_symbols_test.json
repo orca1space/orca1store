@@ -1,0 +1,12 @@
+﻿{
+    "ok":  true,
+    "result":  {
+                   "ok":  true,
+                   "returncode":  0,
+                   "symbols":  "[\n  {\n    \"file\": \"D:\\\\Hermes\\\\core\\\\local_imports.py\",\n    \"symbols\": [\n      {\n        \"name\": \"ROOT\",\n        \"kind\": \"variable\",\n        \"signature\": \"ROOT = ...\",\n        \"line\": 14,\n        \"end_line\": 14\n      },\n      {\n        \"name\": \"SOURCES\",\n        \"kind\": \"variable\",\n        \"signature\": \"SOURCES = ...\",\n        \"line\": 15,\n        \"end_line\": 15\n      },\n      {\n        \"name\": \"_local_path\",\n        \"kind\": \"function\",\n        \"signature\": \"def _local_path(value: Any) -\u003e Path:\",\n        \"line\": 18,\n        \"end_line\": 22\n      },\n      {\n        \"name\": \"_tool\",\n        \"kind\": \"function\",\n        \"signature\": \"def _tool(name: str) -\u003e str | None:\",\n        \"line\": 25,\n        \"end_line\": 35\n      },\n      {\n        \"name\": \"_status\",\n        \"kind\": \"function\",\n        \"signature\": \"def _status(name: str, tool: Any, source: str) -\u003e Dict[str, Any]:\",\n        \"line\": 37,\n        \"end_line\": 40\n      },\n      {\n        \"name\": \"_local_tool_env\",\n        \"kind\": \"function\",\n        \"signature\": \"def _local_tool_env() -\u003e Dict[str, str]:\",\n        \"line\": 43,\n        \"end_line\": 56\n      },\n      {\n        \"name\": \"register_local_import_ops\",\n        \"kind\": \"function\",\n        \"signature\": \"def register_local_import_ops(op: Callable[[str], Callable]):\",\n        \"line\": 59,\n        \"end_line\": 152\n      }\n    ]\n  }\n]\n",
+                   "stderr":  "",
+                   "local_only":  true,
+                   "parser":  "tree-sitter"
+               },
+    "api_version":  "1.0"
+}

@@ -1,0 +1,1207 @@
+{
+  "version": 1,
+  "executions": [
+    {
+      "id": "exec_0dd9edccff73",
+      "task": "AdSense Workflow Simulation",
+      "objective": "Local monetization workflow validation",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "Analyze site and audience constraints",
+          "result": "Checklist created"
+        },
+        {
+          "sequence": 2,
+          "action": "Score content and keyword opportunities",
+          "result": "Opportunities identified"
+        },
+        {
+          "sequence": 3,
+          "action": "Run compliance approval gate",
+          "result": "Human approval required before sensitive action"
+        }
+      ],
+      "tools": [
+        "monetization.score_opportunity",
+        "monetization.execution_plan",
+        "approval.request",
+        "ledger.record_execution"
+      ],
+      "inputs": {
+        "domain": "example.local",
+        "mode": "simulation"
+      },
+      "outputs": {
+        "plan": "local_adsense_execution_plan"
+      },
+      "outcome": "simulation_completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [
+        "monetization.adsense_workflow"
+      ],
+      "artifacts": [],
+      "approved": true,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:25:17Z",
+      "digest": "8c7543e5362dd9073bef9028f34894853b3372c14e18946ec65e38f0e5e59bc9"
+    },
+    {
+      "id": "exec_b76d0e4253c1",
+      "task": "Live operation: imports.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "imports.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "imports.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:16Z",
+      "digest": "c13b8ef1fb473a88263e0b2b330f1fc399acb38cae149972185dff28d3853210"
+    },
+    {
+      "id": "exec_1157a8cf7882",
+      "task": "Live operation: bridge.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "bridge.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "bridge.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:16Z",
+      "digest": "f9f1ee7eedc3504a04afd2af153a093d4b98b72dd825059ec53a3a852a9a2c03"
+    },
+    {
+      "id": "exec_596bc12cf4c5",
+      "task": "Live operation: approval.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "approval.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "approval.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:16Z",
+      "digest": "ea7169b55f367388243ab2e6cd9253038600f83dfda04f9b1771cb570885e229"
+    },
+    {
+      "id": "exec_058397526105",
+      "task": "Live operation: training.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "training.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "training.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:17Z",
+      "digest": "948bdd8a4a77611659046f5ee1e62da156fba4334a78a0de277310a004e877d9"
+    },
+    {
+      "id": "exec_f4c8e24abeb4",
+      "task": "Live operation: skills.list",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "skills.list",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "skills.list"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "list"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:17Z",
+      "digest": "b6ebaadf45244e028bdcd4a1827c6e60153dac8545e516b78c9f865b347fd6ed"
+    },
+    {
+      "id": "exec_b044b83d269f",
+      "task": "Live operation: kb.stats",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "kb.stats",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "kb.stats"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:17Z",
+      "digest": "b6b99dc1ef9af47c3509922fef16edb4dccc97315181965cb5121d816941ec83"
+    },
+    {
+      "id": "exec_ea3a74169330",
+      "task": "Live operation: memory.get",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "memory.get",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "memory.get"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "NoneType"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:17Z",
+      "digest": "d4cc5677052d22b847ad8933c75f5c1cd1615a949a6659b162b85312ccd52864"
+    },
+    {
+      "id": "exec_ddbd7da80f5f",
+      "task": "Live operation: bridge.record_lesson",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "bridge.record_lesson",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "bridge.record_lesson"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:41Z",
+      "digest": "100a69832fe6bf611d86efd441223dbe2ad18c80412337054bffe030fbff9410"
+    },
+    {
+      "id": "exec_3be03a980fe6",
+      "task": "Live operation: bridge.promote_lesson",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "bridge.promote_lesson",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "bridge.promote_lesson"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:41Z",
+      "digest": "bc93c7323ebc7fa74f657e4b1566775ea9a900657ab913894fbe4fb3d1cbe0f7"
+    },
+    {
+      "id": "exec_1a10b86639b0",
+      "task": "Live operation: approval.request",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "approval.request",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "approval.request"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:41Z",
+      "digest": "f97a9dac114b3cd2b6c2b6ee56fa9239c5075d44c033144c37f78966f1783de6"
+    },
+    {
+      "id": "exec_55c222fe12f4",
+      "task": "Live operation: approval.decide",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "approval.decide",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "approval.decide"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:41Z",
+      "digest": "c1493bd7adec1750f8010cd53008ae8fc9657c4616b17298d93696270f624373"
+    },
+    {
+      "id": "exec_ba6d84d060ed",
+      "task": "Live operation: bridge.promote_lesson",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "bridge.promote_lesson",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "bridge.promote_lesson"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:41Z",
+      "digest": "12f3c403ae03cf0d02a74229bcfe1af74bdcd3d19f4e8ab52b786967f30e7f71"
+    },
+    {
+      "id": "exec_aefaaa0b75f8",
+      "task": "Live operation: bridge.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "bridge.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "bridge.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:35:41Z",
+      "digest": "7e8af4be2d875e7028f25f679567e01e7df0374c68f9b04bdf9a7ba6fc71f376"
+    },
+    {
+      "id": "exec_5367dabc91e7",
+      "task": "Live operation: imports.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "imports.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "imports.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "a6fff2acdf139d1834f07bf1f4ce96a24ec3ef555b67bda1ab33299ee70c1c4b"
+    },
+    {
+      "id": "exec_365440cd2ee8",
+      "task": "Live operation: bridge.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "bridge.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "bridge.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "5b3590e9dd01e94c260d5581ab632af8bfa98545c011ac20a4fa6f25b104f749"
+    },
+    {
+      "id": "exec_66eb0199d5da",
+      "task": "Live operation: approval.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "approval.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "approval.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "c3d81a3fbf3ee7156e69e013d0a4defcce2b342af80fdf9c70d14ef8a93ded93"
+    },
+    {
+      "id": "exec_8a4b1369b613",
+      "task": "Live operation: training.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "training.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "training.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "cb6ebb00b2ff168a24245666eabe69f65d2f88ddd649bfeab1bd997d21a78b09"
+    },
+    {
+      "id": "exec_dbd5c8e308d7",
+      "task": "Live operation: skills.list",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "skills.list",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "skills.list"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "list"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "a390c9c9c3a27ea659d24dc5da16fbdae465693a1f999e6112092d711710f34f"
+    },
+    {
+      "id": "exec_5a4cad32db83",
+      "task": "Live operation: kb.stats",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "kb.stats",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "kb.stats"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "156558aaa77a84bee193353c8ea4556884e4452782d20718d21d268a9c9fb2fb"
+    },
+    {
+      "id": "exec_ad1ba1395165",
+      "task": "Live operation: memory.get",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "memory.get",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "memory.get"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "NoneType"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:36:06Z",
+      "digest": "0c6d751083d097f36e0112a0e70f058263fd6fbbd8aa16c46fdc8215f3a20cde"
+    },
+    {
+      "id": "exec_6614afe9f5bd",
+      "task": "Live operation: mentor.connect",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.connect",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.connect"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:59:49Z",
+      "digest": "b86366e897524e8c992f04c9be721ed113b396e0ef539a8771234a76deccff8d"
+    },
+    {
+      "id": "exec_2c7ff0f0da76",
+      "task": "Live operation: skills.list",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "skills.list",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "skills.list"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "list"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:59:49Z",
+      "digest": "45e007e39bc493536c7711c4d5af82dc30d91534f981bc02e14cb0fe496589f6"
+    },
+    {
+      "id": "exec_9d9ac5165cbe",
+      "task": "Live operation: mentor.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T08:59:49Z",
+      "digest": "24e2d2944e7b051a651637c270012d734ec327647c39440a04f595ca010435b7"
+    },
+    {
+      "id": "exec_44f9c3977a59",
+      "task": "Live operation: mentor.connect",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.connect",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.connect"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T09:03:01Z",
+      "digest": "2fe0133e3c6eafbbed2c809732a4e2c813724474f32507c3ae89b8dfb5387fea"
+    },
+    {
+      "id": "exec_cd90f674ef84",
+      "task": "Live operation: mentor.connect",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.connect",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.connect"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T09:04:04Z",
+      "digest": "08bcd198ffb4a23a6d2ecdff5c43adf0fc58b050815b18c3766387fbf0cf94a3"
+    },
+    {
+      "id": "exec_ba4fad1feb9c",
+      "task": "Live operation: mentor.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T09:04:05Z",
+      "digest": "70b781405e3912e925a08c3c633921b0ff64185c88466a1a51dc55d70f5a79bb"
+    },
+    {
+      "id": "exec_bf212eccbae3",
+      "task": "Live operation: kb.stats",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "kb.stats",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "kb.stats"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T09:04:05Z",
+      "digest": "73a6ccca9b6021e0278ebef07af88cc5c2655fc0c103fbd5e14b394eea5020e1"
+    },
+    {
+      "id": "exec_8d66a1a10e83",
+      "task": "Live operation: mentor.status",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.status",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.status"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T09:04:05Z",
+      "digest": "65de86306cf1d4a177d2c08d948b3caf110a25095ab63da68d178b8d7637eb2d"
+    },
+    {
+      "id": "exec_59c4242d4703",
+      "task": "Live operation: mentor.connect",
+      "objective": "Capture reusable execution pattern",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "mentor.connect",
+          "result": "completed"
+        }
+      ],
+      "tools": [
+        "mentor.connect"
+      ],
+      "inputs": {},
+      "outputs": {
+        "result_type": "dict"
+      },
+      "outcome": "completed",
+      "errors": [],
+      "corrections": [],
+      "skill_ids": [],
+      "artifacts": [],
+      "approved": false,
+      "local_only": true,
+      "internal_reasoning_excluded": true,
+      "created_at": "2026-08-13T09:04:06Z",
+      "digest": "53b6f21c59e828f063d289feaf24986031abe8ab6719086db3ff1c66501cf3c3"
+    }
+  ],
+  "procedures": [
+    {
+      "id": "proc_c6642ea0c46d",
+      "name": "adsense_local_workflow",
+      "steps": [
+        {
+          "sequence": 1,
+          "action": "Analyze site and audience constraints",
+          "result": "Checklist created"
+        },
+        {
+          "sequence": 2,
+          "action": "Score content and keyword opportunities",
+          "result": "Opportunities identified"
+        },
+        {
+          "sequence": 3,
+          "action": "Run compliance approval gate",
+          "result": "Human approval required before sensitive action"
+        }
+      ],
+      "tools": [
+        "monetization.score_opportunity",
+        "monetization.execution_plan",
+        "approval.request",
+        "ledger.record_execution"
+      ],
+      "source_execution": "exec_0dd9edccff73",
+      "digest": "81433bccf8d9692beace22ffc040828898fe34d72db9c3210020f55b7bf3ffd1",
+      "created_at": "2026-08-13T08:25:40Z",
+      "state": "approved"
+    }
+  ],
+  "events": [
+    {
+      "id": "599174c74d9c4613aceb09d24860d109",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_0dd9edccff73",
+        "task": "AdSense Workflow Simulation"
+      },
+      "at": "2026-08-13T08:25:17Z"
+    },
+    {
+      "id": "9c8fba24a133465aab251ee2d1d55981",
+      "operation": "ledger.promote_procedure",
+      "payload": {
+        "procedure_id": "proc_c6642ea0c46d",
+        "execution_id": "exec_0dd9edccff73"
+      },
+      "at": "2026-08-13T08:25:40Z"
+    },
+    {
+      "id": "b4798b7bdfb14da7976c0057d907abd8",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_b76d0e4253c1",
+        "task": "Live operation: imports.status"
+      },
+      "at": "2026-08-13T08:35:16Z"
+    },
+    {
+      "id": "bb8eb11009f2465dbb4b3a8e5e1b0fd1",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_1157a8cf7882",
+        "task": "Live operation: bridge.status"
+      },
+      "at": "2026-08-13T08:35:16Z"
+    },
+    {
+      "id": "5925a7ade5d34eeeb5564a2078ad8301",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_596bc12cf4c5",
+        "task": "Live operation: approval.status"
+      },
+      "at": "2026-08-13T08:35:16Z"
+    },
+    {
+      "id": "03f20186911e4bf5b295ed82532d3fb6",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_058397526105",
+        "task": "Live operation: training.status"
+      },
+      "at": "2026-08-13T08:35:17Z"
+    },
+    {
+      "id": "6c99d56408d74094a57caa40d6a59036",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_f4c8e24abeb4",
+        "task": "Live operation: skills.list"
+      },
+      "at": "2026-08-13T08:35:17Z"
+    },
+    {
+      "id": "6bab3fef8c404acab5658d450bd02960",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_b044b83d269f",
+        "task": "Live operation: kb.stats"
+      },
+      "at": "2026-08-13T08:35:17Z"
+    },
+    {
+      "id": "e6d5fad2e452486493aa2dc8c04219b4",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_ea3a74169330",
+        "task": "Live operation: memory.get"
+      },
+      "at": "2026-08-13T08:35:17Z"
+    },
+    {
+      "id": "b755bac615f848d2b4322ebab6341345",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_ddbd7da80f5f",
+        "task": "Live operation: bridge.record_lesson"
+      },
+      "at": "2026-08-13T08:35:41Z"
+    },
+    {
+      "id": "812401ca797d41f9b0d07b79c687bdc7",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_3be03a980fe6",
+        "task": "Live operation: bridge.promote_lesson"
+      },
+      "at": "2026-08-13T08:35:41Z"
+    },
+    {
+      "id": "68ebfcd5e38e4a3fb1c4d2121f340640",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_1a10b86639b0",
+        "task": "Live operation: approval.request"
+      },
+      "at": "2026-08-13T08:35:41Z"
+    },
+    {
+      "id": "0d108490aa6a4a3ca91299753315764a",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_55c222fe12f4",
+        "task": "Live operation: approval.decide"
+      },
+      "at": "2026-08-13T08:35:41Z"
+    },
+    {
+      "id": "a4ef7c4a490742afb90a3960b0e02266",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_ba6d84d060ed",
+        "task": "Live operation: bridge.promote_lesson"
+      },
+      "at": "2026-08-13T08:35:41Z"
+    },
+    {
+      "id": "fba3d2eceb6845d1932cbed5de535f65",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_aefaaa0b75f8",
+        "task": "Live operation: bridge.status"
+      },
+      "at": "2026-08-13T08:35:41Z"
+    },
+    {
+      "id": "59f5ca149b7040a1bd9a09b5b707190f",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_5367dabc91e7",
+        "task": "Live operation: imports.status"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "2530ab03e78c4314bb8dec935b154fcf",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_365440cd2ee8",
+        "task": "Live operation: bridge.status"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "68fea996e9224444afb8806f2065dd8c",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_66eb0199d5da",
+        "task": "Live operation: approval.status"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "5e5d002451fe44c99fb3fcaedab756ae",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_8a4b1369b613",
+        "task": "Live operation: training.status"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "e965be4671944e11a61c586d78fbb4ac",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_dbd5c8e308d7",
+        "task": "Live operation: skills.list"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "6186e048e8444065a243b4322fd39d50",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_5a4cad32db83",
+        "task": "Live operation: kb.stats"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "45e7702952e64bfda345b8338ebc433c",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_ad1ba1395165",
+        "task": "Live operation: memory.get"
+      },
+      "at": "2026-08-13T08:36:06Z"
+    },
+    {
+      "id": "83662f81e9e540f29ae53d3bee70249a",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_6614afe9f5bd",
+        "task": "Live operation: mentor.connect"
+      },
+      "at": "2026-08-13T08:59:49Z"
+    },
+    {
+      "id": "cf82a5aa5bb448f885a16fb86813f947",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_2c7ff0f0da76",
+        "task": "Live operation: skills.list"
+      },
+      "at": "2026-08-13T08:59:49Z"
+    },
+    {
+      "id": "463cb1da69314dc59c871ee8a9868394",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_9d9ac5165cbe",
+        "task": "Live operation: mentor.status"
+      },
+      "at": "2026-08-13T08:59:49Z"
+    },
+    {
+      "id": "d0757eb0ebb14b4287662da8bbcff70c",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_44f9c3977a59",
+        "task": "Live operation: mentor.connect"
+      },
+      "at": "2026-08-13T09:03:01Z"
+    },
+    {
+      "id": "e26f3120b00c4b2f941ebd04ad0b225f",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_cd90f674ef84",
+        "task": "Live operation: mentor.connect"
+      },
+      "at": "2026-08-13T09:04:04Z"
+    },
+    {
+      "id": "7e6d7d07bb2e49479a25d5814c9c2b34",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_ba4fad1feb9c",
+        "task": "Live operation: mentor.status"
+      },
+      "at": "2026-08-13T09:04:05Z"
+    },
+    {
+      "id": "203491aa8ae843028794674c0edf80fe",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_bf212eccbae3",
+        "task": "Live operation: kb.stats"
+      },
+      "at": "2026-08-13T09:04:05Z"
+    },
+    {
+      "id": "7d2d168e037644598c0f6e0a0261f97a",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_8d66a1a10e83",
+        "task": "Live operation: mentor.status"
+      },
+      "at": "2026-08-13T09:04:05Z"
+    },
+    {
+      "id": "a7d0cfe0eb1140d7887e85bec7681084",
+      "operation": "ledger.record_execution",
+      "payload": {
+        "execution_id": "exec_59c4242d4703",
+        "task": "Live operation: mentor.connect"
+      },
+      "at": "2026-08-13T09:04:06Z"
+    }
+  ]
+}

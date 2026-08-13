@@ -1,0 +1,39 @@
+{
+  "started_at": 1786539942.844822,
+  "budget_seconds": 360.0,
+  "external_budget_used": 229.56309294700623,
+  "local_train_count": 14,
+  "tasks": [
+    {
+      "id": "task_0000",
+      "type": "self_train",
+      "config": {
+        "rounds": 3,
+        "per_round": 2
+      },
+      "status": "done",
+      "started_at": 1786539942.848925,
+      "completed_at": 1786540138.0273116,
+      "error": null,
+      "items_imported": 6,
+      "notes": ""
+    },
+    {
+      "id": "task_0001",
+      "type": "kb_topic",
+      "config": {
+        "topic": "Python tips",
+        "questions": 2
+      },
+      "status": "done",
+      "started_at": 1786540138.0285668,
+      "completed_at": 1786540172.4153306,
+      "error": null,
+      "items_imported": 2,
+      "notes": ""
+    }
+  ],
+  "paused": false,
+  "finished": true,
+  "last_saved": 1786540776.5099952
+}

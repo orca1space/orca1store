@@ -1,0 +1,22 @@
+{
+  "name": "src_project_artifact",
+  "description": "Generate and publish a project status artifact — an opinionated, tabbed status page for a project too big for one update (overview & success criteria, the workstream sequence, next steps, plus background, plan, risks & open questions, and decisions/FAQ when they earn a tab) — published with the buil",
+  "trigger_keywords": [
+    "generate",
+    "and",
+    "publish",
+    "project",
+    "status",
+    "artifact",
+    "opinionated",
+    "tabbed"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# project-artifact — an opinionated project status page\n\nThis skill produces one specific *kind* of artifact: a tabbed status page that represents a\nproject too big for one update — a software migration, a research effort, a launch, an org\ninitiative; anything with a set of parallel/dependent workstreams tracked over time. It\ngenerates the HTML (one file, self-contained — the Artifact CSP blocks all external hosts,\nso everything is inlined; the only `<script>` is the tab switcher) and publishes it with\nthe built-in `Artifact` tool to `https://claude.ai/code/artifact/<uuid>`. The page is\ndefault-private; the viewer gives the owner a version picker and lets them share it with\nteammates. (The general \"render any HTML/Markdown to a web page\" capability is the built-in\n`Artifact` tool; this is the project-tracker structure on top — defining what an artifact\n*is* belongs to that tool, not here.)\n\nThe SWE specifics for PR-driven projects are in `swe.md`, kept out of this file so the\nproject-artifact structure stays domain-neutral.\n\n## Workflow\n\n1. **Resolve the artifact config, then locate the project.** Each project gets a directory\n   at `${CLAUDE_PLUGIN_DATA}/artifacts/<slug>/` holding `config.md` (see **\"The artifact\n   config\"** below) and `page.html` (the current render); listing `artifacts/` is the\n   registry of this skill's artifacts on this machine. If the\n   user names a project,\n   load that slug; if exactly one config matches the session (its repo is the cwd, or its\n   project came up in conversation), use it; a config that exists means this is a\n   **refresh** — follow **\"Refreshing an artifact\"** below. No config means a first build:\n   gather from scratch and write the config after the first publish — but if the user says\n   the project already has a published artifact (made on another machine or in a lost\n   session), get that URL and record it instead of minting a new one.\n   Then collect the source material: the goal, the set of workstreams (PRs, milestones,\n   sub-projects, tasks), owners, dates, and any sibling docs (design doc, plan, spec).\n   Pull whatever the domain gives you cheaply — always live, never from memory or earlier\n   turns — for software that's `gh pr list` / `git log` / `gh pr view` (see `swe.md`); for\n   other domains it's the project doc, a tracker, a spreadsheet, your own notes. If the\n   source is itself an existing `claude.ai/code/artifact/...` page to reshape, fetch it —\n   see **\"Reading an existing artifact page\"** below. Don't ask the user to paste content or hand you a local file\n   as a substitute for fetching it yourself.\n\n2. **Pick the tabs** from the catalog below — only the ones with real content.\n   **Overview** and the **Workstreams** sequence are the spine and are essentially always\n   there; **Attention**, **Background**, **Plan**, **Risks & open questions**, and\n   **Decisions/FAQ** each earn a tab only when there's something substantive to put in it\n   (a simple, self-explanatory project may hav",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: project-artifact"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "converse_french",
+  "description": "Converse naturally in French (Français)",
+  "trigger_keywords": [
+    "Bonjour",
+    "Salut",
+    "Bonsoir",
+    "Bonne journée",
+    "Bienvenue",
+    "Français",
+    "french"
+  ],
+  "procedure": "1. Detect that the user is writing in French or wants to speak it.\n2. Respond in Français (French).\n3. Match the formality level (formal vs informal) of the user.\n4. Use natural, conversational French — avoid overly stiff or textbook phrasing.\n5. Cultural note: French is a Romance language spoken widely in Europe, Africa, and Canada. When the user writes in French, respond in French. Use 'tu' for informal and 'vous' for formal. Maintain politeness markers (bonjour, merci, s'il vous plaît) — they are essential in French culture.",
+  "examples": [
+    {
+      "input": "Bonjour",
+      "output": "Salut!"
+    },
+    {
+      "input": "Comment ça va ? / Comment allez-vous ? / Ça va ?",
+      "output": "I'm doing well, thanks for asking!"
+    }
+  ],
+  "enabled": true,
+  "input_schema": {},
+  "version": "1.0.0"
+}

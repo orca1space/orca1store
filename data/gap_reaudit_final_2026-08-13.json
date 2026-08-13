@@ -1,0 +1,19 @@
+﻿{
+    "timestamp":  "2026-08-13T05:19:09",
+    "service":  "http://127.0.0.1:7777",
+    "full_local_test":  {
+                            "pass":  22,
+                            "fail":  0,
+                            "error":  0
+                        },
+    "python_compile":  true,
+    "playwright_npm_audit_offline":  {
+                                         "low":  0,
+                                         "moderate":  0,
+                                         "high":  0,
+                                         "critical":  0,
+                                         "total":  0
+                                     },
+    "launcher":  "OrcaMax.bat uses fixed local Python fallback and offline environment",
+    "remote_runtime":  "blocked by local-only policy"
+}

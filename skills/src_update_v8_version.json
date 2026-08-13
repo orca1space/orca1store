@@ -1,0 +1,23 @@
+{
+  "name": "src_update_v8_version",
+  "description": "Update Codex's pinned `v8` / `rusty_v8` versions, validate the release-candidate path, and investigate failed V8 canary or artifact builds. Use when asked to bump V8, update `rusty_v8` artifacts, prepare or validate a V8 release candidate, check `v8-canary`, or diagnose why a V8 version update no lo",
+  "trigger_keywords": [
+    "update",
+    "codex",
+    "pinned",
+    "rusty",
+    "versions",
+    "validate",
+    "the",
+    "release",
+    "version"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Update V8 Version\n\n## Core Workflow\n\n1. Read `third_party/v8/README.md` and follow its version-bump sequence. Treat\n   that document as the release-process source of truth.\n2. Inspect and update the concrete repo surfaces that carry the pin:\n   - `codex-rs/Cargo.toml`\n   - `codex-rs/Cargo.lock`\n   - `MODULE.bazel`\n   - `third_party/v8/BUILD.bazel`\n   - `third_party/v8/README.md`\n   - the matching `third_party/v8/rusty_v8_<version>.sha256` manifest when the\n     remaining prebuilt inputs change\n3. Keep the existing checksum helpers in the loop:\n\n   ```bash\n   python3 .github/scripts/rusty_v8_bazel.py update-module-bazel\n   python3 .github/scripts/rusty_v8_bazel.py check-module-bazel\n   python3 -m unittest discover -s .github/scripts -p test_rusty_v8_bazel.py\n   ```\n\n4. Validate the release-candidate path before broadening the work:\n   - Prefer checking the `v8-canary` CI result for the candidate branch or PR\n     when one exists, using GitHub check tooling or `gh` as appropriate.\n   - If CI is unavailable or the user asked for a local-only check, run the\n     closest local validation that is practical for the changed surface and say\n     explicitly that it is a local substitute, not the full hosted canary.\n5. If the canary path passes, stop there. Summarize the result and encourage the\n   user to commit the candidate changes or proceed with the release flow they\n   requested. Do not publish tags, releases, or pushes unless the user asked.\n\n## Failure Path\n\nEnter this path only when the canary or local build path fails.\n\n1. Capture the failing target, workflow job, and first actionable error.\n2. Compare the currently pinned version with the target version at the relevant\n   upstream tag or SHA. Inspect both:\n   - `denoland/rusty_v8`\n   - upstream V8 source at the target Bazel-pinned version\n3. Track build-relevant deltas rather than broad source churn:\n   - generated binding layout changes\n   - archive or asset naming changes\n   - GN/Bazel target changes\n   - custom libc++ / libc++abi / llvm-libc inputs\n   - sandbox or pointer-compression feature relationships\n   - patch hunks in `patches/` that no longer apply or no longer match upstream\n4. Trace each failing delta back into Codex's build graph:\n   - `MODULE.bazel`\n   - `third_party/v8/BUILD.bazel`\n   - `.github/scripts/rusty_v8_bazel.py`\n   - `.github/workflows/v8-canary.yml`\n   - `.github/workflows/rusty-v8-release.yml`\n5. Update only the pieces required to restore the target version's build and\n   artifact contract. Keep patch explanations and doc changes close to the\n   affected files.\n6. Re-run the focused validation. If it becomes green, return to the normal\n   workflow and stop with a concise summary plus the remaining release step.\n\n## Reporting\n\n- Say whether validation came from hosted `v8-canary` or from a local\n  substitute.\n- Distinguish \"version bump complete\" from \"release published\".\n- When blocked, report the upstream delta that matters, the Codex file it hits,\n  and the next co",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: update-v8-version"
+}

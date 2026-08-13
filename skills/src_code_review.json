@@ -1,0 +1,20 @@
+{
+  "name": "src_code_review",
+  "description": "Run a final code review on a pull request",
+  "trigger_keywords": [
+    "run",
+    "final",
+    "code",
+    "review",
+    "pull",
+    "request"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "Use subagents to review code using all code-review-* skills other than this orchestrator. One subagent per skill. Pass full skill path to subagents. Use xhigh reasoning.\n\nYou must return every single issue from every subagent. You can return an unlimited number of findings.\nUse raw Markdown to report findings.\nNumber findings for ease of reference.\nEach finding must include a specific file path and line number.\n\nIf the GitHub user running the review is the owner of the pull request add a `code-reviewed` label.\nDo not leave GitHub comments unless explicitly asked.",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: code-review"
+}

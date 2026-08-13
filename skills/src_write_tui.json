@@ -1,0 +1,24 @@
+{
+  "name": "src_write_tui",
+  "description": "Use when writing or modifying the kimi-code terminal UI in apps/kimi-code/src/tui — components, dialogs/selectors, slash commands, themes, streaming render, or the KimiTUI controllers. Covers the architecture, where new features go, test placement, the theme system mechanics, and the dialog interact",
+  "trigger_keywords": [
+    "use",
+    "when",
+    "writing",
+    "modifying",
+    "the",
+    "kimi",
+    "code",
+    "terminal",
+    "write",
+    "tui"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Write TUI (apps/kimi-code)\n\nThe terminal UI lives in `apps/kimi-code/src/tui`. Before writing TUI code, read `apps/kimi-code/AGENTS.md` for the always-on **map, module boundaries, and hard constraints** (printable-key decoding, no chalk named colors, etc.). This skill is the **how-to**: architecture orientation, feature routing, test placement, theme mechanics, and the dialog spec.\n\nFor any list dialog, selector, input box, or status/toggle list, the interaction and visual rules are normative — see **[DESIGN.md](./DESIGN.md)** in this folder and follow its self-check list before submitting.\n\n## Architecture\n\n`KimiTUI` is a **coordinator** that wires state, layout, session, and dialogs together and delegates heavy logic to controllers.\n\n- `src/tui/kimi-tui.ts` — the `KimiTUI` coordinator. Holds `state`, owns startup/shutdown order, layout/editor wiring, user-input entry, sending/queueing, session lifecycle, and the slash-command handler dispatch. It should **not** accumulate event-routing or rendering logic — those live in controllers.\n- `src/tui/tui-state.ts` — `TUIState`, `createTUIState`, `createInitialAppState`. The single global UI state shape. Before adding a new global field, decide whether it truly belongs here vs. local component state.\n- `src/tui/controllers/` — the independently-testable responsibilities. Each controller owns one slice:\n  - `session-event-handler.ts` — routes SDK session events (`handleEvent` dispatch + the per-event `handleXxx`). Concrete event handling goes here, not in `KimiTUI`.\n  - `streaming-ui.ts` — streaming render: assistant delta, thinking, tool call / result, compaction, subagent, background agent, transcript aggregation.\n  - `session-replay.ts` — resume/replay orchestration; drives replay records through the same live render hooks. Stateless replay parsing/limiting/projection helpers belong in `src/tui/utils/message-replay.ts`.\n  - `tasks-browser.ts` — the tasks browser controller.\n  - `editor-keyboard.ts` — editor keyboard handling, exit shortcuts, external editor, clipboard image.\n  - `auth-flow.ts` — login/auth orchestration (`refreshConfigAfterLogin`, etc.).\n- `src/tui/commands/` — slash-command declaration, parsing, ordering, and dynamic skill-command generation. Parsing and types only; execution is dispatched from `KimiTUI`'s slash-command handler section, and complex execution sinks into `utils` or focused components.\n- `src/tui/components/` — pi-tui components by UI type: `chrome/` (footer, todo, welcome, loader, device code), `dialogs/` (selectors, approval/question panels, settings popups that replace the editor), `editor/` (input box + mention provider), `media/` (image, diff, code highlight), `messages/` (transcript blocks + tool-renderers), `panes/` (activity, queue).\n- `src/tui/reverse-rpc/` — adapts SDK approval/question callbacks into UI panel data and the user's choice back into an SDK response.\n- `src/tui/theme/` — themes, color tokens, style helpers, pi-tui markdown theme, terminal-backg",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: write-tui"
+}

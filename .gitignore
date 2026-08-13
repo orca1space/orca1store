@@ -1,23 +1,81 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
+# Local models and large binary artifacts
+models/
+*.gguf
+*.safetensors
+*.onnx
+*.pt
+*.pth
+*.bin
+
+# Generated archives and build output
+*.zip
+*.tgz
+*.tar
+*.7z
+**/node_modules/
+**/target/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyd
+*.so
+
+# Local credentials and secrets
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*secret*
+*token*
+
+# Runtime uploads, logs, and caches
+*.log
+uploads/*
+!uploads/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Hermes runtime state and private session data
+data/session_state.json
+data/approval_queue.json
+data/mentor_bridge.json
+data/mentor_snapshots/
+data/*_result.json
+data/*_payload.json
+data/*_test_result.json
+data/status_*.json
+data/full_regression_result.txt
+data/run_regression_summary.json
+data/run_regression.py
+data/python_files.txt
+data/root_response.txt
+data/capability_inventory_current.txt
+data/bridge_before_merge.txt
+data/*_ops_fragment.txt
+data/agent_ops_after_bridge.json
+data/tracked_data_files.txt
+data/api_chat_test_result.txt
+training/memory.json
+training/training_state.json
+data/memory_store.json
+data/response_cache.json
+data/skill_embeddings.json
+data/checkpoints/
+data/interrupts/
+OrcaMax_Snapshot/data/
+imported_sources/**/tests/cache/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
 .vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-files
-*.bclicense
-*.flf
-#Test results file
-TestResults.xml
+.idea/
+
+# Local Git helper state
+**/.git/
+.gitattributes
+vendor/ 
+knowledge/vector_store.json 
+assets/*.png 

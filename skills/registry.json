@@ -1,0 +1,1533 @@
+{
+  "skills": [
+    {
+      "name": "converse_arabic",
+      "description": "Converse naturally in Arabic (العربية)",
+      "triggers": [
+        "السلام عليكم",
+        "أهلاً وسهلاً",
+        "صباح الخير",
+        "مساء الخير",
+        "مرحبا",
+        "العربية",
+        "arabic"
+      ],
+      "enabled": true,
+      "file": "converse_arabic.json"
+    },
+    {
+      "name": "converse_english",
+      "description": "Converse naturally in English (English)",
+      "triggers": [
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "english",
+        "english"
+      ],
+      "enabled": true,
+      "file": "converse_english.json"
+    },
+    {
+      "name": "converse_french",
+      "description": "Converse naturally in French (Français)",
+      "triggers": [
+        "bonjour",
+        "salut",
+        "bonsoir",
+        "bonne journée",
+        "bienvenue",
+        "français",
+        "french"
+      ],
+      "enabled": true,
+      "file": "converse_french.json"
+    },
+    {
+      "name": "converse_german",
+      "description": "Converse naturally in German (Deutsch)",
+      "triggers": [
+        "hallo",
+        "guten morgen",
+        "guten tag",
+        "guten abend",
+        "servus",
+        "deutsch",
+        "german"
+      ],
+      "enabled": true,
+      "file": "converse_german.json"
+    },
+    {
+      "name": "converse_spanish",
+      "description": "Converse naturally in Spanish (Español)",
+      "triggers": [
+        "hola",
+        "buenos días",
+        "buenas tardes",
+        "buenas noches",
+        "qué tal",
+        "español",
+        "spanish"
+      ],
+      "enabled": true,
+      "file": "converse_spanish.json"
+    },
+    {
+      "name": "greet_user",
+      "description": "Greets the user warmly in their language",
+      "triggers": [
+        "greet",
+        "مرحبا",
+        "سلام",
+        "hello",
+        "hi"
+      ],
+      "enabled": true,
+      "file": "greet_user.json"
+    },
+    {
+      "name": "phrases_arabic",
+      "description": "Common everyday phrases in Arabic",
+      "triggers": [
+        "common phrases in arabic",
+        "how to say in arabic",
+        "عبارات العربية",
+        "كيف أقول بـالعربية"
+      ],
+      "enabled": true,
+      "file": "phrases_arabic.json"
+    },
+    {
+      "name": "phrases_english",
+      "description": "Common everyday phrases in English",
+      "triggers": [
+        "common phrases in english",
+        "how to say in english",
+        "عبارات english",
+        "كيف أقول بـenglish"
+      ],
+      "enabled": true,
+      "file": "phrases_english.json"
+    },
+    {
+      "name": "phrases_french",
+      "description": "Common everyday phrases in French",
+      "triggers": [
+        "common phrases in french",
+        "how to say in french",
+        "عبارات français",
+        "كيف أقول بـfrançais"
+      ],
+      "enabled": true,
+      "file": "phrases_french.json"
+    },
+    {
+      "name": "phrases_german",
+      "description": "Common everyday phrases in German",
+      "triggers": [
+        "common phrases in german",
+        "how to say in german",
+        "عبارات deutsch",
+        "كيف أقول بـdeutsch"
+      ],
+      "enabled": true,
+      "file": "phrases_german.json"
+    },
+    {
+      "name": "phrases_spanish",
+      "description": "Common everyday phrases in Spanish",
+      "triggers": [
+        "common phrases in spanish",
+        "how to say in spanish",
+        "عبارات español",
+        "كيف أقول بـespañol"
+      ],
+      "enabled": true,
+      "file": "phrases_spanish.json"
+    },
+    {
+      "name": "src_access",
+      "description": "Manage Telegram channel access — approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve someone, check who's allowed, or change policy for the Telegram channel.",
+      "triggers": [
+        "manage",
+        "telegram",
+        "channel",
+        "access",
+        "approve",
+        "pairings",
+        "edit",
+        "allowlists"
+      ],
+      "enabled": true,
+      "file": "src_access.json"
+    },
+    {
+      "name": "src_agent_core_dev",
+      "description": "Use when developing in packages/agent-core-v2 (the DI × Scope agent engine) — adding or modifying a domain Service, choosing a LifecycleScope, wiring DI dependencies, splitting a domain across scopes, owning or migrating a config section, gating behavior behind an experimental flag, raising coded er",
+      "triggers": [
+        "use",
+        "when",
+        "developing",
+        "packages",
+        "agent",
+        "core",
+        "the",
+        "scope",
+        "dev"
+      ],
+      "enabled": true,
+      "file": "src_agent_core_dev.json"
+    },
+    {
+      "name": "src_agent_core_review",
+      "description": "Use ONLY for code review and test write/review guidance in `packages/agent-core-v2` (the DI × Scope agent engine). Does NOT apply to the legacy `packages/agent-core` or to any other package — for those, do not load this skill. Groups the review and testing lenses used for agent-core-v2 — `slop` (sin",
+      "triggers": [
+        "use",
+        "only",
+        "for",
+        "code",
+        "review",
+        "and",
+        "test",
+        "write",
+        "agent",
+        "core"
+      ],
+      "enabled": true,
+      "file": "src_agent_core_review.json"
+    },
+    {
+      "name": "src_agent_development",
+      "description": "This skill should be used when the user asks to \"create an agent\", \"add an agent\", \"write a subagent\", \"agent frontmatter\", \"when to use description\", \"agent examples\", \"agent tools\", \"agent colors\", \"autonomous agent\", or needs guidance on agent structure, system prompts, triggering conditions, or ",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "agent",
+        "development"
+      ],
+      "enabled": true,
+      "file": "src_agent_development.json"
+    },
+    {
+      "name": "src_algorithmic_art",
+      "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avo",
+      "triggers": [
+        "creating",
+        "algorithmic",
+        "art",
+        "using",
+        "with",
+        "seeded",
+        "randomness",
+        "and"
+      ],
+      "enabled": true,
+      "file": "src_algorithmic_art.json"
+    },
+    {
+      "name": "src_babysit_pr",
+      "description": "Babysit a GitHub pull request after creation by continuously polling review comments, CI checks/workflow runs, and mergeability state until the PR is merged/closed or user help is required. Diagnose failures, retry likely flaky failures up to 3 times, auto-fix/push branch-related issues when appropr",
+      "triggers": [
+        "babysit",
+        "github",
+        "pull",
+        "request",
+        "after",
+        "creation",
+        "continuously",
+        "polling"
+      ],
+      "enabled": true,
+      "file": "src_babysit_pr.json"
+    },
+    {
+      "name": "src_brand_guidelines",
+      "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
+      "triggers": [
+        "applies",
+        "anthropic",
+        "official",
+        "brand",
+        "colors",
+        "and",
+        "typography",
+        "any",
+        "guidelines"
+      ],
+      "enabled": true,
+      "file": "src_brand_guidelines.json"
+    },
+    {
+      "name": "src_build_mcpb",
+      "description": "This skill should be used when the user wants to \"package an MCP server\", \"bundle an MCP\", \"make an MCPB\", \"ship a local MCP server\", \"distribute a local MCP\", discusses \".mcpb files\", mentions bundling a Node or Python runtime with their MCP server, or needs an MCP server that interacts with the lo",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "wants",
+        "build",
+        "mcpb"
+      ],
+      "enabled": true,
+      "file": "src_build_mcpb.json"
+    },
+    {
+      "name": "src_build_mcp_app",
+      "description": "This skill should be used when the user wants to build an \"MCP app\", add \"interactive UI\" or \"widgets\" to an MCP server, \"render components in chat\", build \"MCP UI resources\", make a tool that shows a \"form\", \"picker\", \"dashboard\" or \"confirmation dialog\" inline in the conversation, or mentions \"app",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "wants",
+        "build",
+        "mcp",
+        "app"
+      ],
+      "enabled": true,
+      "file": "src_build_mcp_app.json"
+    },
+    {
+      "name": "src_build_mcp_server",
+      "description": "This skill should be used when the user asks to \"build an MCP server\", \"create an MCP\", \"make an MCP integration\", \"wrap an API for Claude\", \"expose tools to Claude\", \"make an MCP app\", or discusses building something with the Model Context Protocol. It is the entry point for MCP server development ",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "build",
+        "mcp",
+        "server"
+      ],
+      "enabled": true,
+      "file": "src_build_mcp_server.json"
+    },
+    {
+      "name": "src_canvas_design",
+      "description": "Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.",
+      "triggers": [
+        "create",
+        "beautiful",
+        "visual",
+        "art",
+        "png",
+        "and",
+        "pdf",
+        "documents",
+        "canvas",
+        "design"
+      ],
+      "enabled": true,
+      "file": "src_canvas_design.json"
+    },
+    {
+      "name": "src_cardputer_buddy",
+      "description": "Iterate on the Cardputer-Adv MicroPython app bundle (Claude Buddy, Snake, Hello) after the device is already provisioned via m5-onboard. Use when the user wants to add a new app, push a single changed .py without re-flashing, watch device serial logs, or run a one-shot REPL command. Trigger on \"add ",
+      "triggers": [
+        "iterate",
+        "the",
+        "cardputer",
+        "adv",
+        "micropython",
+        "app",
+        "bundle",
+        "claude",
+        "buddy"
+      ],
+      "enabled": true,
+      "file": "src_cardputer_buddy.json"
+    },
+    {
+      "name": "src_claude_api",
+      "description": "|-",
+      "triggers": [
+        "claude",
+        "api"
+      ],
+      "enabled": true,
+      "file": "src_claude_api.json"
+    },
+    {
+      "name": "src_claude_automation_recommender",
+      "description": "Analyze a codebase and recommend Claude Code automations (hooks, subagents, skills, plugins, MCP servers). Use when user asks for automation recommendations, wants to optimize their Claude Code setup, mentions improving Claude Code workflows, asks how to first set up Claude Code for a project, or wa",
+      "triggers": [
+        "analyze",
+        "codebase",
+        "and",
+        "recommend",
+        "claude",
+        "code",
+        "automations",
+        "hooks",
+        "automation",
+        "recommender"
+      ],
+      "enabled": true,
+      "file": "src_claude_automation_recommender.json"
+    },
+    {
+      "name": "src_claude_md_improver",
+      "description": "Audit and improve CLAUDE.md files in repositories. Use when user asks to check, audit, update, improve, or fix CLAUDE.md files. Scans for all CLAUDE.md files, evaluates quality against templates, outputs quality report, then makes targeted updates. Also use when the user mentions \"CLAUDE.md maintena",
+      "triggers": [
+        "audit",
+        "and",
+        "improve",
+        "claude",
+        "files",
+        "repositories",
+        "use",
+        "when",
+        "improver"
+      ],
+      "enabled": true,
+      "file": "src_claude_md_improver.json"
+    },
+    {
+      "name": "src_claude_security",
+      "description": "The Claude Security menu — pick a job: scan the codebase (the whole repository or a scoped part of it), scan changes (this branch's or a pull request's diff, or one commit), or suggest patches (findings turned into targeted patch files, each verified by a panel of agents, that you apply when you cho",
+      "triggers": [
+        "the",
+        "claude",
+        "security",
+        "menu",
+        "pick",
+        "job",
+        "scan",
+        "the"
+      ],
+      "enabled": true,
+      "file": "src_claude_security.json"
+    },
+    {
+      "name": "src_codex_bug",
+      "description": "Diagnose GitHub bug reports in openai/codex. Use when given a GitHub issue URL from openai/codex and asked to decide next steps such as verifying against the repo, requesting more info, or explaining why it is not a bug; follow any additional user-provided instructions.",
+      "triggers": [
+        "diagnose",
+        "github",
+        "bug",
+        "reports",
+        "openai",
+        "codex",
+        "use",
+        "when"
+      ],
+      "enabled": true,
+      "file": "src_codex_bug.json"
+    },
+    {
+      "name": "src_codex_issue_digest",
+      "description": "Run a GitHub issue digest for openai/codex by feature-area labels, all areas, and configurable time windows. Use when asked to summarize recent Codex bug reports or enhancement requests, especially for owner-specific labels such as tui, exec, app, or similar areas.",
+      "triggers": [
+        "run",
+        "github",
+        "issue",
+        "digest",
+        "for",
+        "openai",
+        "codex",
+        "feature"
+      ],
+      "enabled": true,
+      "file": "src_codex_issue_digest.json"
+    },
+    {
+      "name": "src_codex_pr_body",
+      "description": "Update the title and body of one or more pull requests.",
+      "triggers": [
+        "update",
+        "the",
+        "title",
+        "and",
+        "body",
+        "one",
+        "more",
+        "pull",
+        "codex"
+      ],
+      "enabled": true,
+      "file": "src_codex_pr_body.json"
+    },
+    {
+      "name": "src_code_breaking_changes",
+      "description": "Breaking changes",
+      "triggers": [
+        "breaking",
+        "changes",
+        "code"
+      ],
+      "enabled": true,
+      "file": "src_code_breaking_changes.json"
+    },
+    {
+      "name": "src_code_review",
+      "description": "Run a final code review on a pull request",
+      "triggers": [
+        "run",
+        "final",
+        "code",
+        "review",
+        "pull",
+        "request"
+      ],
+      "enabled": true,
+      "file": "src_code_review.json"
+    },
+    {
+      "name": "src_code_review_change_size",
+      "description": "Change size guidance (800 lines)",
+      "triggers": [
+        "change",
+        "size",
+        "guidance",
+        "lines",
+        "code",
+        "review"
+      ],
+      "enabled": true,
+      "file": "src_code_review_change_size.json"
+    },
+    {
+      "name": "src_code_review_context",
+      "description": "Model visible context",
+      "triggers": [
+        "model",
+        "visible",
+        "context",
+        "code",
+        "review"
+      ],
+      "enabled": true,
+      "file": "src_code_review_context.json"
+    },
+    {
+      "name": "src_code_review_testing",
+      "description": "Test authoring guidance",
+      "triggers": [
+        "test",
+        "authoring",
+        "guidance",
+        "code",
+        "review",
+        "testing"
+      ],
+      "enabled": true,
+      "file": "src_code_review_testing.json"
+    },
+    {
+      "name": "src_command_development",
+      "description": "This skill should be used when the user asks to \"create a slash command\", \"add a command\", \"write a custom command\", \"define command arguments\", \"use command frontmatter\", \"organize commands\", \"create command with file references\", \"interactive command\", \"use AskUserQuestion in command\", or needs gu",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "command",
+        "development"
+      ],
+      "enabled": true,
+      "file": "src_command_development.json"
+    },
+    {
+      "name": "src_configure",
+      "description": "Set up the Telegram channel — save the bot token and review access policy. Use when the user pastes a Telegram bot token, asks to configure Telegram, asks \"how do I set this up\" or \"who can reach me,\" or wants to check channel status.",
+      "triggers": [
+        "set",
+        "the",
+        "telegram",
+        "channel",
+        "save",
+        "the",
+        "bot",
+        "token",
+        "configure"
+      ],
+      "enabled": true,
+      "file": "src_configure.json"
+    },
+    {
+      "name": "src_consolidate",
+      "description": "Apply an approved sub-skill grouping by moving user-specified skills into a parent bundle, with timestamped backups of every modified directory.",
+      "triggers": [
+        "apply",
+        "approved",
+        "sub",
+        "skill",
+        "grouping",
+        "moving",
+        "user",
+        "specified",
+        "consolidate"
+      ],
+      "enabled": true,
+      "file": "src_consolidate.json"
+    },
+    {
+      "name": "src_docx",
+      "description": "Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx files). Triggers include: any mention of 'Word doc', 'word document', '.docx', '.dotx', or requests to produce professional documents with formatting like tables of conte",
+      "triggers": [
+        "use",
+        "this",
+        "skill",
+        "whenever",
+        "the",
+        "user",
+        "wants",
+        "create",
+        "docx"
+      ],
+      "enabled": true,
+      "file": "src_docx.json"
+    },
+    {
+      "name": "src_doc_coauthoring",
+      "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc",
+      "triggers": [
+        "guide",
+        "users",
+        "through",
+        "structured",
+        "workflow",
+        "for",
+        "authoring",
+        "documentation",
+        "doc",
+        "coauthoring"
+      ],
+      "enabled": true,
+      "file": "src_doc_coauthoring.json"
+    },
+    {
+      "name": "src_example_command",
+      "description": "An example user-invoked skill that demonstrates frontmatter options and the skills/<name>/SKILL.md layout",
+      "triggers": [
+        "example",
+        "user",
+        "invoked",
+        "skill",
+        "that",
+        "demonstrates",
+        "frontmatter",
+        "options",
+        "command"
+      ],
+      "enabled": true,
+      "file": "src_example_command.json"
+    },
+    {
+      "name": "src_example_skill",
+      "description": "This skill should be used when the user asks to \"demonstrate skills\", \"show skill format\", \"create a skill template\", or discusses skill development patterns. Provides a reference template for creating Claude Code plugin skills.",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "example"
+      ],
+      "enabled": true,
+      "file": "src_example_skill.json"
+    },
+    {
+      "name": "src_frontend_design",
+      "description": "Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making choices that don't read as templated defaults.",
+      "triggers": [
+        "guidance",
+        "for",
+        "distinctive",
+        "intentional",
+        "visual",
+        "design",
+        "when",
+        "building",
+        "frontend"
+      ],
+      "enabled": true,
+      "file": "src_frontend_design.json"
+    },
+    {
+      "name": "src_gen_changesets",
+      "description": "Use when generating changesets in the kimi-code repository, including package bump selection, internal package and CLI bundle handling, bump levels, major confirmation, and English changelog wording.",
+      "triggers": [
+        "use",
+        "when",
+        "generating",
+        "changesets",
+        "the",
+        "kimi",
+        "code",
+        "repository",
+        "gen"
+      ],
+      "enabled": true,
+      "file": "src_gen_changesets.json"
+    },
+    {
+      "name": "src_gen_docs",
+      "description": "Update Kimi Code CLI user documentation after meaningful code changes that affect product behavior or user experience.",
+      "triggers": [
+        "update",
+        "kimi",
+        "code",
+        "cli",
+        "user",
+        "documentation",
+        "after",
+        "meaningful",
+        "gen",
+        "docs"
+      ],
+      "enabled": true,
+      "file": "src_gen_docs.json"
+    },
+    {
+      "name": "src_hook_development",
+      "description": "This skill should be used when the user asks to \"create a hook\", \"add a PreToolUse/PostToolUse/Stop hook\", \"validate tool use\", \"implement prompt-based hooks\", \"use ${CLAUDE_PLUGIN_ROOT}\", \"set up event-driven automation\", \"block dangerous commands\", or mentions hook events (PreToolUse, PostToolUse,",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "hook",
+        "development"
+      ],
+      "enabled": true,
+      "file": "src_hook_development.json"
+    },
+    {
+      "name": "src_imagegen",
+      "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, a",
+      "triggers": [
+        "generate",
+        "edit",
+        "raster",
+        "images",
+        "when",
+        "the",
+        "task",
+        "benefits",
+        "imagegen"
+      ],
+      "enabled": true,
+      "file": "src_imagegen.json"
+    },
+    {
+      "name": "src_internal_comms",
+      "description": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident rep",
+      "triggers": [
+        "set",
+        "resources",
+        "help",
+        "write",
+        "all",
+        "kinds",
+        "internal",
+        "communications",
+        "comms"
+      ],
+      "enabled": true,
+      "file": "src_internal_comms.json"
+    },
+    {
+      "name": "src_kimi_datasource",
+      "description": "|",
+      "triggers": [
+        "kimi",
+        "datasource"
+      ],
+      "enabled": true,
+      "file": "src_kimi_datasource.json"
+    },
+    {
+      "name": "src_kimi_webbridge",
+      "description": "|",
+      "triggers": [
+        "kimi",
+        "webbridge"
+      ],
+      "enabled": true,
+      "file": "src_kimi_webbridge.json"
+    },
+    {
+      "name": "src_m5_onboard",
+      "description": "End-to-end onboarding for a freshly-plugged-in M5Stack ESP32 device (Cardputer, Cardputer-Adv, Core, CoreS3, Stick) — detect on USB, flash UIFlow 2.0 firmware, and install the Claude Buddy MicroPython app bundle. Use whenever the user plugs in or wants to flash/provision/reset an M5Stack or ESP32 bo",
+      "triggers": [
+        "end",
+        "end",
+        "onboarding",
+        "for",
+        "freshly",
+        "plugged",
+        "stack",
+        "esp",
+        "onboard"
+      ],
+      "enabled": true,
+      "file": "src_m5_onboard.json"
+    },
+    {
+      "name": "src_mcp_builder",
+      "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+      "triggers": [
+        "guide",
+        "for",
+        "creating",
+        "high",
+        "quality",
+        "mcp",
+        "model",
+        "context",
+        "builder"
+      ],
+      "enabled": true,
+      "file": "src_mcp_builder.json"
+    },
+    {
+      "name": "src_mcp_integration",
+      "description": "This skill should be used when the user asks to \"add MCP server\", \"integrate MCP\", \"configure MCP in plugin\", \"use .mcp.json\", \"set up Model Context Protocol\", \"connect external service\", mentions \"${CLAUDE_PLUGIN_ROOT} with MCP\", or discusses MCP server types (SSE, stdio, HTTP, WebSocket). Provides",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "mcp",
+        "integration"
+      ],
+      "enabled": true,
+      "file": "src_mcp_integration.json"
+    },
+    {
+      "name": "src_openai_docs",
+      "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migrat",
+      "triggers": [
+        "use",
+        "for",
+        "codex",
+        "models",
+        "pricing",
+        "scheduled",
+        "tasks",
+        "skills",
+        "openai",
+        "docs"
+      ],
+      "enabled": true,
+      "file": "src_openai_docs.json"
+    },
+    {
+      "name": "src_path_types",
+      "description": "Choose Rust types for operating system paths across the Codex repository. Use when defining new path-bearing types or explicitly migrating existing ones.",
+      "triggers": [
+        "choose",
+        "rust",
+        "types",
+        "for",
+        "operating",
+        "system",
+        "paths",
+        "across",
+        "path"
+      ],
+      "enabled": true,
+      "file": "src_path_types.json"
+    },
+    {
+      "name": "src_pdf",
+      "description": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks, creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, ext",
+      "triggers": [
+        "use",
+        "this",
+        "skill",
+        "whenever",
+        "the",
+        "user",
+        "wants",
+        "anything",
+        "pdf"
+      ],
+      "enabled": true,
+      "file": "src_pdf.json"
+    },
+    {
+      "name": "src_playground",
+      "description": "Creates interactive HTML playgrounds — self-contained single-file explorers that let users configure something visually through controls, see a live preview, and copy out a prompt. Use when the user asks to make a playground, explorer, or interactive tool for a topic.",
+      "triggers": [
+        "creates",
+        "interactive",
+        "html",
+        "playgrounds",
+        "self",
+        "contained",
+        "single",
+        "file",
+        "playground"
+      ],
+      "enabled": true,
+      "file": "src_playground.json"
+    },
+    {
+      "name": "src_plugin_creator",
+      "description": "Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/files, valid manifest defaults, and personal-marketplace entries by default. Use when Codex needs to create a new personal plugin, add optional plugin structure, generate or update m",
+      "triggers": [
+        "create",
+        "and",
+        "scaffold",
+        "plugin",
+        "directories",
+        "for",
+        "codex",
+        "with",
+        "creator"
+      ],
+      "enabled": true,
+      "file": "src_plugin_creator.json"
+    },
+    {
+      "name": "src_plugin_settings",
+      "description": "This skill should be used when the user asks about \"plugin settings\", \"store plugin configuration\", \"user-configurable plugin\", \".local.md files\", \"plugin state files\", \"read YAML frontmatter\", \"per-project plugin settings\", or wants to make plugin behavior configurable. Documents the .claude/plugin",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "plugin",
+        "settings"
+      ],
+      "enabled": true,
+      "file": "src_plugin_settings.json"
+    },
+    {
+      "name": "src_plugin_structure",
+      "description": "This skill should be used when the user asks to \"create a plugin\", \"scaffold a plugin\", \"understand plugin structure\", \"organize plugin components\", \"set up plugin.json\", \"use ${CLAUDE_PLUGIN_ROOT}\", \"add commands/agents/skills/hooks\", \"configure auto-discovery\", or needs guidance on plugin director",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "plugin",
+        "structure"
+      ],
+      "enabled": true,
+      "file": "src_plugin_structure.json"
+    },
+    {
+      "name": "src_pptx",
+      "description": "Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx or .potx file (even if the extracted content will be used elsewhere, like in an em",
+      "triggers": [
+        "use",
+        "this",
+        "skill",
+        "any",
+        "time",
+        "pptx",
+        "potx",
+        "file"
+      ],
+      "enabled": true,
+      "file": "src_pptx.json"
+    },
+    {
+      "name": "src_pre_changelog",
+      "description": "Use before merging a kimi-code release PR to preview the user-facing CLI changelog in Chinese. Reads the changelog that changesets pre-generated in the release PR, then reuses sync-changelog's strip / classify / translate logic to render a Chinese preview. Writes no files.",
+      "triggers": [
+        "use",
+        "before",
+        "merging",
+        "kimi",
+        "code",
+        "release",
+        "preview",
+        "the",
+        "pre",
+        "changelog"
+      ],
+      "enabled": true,
+      "file": "src_pre_changelog.json"
+    },
+    {
+      "name": "src_project_artifact",
+      "description": "Generate and publish a project status artifact — an opinionated, tabbed status page for a project too big for one update (overview & success criteria, the workstream sequence, next steps, plus background, plan, risks & open questions, and decisions/FAQ when they earn a tab) — published with the buil",
+      "triggers": [
+        "generate",
+        "and",
+        "publish",
+        "project",
+        "status",
+        "artifact",
+        "opinionated",
+        "tabbed"
+      ],
+      "enabled": true,
+      "file": "src_project_artifact.json"
+    },
+    {
+      "name": "src_pushing_ci_changes",
+      "description": "Pushing GitHub Actions changes, resolving push rejection, requesting upload exceptions.",
+      "triggers": [
+        "pushing",
+        "github",
+        "actions",
+        "changes",
+        "resolving",
+        "push",
+        "rejection",
+        "requesting"
+      ],
+      "enabled": true,
+      "file": "src_pushing_ci_changes.json"
+    },
+    {
+      "name": "src_receipts",
+      "description": "Generate a personal Claude Code usage & impact report (\"receipts\") from this machine's local session transcripts — for justifying Claude Code usage/spend to a manager, self-review, or \"what have I been using this for\" check-ins. Mines ~/.claude/projects locally (no extra API calls beyond one final w",
+      "triggers": [
+        "generate",
+        "personal",
+        "claude",
+        "code",
+        "usage",
+        "impact",
+        "report",
+        "receipts"
+      ],
+      "enabled": true,
+      "file": "src_receipts.json"
+    },
+    {
+      "name": "src_release_notes",
+      "description": "Draft concise release notes.",
+      "triggers": [
+        "draft",
+        "concise",
+        "release",
+        "notes"
+      ],
+      "enabled": true,
+      "file": "src_release_notes.json"
+    },
+    {
+      "name": "src_remote_tests",
+      "description": "Testing against remote executors in integration tests.",
+      "triggers": [
+        "testing",
+        "against",
+        "remote",
+        "executors",
+        "integration",
+        "tests"
+      ],
+      "enabled": true,
+      "file": "src_remote_tests.json"
+    },
+    {
+      "name": "src_review",
+      "description": "Analyze the available skill set and recommend candidate groups that could be consolidated into sub-skill bundles. Read-only — proposes a plan, does not move files.",
+      "triggers": [
+        "analyze",
+        "the",
+        "available",
+        "skill",
+        "set",
+        "and",
+        "recommend",
+        "candidate",
+        "review"
+      ],
+      "enabled": true,
+      "file": "src_review.json"
+    },
+    {
+      "name": "src_review_agent",
+      "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+      "triggers": [
+        "perform",
+        "read",
+        "only",
+        "defect",
+        "first",
+        "review",
+        "specified",
+        "code",
+        "agent"
+      ],
+      "enabled": true,
+      "file": "src_review_agent.json"
+    },
+    {
+      "name": "src_session_report",
+      "description": "Generate an explorable HTML report of Claude Code session usage (tokens, cache, subagents, skills, expensive prompts) from ~/.claude/projects transcripts.",
+      "triggers": [
+        "generate",
+        "explorable",
+        "html",
+        "report",
+        "claude",
+        "code",
+        "session",
+        "usage"
+      ],
+      "enabled": true,
+      "file": "src_session_report.json"
+    },
+    {
+      "name": "src_skill_creator",
+      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations.",
+      "triggers": [
+        "guide",
+        "for",
+        "creating",
+        "effective",
+        "skills",
+        "this",
+        "skill",
+        "should",
+        "creator"
+      ],
+      "enabled": true,
+      "file": "src_skill_creator.json"
+    },
+    {
+      "name": "src_skill_development",
+      "description": "This skill should be used when the user wants to \"create a skill\", \"add a skill to plugin\", \"write a new skill\", \"improve skill description\", \"organize skill content\", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "wants",
+        "development"
+      ],
+      "enabled": true,
+      "file": "src_skill_development.json"
+    },
+    {
+      "name": "src_skill_installer",
+      "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+      "triggers": [
+        "install",
+        "codex",
+        "skills",
+        "into",
+        "codex",
+        "home",
+        "skills",
+        "from",
+        "skill",
+        "installer"
+      ],
+      "enabled": true,
+      "file": "src_skill_installer.json"
+    },
+    {
+      "name": "src_slack_gif_creator",
+      "description": "Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.",
+      "triggers": [
+        "knowledge",
+        "and",
+        "utilities",
+        "for",
+        "creating",
+        "animated",
+        "gifs",
+        "optimized",
+        "slack",
+        "gif",
+        "creator"
+      ],
+      "enabled": true,
+      "file": "src_slack_gif_creator.json"
+    },
+    {
+      "name": "src_slop",
+      "description": "Invoke only when the user explicitly asks to review code through the \"single level of abstraction / layered error handling\" lens — a function does only its own layer's business logic while errors are handled above or below. The agent reports detections, raw-count measurements, and move directions. A",
+      "triggers": [
+        "invoke",
+        "only",
+        "when",
+        "the",
+        "user",
+        "explicitly",
+        "asks",
+        "review",
+        "slop"
+      ],
+      "enabled": true,
+      "file": "src_slop.json"
+    },
+    {
+      "name": "src_sub_skill",
+      "description": "Discover and reorganize the skill inventory into hierarchical sub-skill bundles. Use when the user asks to review, group, or consolidate skills into a parent bundle.",
+      "triggers": [
+        "discover",
+        "and",
+        "reorganize",
+        "the",
+        "skill",
+        "inventory",
+        "into",
+        "hierarchical",
+        "sub"
+      ],
+      "enabled": true,
+      "file": "src_sub_skill.json"
+    },
+    {
+      "name": "src_sync_changelog",
+      "description": "Use after a release succeeds, when maintainers need to sync apps/kimi-code/CHANGELOG.md into docs/en/release-notes/changelog.md and docs/zh/release-notes/changelog.md, then open a PR on a dedicated branch.",
+      "triggers": [
+        "use",
+        "after",
+        "release",
+        "succeeds",
+        "when",
+        "maintainers",
+        "need",
+        "sync",
+        "changelog"
+      ],
+      "enabled": true,
+      "file": "src_sync_changelog.json"
+    },
+    {
+      "name": "src_template_skill",
+      "description": "Replace with description of the skill and when Claude should use it.",
+      "triggers": [
+        "replace",
+        "with",
+        "description",
+        "the",
+        "skill",
+        "and",
+        "when",
+        "claude",
+        "template"
+      ],
+      "enabled": true,
+      "file": "src_template_skill.json"
+    },
+    {
+      "name": "src_test",
+      "description": "Use when writing or reviewing tests, or when asked how to write a good single test. Encodes the per-test rules behind the \"test the contract / responsibility, not the implementation\" principle — name and structure one behavior per `it`, drive through the public surface, stub only true external bound",
+      "triggers": [
+        "use",
+        "when",
+        "writing",
+        "reviewing",
+        "tests",
+        "when",
+        "asked",
+        "how",
+        "test"
+      ],
+      "enabled": true,
+      "file": "src_test.json"
+    },
+    {
+      "name": "src_test_tui",
+      "description": "Guide for testing Codex TUI interactively",
+      "triggers": [
+        "guide",
+        "for",
+        "testing",
+        "codex",
+        "tui",
+        "interactively",
+        "test"
+      ],
+      "enabled": true,
+      "file": "src_test_tui.json"
+    },
+    {
+      "name": "src_theme_factory",
+      "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
+      "triggers": [
+        "toolkit",
+        "for",
+        "styling",
+        "artifacts",
+        "with",
+        "theme",
+        "these",
+        "artifacts",
+        "factory"
+      ],
+      "enabled": true,
+      "file": "src_theme_factory.json"
+    },
+    {
+      "name": "src_translate_docs",
+      "description": "Translate and sync bilingual user documentation between docs/zh/ and docs/en/ following the source-of-truth rules in docs/AGENTS.md.",
+      "triggers": [
+        "translate",
+        "and",
+        "sync",
+        "bilingual",
+        "user",
+        "documentation",
+        "between",
+        "docs"
+      ],
+      "enabled": true,
+      "file": "src_translate_docs.json"
+    },
+    {
+      "name": "src_update_v8_version",
+      "description": "Update Codex's pinned `v8` / `rusty_v8` versions, validate the release-candidate path, and investigate failed V8 canary or artifact builds. Use when asked to bump V8, update `rusty_v8` artifacts, prepare or validate a V8 release candidate, check `v8-canary`, or diagnose why a V8 version update no lo",
+      "triggers": [
+        "update",
+        "codex",
+        "pinned",
+        "rusty",
+        "versions",
+        "validate",
+        "the",
+        "release",
+        "version"
+      ],
+      "enabled": true,
+      "file": "src_update_v8_version.json"
+    },
+    {
+      "name": "src_webapp_testing",
+      "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
+      "triggers": [
+        "toolkit",
+        "for",
+        "interacting",
+        "with",
+        "and",
+        "testing",
+        "local",
+        "web",
+        "webapp"
+      ],
+      "enabled": true,
+      "file": "src_webapp_testing.json"
+    },
+    {
+      "name": "src_web_artifacts_builder",
+      "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
+      "triggers": [
+        "suite",
+        "tools",
+        "for",
+        "creating",
+        "elaborate",
+        "multi",
+        "component",
+        "claude",
+        "web",
+        "artifacts",
+        "builder"
+      ],
+      "enabled": true,
+      "file": "src_web_artifacts_builder.json"
+    },
+    {
+      "name": "src_write_tui",
+      "description": "Use when writing or modifying the kimi-code terminal UI in apps/kimi-code/src/tui — components, dialogs/selectors, slash commands, themes, streaming render, or the KimiTUI controllers. Covers the architecture, where new features go, test placement, the theme system mechanics, and the dialog interact",
+      "triggers": [
+        "use",
+        "when",
+        "writing",
+        "modifying",
+        "the",
+        "kimi",
+        "code",
+        "terminal",
+        "write",
+        "tui"
+      ],
+      "enabled": true,
+      "file": "src_write_tui.json"
+    },
+    {
+      "name": "src_writing_hookify_rules",
+      "description": "This skill should be used when the user asks to \"create a hookify rule\", \"write a hook rule\", \"configure hookify\", \"add a hookify rule\", or needs guidance on hookify rule syntax and patterns.",
+      "triggers": [
+        "this",
+        "skill",
+        "should",
+        "used",
+        "when",
+        "the",
+        "user",
+        "asks",
+        "writing",
+        "hookify",
+        "rules"
+      ],
+      "enabled": true,
+      "file": "src_writing_hookify_rules.json"
+    },
+    {
+      "name": "src_xlsx",
+      "description": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing formulas, formatting, charting, cleaning messy data); create a new spr",
+      "triggers": [
+        "use",
+        "this",
+        "skill",
+        "any",
+        "time",
+        "spreadsheet",
+        "file",
+        "the",
+        "xlsx"
+      ],
+      "enabled": true,
+      "file": "src_xlsx.json"
+    },
+    {
+      "name": "test_skill_a",
+      "description": "Test skill A: respond in Arabic poetry style.",
+      "triggers": [
+        "poetry",
+        "شعر",
+        "verse"
+      ],
+      "enabled": true,
+      "file": "test_skill_a.json"
+    },
+    {
+      "name": "test_skill_b",
+      "description": "Test skill B: explain a code snippet in plain language.",
+      "triggers": [
+        "code",
+        "explain",
+        "كود",
+        "اشرح"
+      ],
+      "enabled": true,
+      "file": "test_skill_b.json"
+    },
+    {
+      "name": "time_greeting",
+      "description": "Greets the user with a time-appropriate greeting",
+      "triggers": [
+        "صباح",
+        "مساء",
+        "morning",
+        "evening",
+        "hello",
+        "مرحبا"
+      ],
+      "enabled": true,
+      "file": "time_greeting.json"
+    },
+    {
+      "name": "translate_arabic",
+      "description": "Translate text to or from Arabic (العربية)",
+      "triggers": [
+        "translate to arabic",
+        "ترجم إلى العربية",
+        "in arabic",
+        "بـالعربية",
+        "translate arabic",
+        "ترجمة العربية"
+      ],
+      "enabled": true,
+      "file": "translate_arabic.json"
+    },
+    {
+      "name": "translate_english",
+      "description": "Translate text to or from English (English)",
+      "triggers": [
+        "translate to english",
+        "ترجم إلى english",
+        "in english",
+        "بـenglish",
+        "translate english",
+        "ترجمة english"
+      ],
+      "enabled": true,
+      "file": "translate_english.json"
+    },
+    {
+      "name": "translate_french",
+      "description": "Translate text to or from French (Français)",
+      "triggers": [
+        "translate to french",
+        "ترجم إلى français",
+        "in french",
+        "بـfrançais",
+        "translate french",
+        "ترجمة français"
+      ],
+      "enabled": true,
+      "file": "translate_french.json"
+    },
+    {
+      "name": "translate_german",
+      "description": "Translate text to or from German (Deutsch)",
+      "triggers": [
+        "translate to german",
+        "ترجم إلى deutsch",
+        "in german",
+        "بـdeutsch",
+        "translate german",
+        "ترجمة deutsch"
+      ],
+      "enabled": true,
+      "file": "translate_german.json"
+    },
+    {
+      "name": "translate_spanish",
+      "description": "Translate text to or from Spanish (Español)",
+      "triggers": [
+        "translate to spanish",
+        "ترجم إلى español",
+        "in spanish",
+        "بـespañol",
+        "translate spanish",
+        "ترجمة español"
+      ],
+      "enabled": true,
+      "file": "translate_spanish.json"
+    }
+  ],
+  "updated_at": 1786611589.7962942
+}

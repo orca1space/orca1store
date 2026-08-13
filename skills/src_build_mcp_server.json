@@ -1,0 +1,25 @@
+{
+  "name": "src_build_mcp_server",
+  "description": "This skill should be used when the user asks to \"build an MCP server\", \"create an MCP\", \"make an MCP integration\", \"wrap an API for Claude\", \"expose tools to Claude\", \"make an MCP app\", or discusses building something with the Model Context Protocol. It is the entry point for MCP server development ",
+  "trigger_keywords": [
+    "this",
+    "skill",
+    "should",
+    "used",
+    "when",
+    "the",
+    "user",
+    "asks",
+    "build",
+    "mcp",
+    "server"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# Build an MCP Server\n\nYou are guiding a developer through designing and building an MCP server that works seamlessly with Claude. MCP servers come in many forms — picking the wrong shape early causes painful rewrites later. Your first job is **discovery, not code**.\n\n**Load Claude-specific context first.** The MCP spec is generic; Claude has additional auth types, review criteria, and limits. Before answering questions or scaffolding, fetch `https://claude.com/docs/llms-full.txt` (the full export of the Claude connector docs) so your guidance reflects Claude's actual constraints.\n\nDo not start scaffolding until you have answers to the questions in Phase 1. If the user's opening message already answers them, acknowledge that and skip straight to the recommendation.\n\n---\n\n## Phase 1 — Interrogate the use case\n\nAsk these questions conversationally (batch them into one message, don't interrogate one-at-a-time). Adapt wording to what the user has already told you.\n\n### 1. What does it connect to?\n\n| If it connects to… | Likely direction |\n|---|---|\n| A cloud API (SaaS, REST, GraphQL) | Remote HTTP server |\n| A local process, filesystem, or desktop app | MCPB or local stdio |\n| Hardware, OS-level APIs, or user-specific state | MCPB |\n| Nothing external — pure logic / computation | Either — default to remote |\n\n### 2. Who will use it?\n\n- **Just me / my team, on our machines** → Local stdio is acceptable (easiest to prototype)\n- **Anyone who installs it** → Remote HTTP (strongly preferred) or MCPB (if it *must* be local)\n- **Users of Claude desktop who want UI widgets** → MCP app (remote or MCPB)\n\n### 3. How many distinct actions does it expose?\n\nThis determines the tool-design pattern — see Phase 3.\n\n- **Under ~15 actions** → one tool per action\n- **Dozens to hundreds of actions** (e.g. wrapping a large API surface) → search + execute pattern\n\n### 4. Does a tool need mid-call user input or rich display?\n\n- **Simple structured input** (pick from list, enter a value, confirm) → **Elicitation** — spec-native, zero UI code. *Host support is rolling out* (Claude Code ≥2.1.76) — always pair with a capability check and fallback. See `references/elicitation.md`.\n- **Rich/visual UI** (charts, custom pickers with search, live dashboards) → **MCP app widgets** — iframe-based, needs `@modelcontextprotocol/ext-apps`. See `build-mcp-app` skill.\n- **Neither** → plain tool returning text/JSON.\n\n### 5. What auth does the upstream service use?\n\n- None / API key → straightforward\n- OAuth 2.0 → you'll need a remote server with CIMD (preferred) or DCR support; see `references/auth.md`\n\n---\n\n## Phase 2 — Recommend a deployment model\n\nBased on the answers, recommend **one** path. Be opinionated. The ranked options:\n\n### ⭐ Remote streamable-HTTP MCP server (default recommendation)\n\nA hosted service speaking MCP over streamable HTTP. This is the **recommended path** for anything wrapping a cloud API.\n\n**Why it wins:**\n- Zero install friction — users add a URL, done\n- One deplo",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: build-mcp-server"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "src_babysit_pr",
+  "description": "Babysit a GitHub pull request after creation by continuously polling review comments, CI checks/workflow runs, and mergeability state until the PR is merged/closed or user help is required. Diagnose failures, retry likely flaky failures up to 3 times, auto-fix/push branch-related issues when appropr",
+  "trigger_keywords": [
+    "babysit",
+    "github",
+    "pull",
+    "request",
+    "after",
+    "creation",
+    "continuously",
+    "polling"
+  ],
+  "input_schema": {
+    "text": "user input"
+  },
+  "procedure": "# PR Babysitter\n\n## Objective\nBabysit a PR persistently until one of these terminal outcomes occurs:\n\n- The PR is merged or closed.\n- A situation requires user help (for example CI infrastructure issues, repeated flaky failures after retry budget is exhausted, permission problems, or ambiguity that cannot be resolved safely).\n- Optional handoff milestone: the PR is currently green + mergeable + review-clean. Treat this as a progress state, not a watcher stop, so late-arriving review comments are still surfaced promptly while the PR remains open.\n\nDo not stop merely because a single snapshot returns `idle` while checks are still pending.\n\n## Inputs\nAccept any of the following:\n\n- No PR argument: infer the PR from the current branch (`--pr auto`)\n- PR number\n- PR URL\n\n## Core Workflow\n\n1. When the user asks to \"monitor\"/\"watch\"/\"babysit\" a PR, start with the watcher's continuous mode (`--watch`) unless you are intentionally doing a one-shot diagnostic snapshot.\n2. Run the watcher script to snapshot PR/review/CI state (or consume each streamed snapshot from `--watch`).\n3. Inspect the `actions` list in the JSON response.\n4. If `diagnose_ci_failure` is present, inspect failed run logs and classify the failure.\n5. If the failure is likely caused by the current branch, patch code locally, commit, and push. Do not patch random flaky tests, CI infrastructure, dependency outages, runner issues, or other failures that are unrelated to the branch.\n6. If `process_review_comment` is present, inspect surfaced published review items and decide whether to address them.\n7. If a review item is actionable and correct, patch code locally, commit, push, and then resolve the associated review thread only when allowed by the GitHub state mutation policy below.\n8. Do not post replies to human-authored review comments/threads unless the user explicitly confirms the exact response. If a human review item is non-actionable, already addressed, or not valid, surface the item and recommended response to the user instead of replying on GitHub.\n9. If the failure is likely flaky/unrelated and `retry_failed_checks` is present, rerun failed jobs with `--retry-failed-now`.\n10. If both actionable review feedback and `retry_failed_checks` are present, prioritize review feedback first; a new commit will retrigger CI, so avoid rerunning flaky checks on the old SHA unless you intentionally defer the review change.\n11. On every loop, look for newly surfaced review feedback before acting on CI failures or mergeability state, then verify mergeability / merge-conflict status (for example via `gh pr view`) alongside CI.\n12. After any push or rerun action, immediately return to step 1 and continue polling on the updated SHA/state.\n13. If you had been using `--watch` before pausing to patch/commit/push, relaunch `--watch` yourself in the same turn immediately after the push (do not wait for the user to re-invoke the skill).\n14. Repeat polling until `stop_pr_closed` appears or a user-help-requir",
+  "examples": [],
+  "version": "1.0.0",
+  "enabled": true,
+  "_source": "cloned: babysit-pr"
+}
