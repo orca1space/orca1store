@@ -1,0 +1,178 @@
+{
+  "total": 34,
+  "passed": 34,
+  "failed": 0,
+  "results": [
+    {
+      "test": "1.1 safe inference runs and merges",
+      "status": "PASS",
+      "detail": "sources=4"
+    },
+    {
+      "test": "1.2 confidence_score > 0 (dict-merge bug fixed)",
+      "status": "PASS",
+      "detail": "confidence=20.93%"
+    },
+    {
+      "test": "1.3 deterministic cache hit",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "1.4 concurrent stress (40 batches)",
+      "status": "PASS",
+      "detail": "runs=42"
+    },
+    {
+      "test": "1.5 timeout fallback activates",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "1.6 metrics expose latency and cache",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "2.1 missing fields are completed",
+      "status": "PASS",
+      "detail": "price=116.1, volume=580.6"
+    },
+    {
+      "test": "2.2 completion report + rate present",
+      "status": "PASS",
+      "detail": "rate=100%"
+    },
+    {
+      "test": "2.3 explicit values untouched",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "2.4 contextual hint strategy",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "2.5 correlation inference",
+      "status": "PASS",
+      "detail": "price=116.1"
+    },
+    {
+      "test": "2.6 unresolved fields reported honestly",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "3.1 light error heals (tier 1)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "3.2 timeout escalates and heals",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "3.3 critical tier activates",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "3.4 cross-component strategy used",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "3.5 learning re-ranks strategies",
+      "status": "PASS",
+      "detail": "signatures=5"
+    },
+    {
+      "test": "3.6 stats + all 12 strategies registered",
+      "status": "PASS",
+      "detail": "success_rate=100%"
+    },
+    {
+      "test": "4.1 healthy decision passes all 10 layers",
+      "status": "PASS",
+      "detail": "rate=100%"
+    },
+    {
+      "test": "4.2 ten layers executed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "4.3 schema violation blocked",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "4.4 invalid action blocked",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "4.5 out-of-range confidence fails",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "4.6 user policy blocks forbidden actions",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "4.7 anomaly layer flags extreme confidence",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "5.1 ensemble prediction reacts to data",
+      "status": "PASS",
+      "detail": "prediction=85.8"
+    },
+    {
+      "test": "5.2 four sub-models active",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "5.3 graceful degradation without data",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "5.4 calibration rebalances weights",
+      "status": "PASS",
+      "detail": "weights={'mean': 0.3029492834619459, 'trend': 0.3039540903722674, 'ar': 0.30145446791854813, 'pattern': 0.09164215824723863}"
+    },
+    {
+      "test": "6.1 full pipeline passes",
+      "status": "PASS",
+      "detail": "latency=0.48ms"
+    },
+    {
+      "test": "6.2 all stage outputs present",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "6.3 aggregated stats",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "6.4 engine self-heals on stage failure",
+      "status": "PASS",
+      "detail": "error=static_failing_predict() missing 1 required positional argum"
+    },
+    {
+      "test": "6.5 20 concurrent pipeline runs consistent",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "suite_version": "2.0.0"
+}
