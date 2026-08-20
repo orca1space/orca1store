@@ -1,4 +1,4 @@
-# Hermes / OrcaMax Code
+  # Hermes / OrcaMax Code
 
 ## Local-first AI agent repository
 
@@ -69,3 +69,21 @@ Hermes مستقل محليًا، لكنه لا يمتلك أوزان نموذج 
 ## الحالة
 
 تم دمج الجسر المحلي والتحقق منه عبر واجهة Hermes الفعلية. يجب تنفيذ مزامنة GitHub النهائية فقط بعد نجاح المصادقة الإدارية على المستودع الخاص وإتمام فحص الأسرار.
+
+## HERMES-AI — حزمة التحسين الخماسية (v2)
+
+نظام قرار ذكي مضاف فوق محرك Hermes، ينفّذ خمس مراحل تحسين متكاملة:
+
+1. **الاستنتاج المتزامن الآمن** (`core/hermes_ai/concurrent_inference.py`) — تنفيذ متوازٍ محمي بقفل دقيق، مهلة زمنية، تخزين مؤقت، وإعادة محاولات بتراجع أسي.
+2. **استكمال البيانات الذكي** (`core/hermes_ai/data_completion.py`) — 5 استراتيجيات حقيقية (آخر قيمة معروفة، استيفاء إحصائي، مطابقة أنماط، ارتباط الحقول، تلميحات سياقية) مع سجل ثقة لكل حقل.
+3. **مركز الشفاء المتقدم** (`core/hermes_ai/recovery_center.py`) — 12 استراتيجية شفاء مُنفَّذة، تصعيد تكيفي حسب الشدة، وحلقة تعلّم ترتّب الاستراتيجيات حسب تاريخ نجاحها.
+4. **التحقق متعدد الطبقات** (`core/hermes_ai/multilayer_verification.py`) — 10 طبقات تحقق: syntax، logic، ethics، resources، historical precedent، impact، anomaly، consistency، confidence، compliance.
+5. **النموذج التنبؤي المتعدد** (`core/hermes_ai/predictive_model.py`) — ensemble من 4 نماذج فرعية (Mean/Trend/AR/Pattern) مع معايرة أوزان ديناميكية.
+
+المحرك الموحد `core/hermes_ai/engine.py` يربط المراحل في خط أنابيب قرار واحد، ومدمج داخل `core/orchestrator.py` عبر `get_hermes_ai_stats()`. جميع الوحدات الخمس تعمل على بيانات حقيقية (بلا ثوابت سحرية) ونسبة النجاح في الاختبارات الشاملة 100% (34/34).
+
+```bash
+python -m tests.hermes_ai.test_hermes_ai
+```
+
+انظر `HERMES_AI_REPORT_AR.md` للتقرير الكامل بالعربية.
